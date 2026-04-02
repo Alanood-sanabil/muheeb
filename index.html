@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مُهيب — ثوبك المثالي من بيتك</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header id="header">
+    <a class="logo" id="nav-logo" href="#"></a>
+    <nav class="navbar">
+      <div class="nav-links" id="nav-links"></div>
+      <button class="navbar-toggler" id="hamburger" aria-label="القائمة">
+        <div class="toggler-icon">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+    </nav>
+    <!-- Mobile menu -->
+    <div class="collapse-menu" id="mobile-menu">
+      <button class="mobile-close" id="mobile-close">✕</button>
+      <div class="mobile-links" id="mobile-links"></div>
+    </div>
+  </header>
+
+  <!-- HERO BANNER -->
+  <section class="hero-banner slide-menu">
+    <div class="hero-banner-container">
+      <div class="hero-banner-bg">
+        <div class="hero-banner-left"></div>
+        <!-- PLACEHOLDER: replace with Muheeb hero photo (portrait, man in thoob) -->
+        <div class="hero-banner-right" style="background-image: url('images/hero-right.jpg')"></div>
+      </div>
+      <div class="hero-banner-inner">
+        <!-- PLACEHOLDER: replace with Muheeb overlapping hero photo -->
+        <div class="hero-banner-inner-image" style="background-image: url('images/hero-inner.jpg')"></div>
+        <h1 id="hero-headline"></h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOUBLE COLUMN — text + 3 image grid -->
+  <section class="double-column">
+    <div class="double-column-text">
+      <h2 class="reveal" id="about-quote"></h2>
+      <p class="text-top reveal" id="about-body"></p>
+    </div>
+    <div class="double-column-images">
+      <div class="column-right">
+        <!-- PLACEHOLDER: replace with thoob detail photo -->
+        <div class="image-top reveal" style="background-image: url('images/lifestyle-main.jpg')">
+          <span class="img-label" id="img-label-1"></span>
+        </div>
+        <!-- PLACEHOLDER: replace with fabric texture photo -->
+        <div class="image-bottom reveal" style="background-image: url('images/lifestyle-packaged.jpg')">
+          <span class="img-label" id="img-label-3"></span>
+        </div>
+      </div>
+      <div class="column-left">
+        <!-- PLACEHOLDER: replace with lifestyle photo -->
+        <div class="image-middle reveal" style="background-image: url('images/lifestyle-fabric.jpg')">
+          <span class="img-label" id="img-label-2"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEXT SECTION — centered -->
+  <section class="text-section">
+    <h2 class="reveal" id="hero-subtext"></h2>
+  </section>
+
+  <!-- SCROLLING IMAGES MARQUEE -->
+  <section class="scrolling-images">
+    <div class="scroll-wrap scroll-wrap-top">
+      <div class="scrolling-track scrolling-track-top" id="scroll-track-top"></div>
+    </div>
+    <div class="scroll-wrap scroll-wrap-bottom">
+      <div class="scrolling-track scrolling-track-bottom" id="scroll-track-bottom"></div>
+    </div>
+  </section>
+
+  <!-- SERVICES TEXT — quote + signature style -->
+  <section class="services-text-section">
+    <div class="services-text-container">
+      <div class="services-text-content">
+        <p class="reveal" id="about-paragraph"></p>
+      </div>
+      <div class="services-text-brand">
+        <span class="brand-signature reveal" id="brand-sig"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEXT + 3 IMAGES — details section -->
+  <section class="text-3-images" id="thoob">
+    <div class="text-3-images-container">
+      <div class="text-3-images-right">
+        <div class="text-3-images-text">
+          <h2 class="reveal" id="wide-headline"></h2>
+          <p class="reveal" id="wide-sub"></p>
+        </div>
+        <!-- PLACEHOLDER: replace with thoob detail photo -->
+        <div class="text-3-images-image-right reveal" style="background-image: url('images/step-1-fabric.jpg')"></div>
+      </div>
+      <div class="text-3-images-left">
+        <!-- PLACEHOLDER: replace with thoob close-up photo -->
+        <div class="text-3-images-image-left reveal" style="background-image: url('images/step-2-measurements.jpg')"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS — accordion style -->
+  <section class="how-section" id="how">
+    <div class="how-container">
+      <!-- PLACEHOLDER: replace with video or thoob crafting photo -->
+      <div class="how-image-side" style="background-image: url('images/step-3-delivery.jpg')"></div>
+      <div class="how-content-side">
+        <h2 class="reveal" id="how-headline"></h2>
+        <div class="steps-accordion" id="steps-container"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS SECTION -->
+  <section class="stats-section">
+    <div class="stats-grid" id="stats-grid"></div>
+  </section>
+
+  <!-- FOOTER CTA — image + text -->
+  <section class="footer-cta-section">
+    <div class="footer-cta-right">
+      <!-- PLACEHOLDER: replace with wide thoob lifestyle photo -->
+      <div class="footer-cta-image reveal" style="background-image: url('images/wide-banner.jpg')"></div>
+    </div>
+    <div class="footer-cta-left">
+      <p class="reveal" id="final-sub"></p>
+      <h2 class="reveal" id="final-headline"></h2>
+      <div class="cta-buttons reveal">
+        <a class="page-link" id="final-cta-primary" href="order.html"></a>
+      </div>
+      <span class="cta-note reveal" id="final-note"></span>
+    </div>
+  </section>
+
+  <!-- FOOTER ADDRESS -->
+  <section class="footer-address" id="about">
+    <div class="footer-address-logo reveal" id="footer-logo"></div>
+    <div class="footer-address-tagline reveal" id="footer-tagline"></div>
+    <div class="footer-contact reveal">
+      <a id="footer-whatsapp-link" target="_blank"></a>
+    </div>
+    <div class="footer-links reveal" id="footer-links"></div>
+  </section>
+
+  <!-- FOOTER BOTTOM -->
+  <section class="footer-bottom">
+    <span id="footer-copyright"></span>
+    <span id="footer-sub"></span>
+  </section>
+
+  <script src="content/content.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
