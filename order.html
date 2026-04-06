@@ -2,11 +2,11 @@
 <html dir="rtl" lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>مُهيب — اطلب ثوبك</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/order.css" />
 </head>
 <body>
@@ -18,189 +18,163 @@
       <div class="order-tagline" id="order-tagline"></div>
       <h2 class="order-headline" id="order-headline"></h2>
       <p class="order-sub" id="order-sub"></p>
-      <button class="btn-order-landing" id="order-landing-cta" onclick="showScreen(2)"></button>
-      <div class="badges" id="order-badges"></div>
+      <button class="btn-primary-full" id="order-landing-cta" onclick="showScreen(2)"></button>
     </div>
   </div>
 
-  <!-- SCREEN 2: Step 1 — Thoob Customization -->
+  <!-- TAB PROGRESS BAR -->
+  <div class="tab-bar" id="tab-bar">
+    <div class="tab" id="tab-1" data-step="1"><span></span></div>
+    <div class="tab" id="tab-2" data-step="2"><span></span></div>
+    <div class="tab" id="tab-3" data-step="3"><span></span></div>
+    <div class="tab" id="tab-4" data-step="4"><span></span></div>
+  </div>
+
+  <!-- SCREEN 2: Step 1 — Color + Collar -->
   <div id="screen-2" class="screen">
-    <div class="progress-wrap">
-      <div class="progress-bar">
-        <div class="progress-seg"></div>
-        <div class="progress-seg"></div>
-        <div class="progress-seg"></div>
+    <div class="step-body">
+      <div class="step-top">
+        <div class="section-block">
+          <div class="sec-label">اللون</div>
+          <div class="card-row" id="color-cards"></div>
+          <div class="error-msg" id="error-color">الرجاء اختيار اللون</div>
+        </div>
+        <div class="section-block">
+          <div class="sec-label">الياقة</div>
+          <div class="card-row" id="collar-cards"></div>
+          <div class="error-msg" id="error-collar">الرجاء اختيار الياقة</div>
+        </div>
       </div>
-      <div class="progress-labels">
-        <span class="progress-label"></span>
-        <span class="progress-label"></span>
-        <span class="progress-label"></span>
-      </div>
-    </div>
-    <div class="screen-inner">
-      <div class="step-content">
-        <button class="back-btn" id="step1-back" onclick="showScreen(1, true)"></button>
-
-        <!-- Color -->
-        <div class="section-group">
-          <div class="section-title" id="color-title"></div>
-          <div class="cards-row" id="color-cards"></div>
-          <div class="error-msg" id="error-color">الرجاء اختيار لون الثوب</div>
-        </div>
-
-        <!-- Fabric -->
-        <div class="section-group">
-          <div class="section-title" id="fabric-title"></div>
-          <div class="section-sub" id="fabric-sub"></div>
-          <div class="cards-row" id="fabric-cards"></div>
-          <div class="error-msg" id="error-fabric">الرجاء اختيار نوع القماش</div>
-        </div>
-
-        <!-- Collar -->
-        <div class="section-group">
-          <div class="section-title" id="collar-title"></div>
-          <div class="cards-row" id="collar-cards"></div>
-          <div class="error-msg" id="error-collar">الرجاء اختيار نوع الياقة</div>
-        </div>
-
-        <button class="btn-order" id="step1-next" onclick="validateStep1()"></button>
-        <div class="error-msg" id="error-step1" style="text-align:center; margin-top:8px;">الرجاء اختيار جميع الخيارات</div>
+      <div class="step-bottom">
+        <button class="btn-next" id="btn-next-1" onclick="validateStep1()">اختر جميع الخيارات</button>
       </div>
     </div>
   </div>
 
-  <!-- SCREEN 3: Step 2 — Measurements -->
+  <!-- SCREEN 3: Step 2 — Measurements (sliders) -->
   <div id="screen-3" class="screen">
-    <div class="progress-wrap">
-      <div class="progress-bar">
-        <div class="progress-seg"></div>
-        <div class="progress-seg"></div>
-        <div class="progress-seg"></div>
-      </div>
-      <div class="progress-labels">
-        <span class="progress-label"></span>
-        <span class="progress-label"></span>
-        <span class="progress-label"></span>
-      </div>
-    </div>
-    <div class="screen-inner">
-      <div class="step-content">
-        <button class="back-btn" id="step2-back" onclick="showScreen(2, true)"></button>
-        <p class="section-sub" id="step2-intro" style="margin-bottom:24px;"></p>
-
-        <!-- Height -->
-        <div class="field">
-          <label id="height-label"></label>
-          <div class="input-wrap">
-            <input type="text" inputmode="numeric" id="input-height" style="padding-left:50px;" />
-            <span class="unit-label" id="height-unit"></span>
+    <div class="step-body step-body-center">
+      <div class="step-top">
+        <h2 class="screen-title serif">المقاسات</h2>
+        <div class="slider-block">
+          <div class="slider-header">
+            <span class="slider-label" id="s-height-label"></span>
+            <span class="slider-value" id="s-height-val">١٧٠ سم</span>
           </div>
-          <div class="helper-text" id="height-helper"></div>
-          <div class="error-msg" id="error-height">الرجاء إدخال الطول</div>
+          <input type="range" id="slider-height" min="140" max="210" value="170" step="1" />
         </div>
-
-        <!-- Weight -->
-        <div class="field">
-          <label id="weight-label"></label>
-          <div class="input-wrap">
-            <input type="text" inputmode="numeric" id="input-weight" style="padding-left:60px;" />
-            <span class="unit-label" id="weight-unit"></span>
+        <div class="slider-block">
+          <div class="slider-header">
+            <span class="slider-label" id="s-weight-label"></span>
+            <span class="slider-value" id="s-weight-val">٨٠ كيلو</span>
           </div>
-          <div class="error-msg" id="error-weight">الرجاء إدخال الوزن</div>
+          <input type="range" id="slider-weight" min="40" max="180" value="80" step="1" />
         </div>
-
-        <!-- Body Type -->
-        <div class="section-group">
-          <div class="section-title" id="body-title"></div>
-          <div class="section-sub" id="body-sub"></div>
-          <div class="cards-row" id="body-cards"></div>
-          <div class="error-msg" id="error-body">الرجاء اختيار شكل الجسم</div>
-        </div>
-
-        <button class="btn-order" id="step2-next" onclick="validateStep2()"></button>
+      </div>
+      <div class="step-bottom">
+        <button class="btn-next ready" id="btn-next-2" onclick="validateStep2()">التالي</button>
       </div>
     </div>
   </div>
 
-  <!-- SCREEN 4: Step 3 — Contact + Summary -->
+  <!-- SCREEN 4: Step 3 — Body Shape -->
   <div id="screen-4" class="screen">
-    <div class="progress-wrap">
-      <div class="progress-bar">
-        <div class="progress-seg"></div>
-        <div class="progress-seg"></div>
-        <div class="progress-seg"></div>
+    <div class="step-body step-body-center">
+      <div class="step-top">
+        <h2 class="screen-title serif">شكل الجسم</h2>
+        <div id="shape-cards"></div>
+        <div class="error-msg" id="error-body">الرجاء اختيار شكل الجسم</div>
       </div>
-      <div class="progress-labels">
-        <span class="progress-label"></span>
-        <span class="progress-label"></span>
-        <span class="progress-label"></span>
+      <div class="step-bottom">
+        <button class="btn-next" id="btn-next-3" onclick="validateStep3()">اختر شكل الجسم</button>
       </div>
     </div>
-    <div class="screen-inner">
-      <div class="step-content">
-        <button class="back-btn" id="step3-back" onclick="showScreen(3, true)"></button>
+  </div>
 
-        <!-- Name -->
-        <div class="field">
-          <label id="name-label"></label>
-          <div class="input-wrap">
-            <input type="text" id="input-name" />
+  <!-- SCREEN 5: Step 4 — Contact + Summary -->
+  <div id="screen-5" class="screen">
+    <div class="step-body">
+      <div class="step-top">
+        <div class="section-block">
+          <div class="input-row">
+            <label id="name-label"></label>
+            <div class="line-input-wrap">
+              <input type="text" id="input-name" placeholder="" />
+              <div class="line-border"><div class="line-border-fill"></div></div>
+            </div>
           </div>
           <div class="error-msg" id="error-name">الرجاء إدخال الاسم</div>
-        </div>
-
-        <!-- Phone -->
-        <div class="field">
-          <label id="phone-label"></label>
-          <div class="input-wrap">
-            <input type="tel" id="input-phone" />
+          <div class="input-row">
+            <label id="phone-label"></label>
+            <div class="line-input-wrap">
+              <input type="tel" id="input-phone" placeholder="" />
+              <div class="line-border"><div class="line-border-fill"></div></div>
+            </div>
           </div>
-          <div class="helper-text" id="phone-note"></div>
           <div class="error-msg" id="error-phone">الرجاء إدخال رقم الجوال</div>
-        </div>
-
-        <!-- City -->
-        <div class="field">
-          <label id="city-label"></label>
-          <div class="input-wrap">
-            <select id="input-city"></select>
+          <div class="input-row">
+            <label id="city-label"></label>
+            <div class="line-input-wrap">
+              <select id="input-city"></select>
+              <div class="line-border"><div class="line-border-fill"></div></div>
+            </div>
           </div>
           <div class="error-msg" id="error-city">الرجاء اختيار المدينة</div>
         </div>
 
-        <!-- Order Summary -->
-        <div class="summary-card">
-          <h3 id="summary-title"></h3>
-          <div class="summary-row"><span class="label" id="sum-color-label"></span><span id="sum-color">—</span></div>
-          <div class="summary-row"><span class="label" id="sum-fabric-label"></span><span id="sum-fabric">—</span></div>
-          <div class="summary-row"><span class="label" id="sum-collar-label"></span><span id="sum-collar">—</span></div>
-          <div class="summary-row"><span class="label" id="sum-height-label"></span><span id="sum-height">—</span></div>
-          <div class="summary-row"><span class="label" id="sum-weight-label"></span><span id="sum-weight">—</span></div>
-          <div class="summary-row"><span class="label" id="sum-body-label"></span><span id="sum-body">—</span></div>
-          <hr class="summary-sep" />
-          <div class="summary-price"><span id="sum-price-label"></span><span id="sum-price">—</span></div>
-        </div>
+        <!-- Grouped summary -->
+        <div class="summary-wrap">
+          <div class="sum-title" id="summary-title"></div>
 
-        <button class="btn-order" id="step3-submit" onclick="validateStep3()"></button>
+          <div class="sum-group">
+            <div class="sum-group-head">
+              <span id="sum-grp-thoob"></span>
+              <a class="sum-edit" onclick="goToStep(1)"></a>
+            </div>
+            <div class="sum-row"><span class="sum-l" id="sum-color-label"></span><span class="sum-v" id="sum-color">—</span></div>
+            <div class="sum-row"><span class="sum-l" id="sum-collar-label"></span><span class="sum-v" id="sum-collar">—</span></div>
+          </div>
+
+          <div class="sum-group">
+            <div class="sum-group-head">
+              <span id="sum-grp-meas"></span>
+              <a class="sum-edit" onclick="goToStep(2)"></a>
+            </div>
+            <div class="sum-row"><span class="sum-l" id="sum-height-label"></span><span class="sum-v" id="sum-height">—</span></div>
+            <div class="sum-row"><span class="sum-l" id="sum-weight-label"></span><span class="sum-v" id="sum-weight">—</span></div>
+          </div>
+
+          <div class="sum-group">
+            <div class="sum-group-head">
+              <span id="sum-grp-body"></span>
+              <a class="sum-edit" onclick="goToStep(3)"></a>
+            </div>
+            <div class="sum-row"><span class="sum-l" id="sum-body-label"></span><span class="sum-v" id="sum-body">—</span></div>
+          </div>
+
+          <div class="sum-price-row">
+            <span class="sum-l" id="sum-price-label"></span>
+            <span class="sum-v" id="sum-price">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="step-bottom">
+        <button class="btn-next btn-submit" id="btn-next-4" onclick="validateStep4()">أرسل الطلب</button>
       </div>
     </div>
   </div>
 
-  <!-- SCREEN 5: Confirmation -->
-  <div id="screen-5" class="screen">
-    <div class="confirm-center">
-      <div class="checkmark-circle">
-        <svg viewBox="0 0 100 100">
-          <circle class="circle" cx="50" cy="50" r="45" />
-          <path class="check" d="M30 52 L44 66 L70 38" />
-        </svg>
-      </div>
-      <h2 id="confirm-title"></h2>
-      <p id="confirm-sub"></p>
-      <div class="order-ref" id="order-ref"></div>
-      <hr class="confirm-sep" />
-      <a class="btn-whatsapp" id="confirm-wa-btn" target="_blank">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  <!-- SCREEN 6: Confirmation -->
+  <div id="screen-6" class="screen">
+    <div class="confirm-wrap">
+      <h1 class="confirm-title serif" id="confirm-title"></h1>
+      <p class="confirm-sub" id="confirm-sub"></p>
+      <div class="confirm-line"></div>
+      <div class="ref-label" id="confirm-ref-label"></div>
+      <div class="ref-num" id="order-ref"></div>
+      <a class="btn-wa" id="confirm-wa-btn" target="_blank">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        <span id="confirm-wa-text"></span>
       </a>
     </div>
   </div>

@@ -1,378 +1,352 @@
 // ============================================================
-//  MUHEEB — ORDER FLOW LOGIC
-//  Reads all text from CONTENT (content/content.js)
+//  MUHEEB — ORDER FLOW (4-step + landing + confirmation)
 // ============================================================
 
-const orderState = {
-  color: null,
-  fabric: null,
-  collar: null,
-  height: null,
-  weight: null,
-  bodyType: null,
-  name: null,
-  phone: null,
-  city: null,
-};
-
+const orderState = { color: null, collar: null, height: 170, weight: 80, bodyShape: null, name: null, phone: null, city: null };
 let currentScreen = 1;
 
 document.addEventListener('DOMContentLoaded', () => {
-  populateOrderContent();
-  buildOrderOptions();
+  populate();
+  buildCards();
+  initSliders();
+  attachInputWatchers();
   showScreen(1);
 });
 
-// --- POPULATE ORDER CONTENT ---
-function populateOrderContent() {
+// ---- POPULATE ----
+function populate() {
   const O = CONTENT.order;
   const S = CONTENT.site;
 
-  // Landing screen
+  // Landing
   document.getElementById('order-logo').textContent = S.name;
   document.getElementById('order-tagline').textContent = S.tagline;
   document.getElementById('order-headline').textContent = O.landingHeadline;
   document.getElementById('order-sub').textContent = O.landingSub;
   document.getElementById('order-landing-cta').textContent = O.landingCta;
 
-  // Badges
-  const badgesContainer = document.getElementById('order-badges');
-  O.landingBadges.forEach(b => {
-    const div = document.createElement('div');
-    div.className = 'badge';
-    div.innerHTML = `<div class="badge-icon">${b.icon}</div><div class="badge-label">${b.label}</div>`;
-    badgesContainer.appendChild(div);
+  // Tab labels
+  O.tabs.forEach((label, i) => {
+    document.getElementById('tab-' + (i + 1)).querySelector('span').textContent = label;
   });
 
-  // Progress labels
-  const labels = document.querySelectorAll('.progress-label');
-  O.steps.forEach((stepLabel, i) => {
-    if (labels[i]) labels[i].textContent = `${toArabicNum(i + 1)}. ${stepLabel}`;
-  });
+  // Slider labels
+  document.getElementById('s-height-label').textContent = O.heightLabel;
+  document.getElementById('s-weight-label').textContent = O.weightLabel;
+  document.getElementById('s-height-val').textContent = toAr(170) + ' ' + O.heightUnit;
+  document.getElementById('s-weight-val').textContent = toAr(80) + ' ' + O.weightUnit;
 
-  // Step 1 titles
-  document.getElementById('color-title').textContent = O.colorLabel;
-  document.getElementById('fabric-title').textContent = O.fabricLabel;
-  document.getElementById('fabric-sub').textContent = O.fabricSub;
-  document.getElementById('collar-title').textContent = O.collarLabel;
-  document.getElementById('step1-next').textContent = O.nextBtn;
-  document.getElementById('step1-back').textContent = O.backBtn;
-
-  // Step 2 titles
-  document.getElementById('step2-intro').textContent = O.measurementsIntro;
-  document.getElementById('height-label').textContent = O.heightLabel;
-  document.getElementById('input-height').placeholder = O.heightPlaceholder;
-  document.getElementById('height-unit').textContent = O.heightUnit;
-  document.getElementById('height-helper').textContent = O.heightHelper;
-  document.getElementById('weight-label').textContent = O.weightLabel;
-  document.getElementById('input-weight').placeholder = O.weightPlaceholder;
-  document.getElementById('weight-unit').textContent = O.weightUnit;
-  document.getElementById('body-title').textContent = O.bodyTypeLabel;
-  document.getElementById('body-sub').textContent = O.bodyTypeSubtext;
-  document.getElementById('step2-next').textContent = O.nextBtn;
-  document.getElementById('step2-back').textContent = O.backBtn;
-
-  // Step 3 titles
+  // Contact
   document.getElementById('name-label').textContent = O.nameLabel;
   document.getElementById('input-name').placeholder = O.namePlaceholder;
   document.getElementById('phone-label').textContent = O.phoneLabel;
   document.getElementById('input-phone').placeholder = O.phonePlaceholder;
-  document.getElementById('phone-note').textContent = O.phoneNote;
   document.getElementById('city-label').textContent = O.cityLabel;
-  document.getElementById('summary-title').textContent = O.summaryTitle;
-  document.getElementById('step3-submit').textContent = O.submitBtn;
-  document.getElementById('step3-back').textContent = O.backBtn;
-
-  // City dropdown
-  const citySelect = document.getElementById('input-city');
-  O.cities.forEach((city, i) => {
-    const opt = document.createElement('option');
-    opt.value = i === 0 ? '' : city;
-    opt.textContent = city;
-    citySelect.appendChild(opt);
+  const sel = document.getElementById('input-city');
+  O.cities.forEach((c, i) => {
+    const o = document.createElement('option');
+    o.value = i === 0 ? '' : c;
+    o.textContent = c;
+    sel.appendChild(o);
   });
 
-  // Summary labels
-  document.getElementById('sum-color-label').textContent = O.summaryLabels.color + ':';
-  document.getElementById('sum-fabric-label').textContent = O.summaryLabels.fabric + ':';
-  document.getElementById('sum-collar-label').textContent = O.summaryLabels.collar + ':';
-  document.getElementById('sum-height-label').textContent = O.summaryLabels.height + ':';
-  document.getElementById('sum-weight-label').textContent = O.summaryLabels.weight + ':';
-  document.getElementById('sum-body-label').textContent = O.summaryLabels.bodyType + ':';
-  document.getElementById('sum-price-label').textContent = O.summaryLabels.price + ':';
+  // Summary
+  document.getElementById('summary-title').textContent = O.summaryTitle;
+  document.getElementById('sum-grp-thoob').textContent = O.summaryGroups.thoob;
+  document.getElementById('sum-grp-meas').textContent = O.summaryGroups.measurements;
+  document.getElementById('sum-grp-body').textContent = O.summaryGroups.body;
+  document.getElementById('sum-color-label').textContent = O.summaryLabels.color;
+  document.getElementById('sum-collar-label').textContent = O.summaryLabels.collar;
+  document.getElementById('sum-height-label').textContent = O.summaryLabels.height;
+  document.getElementById('sum-weight-label').textContent = O.summaryLabels.weight;
+  document.getElementById('sum-body-label').textContent = O.summaryLabels.bodyType;
+  document.getElementById('sum-price-label').textContent = O.summaryLabels.price;
+
+  // Edit links
+  document.querySelectorAll('.sum-edit').forEach(a => { a.textContent = O.editLabel; });
 
   // Confirmation
   document.getElementById('confirm-title').textContent = O.confirmTitle;
   document.getElementById('confirm-sub').textContent = O.confirmSub;
-  document.getElementById('confirm-wa-btn').textContent = O.confirmWhatsapp;
+  document.getElementById('confirm-ref-label').textContent = O.confirmRefLabel;
+  document.getElementById('confirm-wa-text').textContent = O.confirmWhatsapp;
 }
 
-// --- BUILD ORDER OPTIONS ---
-function buildOrderOptions() {
+// ---- BUILD CARDS ----
+function buildCards() {
   buildColorCards();
-  buildFabricCards();
   buildCollarCards();
-  buildBodyTypeCards();
+  buildShapeCards();
 }
 
 function buildColorCards() {
-  const container = document.getElementById('color-cards');
+  const c = document.getElementById('color-cards');
   CONTENT.order.colors.forEach(color => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.dataset.value = color.label;
-    card.dataset.field = 'color';
-
-    const borderStyle = color.hex === '#FFFFFF' ? `border: 1px solid var(--border)` : '';
-    card.innerHTML = `
-      <div class="color-circle" style="background:${color.hex}; ${borderStyle}"></div>
-      <div class="card-label">${color.label}</div>
-      <div class="card-sub">${color.sub}</div>
-    `;
-    card.addEventListener('click', () => selectCard('color', card, container));
-    container.appendChild(card);
-  });
-}
-
-function buildFabricCards() {
-  const container = document.getElementById('fabric-cards');
-  CONTENT.order.fabrics.forEach(fabric => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.dataset.value = fabric.label;
-    card.dataset.field = 'fabric';
-    card.dataset.upcharge = fabric.upcharge;
-
-    const priceClass = fabric.upcharge > 0 ? 'price-tag gold' : 'price-tag';
-    const priceText = fabric.upcharge > 0
-      ? `+${toArabicNum(fabric.upcharge)} ${CONTENT.order.priceUnit}`
-      : 'السعر الأساسي';
-
-    card.innerHTML = `
-      <div class="card-label">${fabric.label}</div>
-      <div class="card-sub">${fabric.sub}</div>
-      <span class="${priceClass}">${priceText}</span>
-    `;
-    card.addEventListener('click', () => selectCard('fabric', card, container));
-    container.appendChild(card);
+    const d = mk('card card-color', color.label);
+    d.innerHTML = `<div class="card-ck"></div><img src="${color.image}" alt="${color.label}" class="color-thob-img"><div class="card-label">${color.label}</div>`;
+    d.onclick = () => pick('color', d, c, 1);
+    c.appendChild(d);
   });
 }
 
 function buildCollarCards() {
-  const container = document.getElementById('collar-cards');
-  CONTENT.order.collars.forEach(collar => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.dataset.value = collar.label;
-    card.dataset.field = 'collar';
-
-    // SVG icons
-    const svg = collar.id === 'qalabi'
-      ? `<svg class="collar-icon" width="60" height="50" viewBox="0 0 60 50"><path d="M10 40 L30 15 L50 40" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 40 L5 45" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M50 40 L55 45" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`
-      : `<svg class="collar-icon" width="60" height="50" viewBox="0 0 60 50"><circle cx="30" cy="28" r="16" stroke="currentColor" stroke-width="2.5" fill="none"/></svg>`;
-
-    card.innerHTML = `
-      ${svg}
-      <div class="card-label">${collar.label}</div>
-      <div class="card-sub">${collar.sub}</div>
-    `;
-    card.addEventListener('click', () => selectCard('collar', card, container));
-    container.appendChild(card);
+  const c = document.getElementById('collar-cards');
+  CONTENT.order.collars.forEach(col => {
+    const d = mk('card', col.label);
+    const svg = col.id === 'qalabi'
+      ? '<svg class="collar-svg" viewBox="0 0 60 50"><path d="M10 40 L30 15 L50 40" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 40 L5 45" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M50 40 L55 45" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>'
+      : '<svg class="collar-svg" viewBox="0 0 60 50"><circle cx="30" cy="28" r="16" stroke="currentColor" stroke-width="2.5" fill="none"/></svg>';
+    d.innerHTML = `<div class="card-ck"></div>${svg}<div class="card-text"><div class="card-label">${col.label}</div></div>`;
+    d.onclick = () => pick('collar', d, c, 1);
+    c.appendChild(d);
   });
 }
 
-function buildBodyTypeCards() {
-  const container = document.getElementById('body-cards');
-  CONTENT.order.bodyTypes.forEach(bt => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.dataset.value = bt.label;
-    card.dataset.field = 'bodyType';
-
-    const svg = bt.id === 'slim'
-      ? `<svg class="body-svg" width="60" height="90" viewBox="0 0 60 90">
-           <circle class="body-shape" cx="30" cy="14" r="10"/>
-           <rect class="body-shape" x="22" y="26" width="16" height="38" rx="6"/>
-           <rect class="body-shape" x="22" y="64" width="7" height="22" rx="3"/>
-           <rect class="body-shape" x="31" y="64" width="7" height="22" rx="3"/>
-         </svg>`
-      : `<svg class="body-svg" width="60" height="90" viewBox="0 0 60 90">
-           <circle class="body-shape" cx="30" cy="14" r="11"/>
-           <ellipse class="body-shape" cx="30" cy="48" rx="16" ry="22"/>
-           <rect class="body-shape" x="19" y="64" width="9" height="22" rx="4"/>
-           <rect class="body-shape" x="32" y="64" width="9" height="22" rx="4"/>
-         </svg>`;
-
-    card.innerHTML = `${svg}<div class="card-label">${bt.label}</div>`;
-    card.addEventListener('click', () => selectCard('bodyType', card, container));
-    container.appendChild(card);
+function buildShapeCards() {
+  const c = document.getElementById('shape-cards');
+  const svgs = {
+    chest: '<svg class="shape-svg" viewBox="0 0 36 36"><path d="M4 32 L8 4 L28 4 L32 32 Z"/></svg>',
+    even:  '<svg class="shape-svg" viewBox="0 0 36 36"><rect x="6" y="4" width="24" height="28" rx="2"/></svg>',
+    belly: '<svg class="shape-svg" viewBox="0 0 36 36"><path d="M8 4 L28 4 L32 32 L4 32 Z"/></svg>',
+  };
+  CONTENT.order.bodyShapes.forEach(shape => {
+    const d = document.createElement('div');
+    d.className = 'shape-card';
+    d.dataset.value = shape.label;
+    const badge = shape.badge ? `<div class="shape-badge">${shape.badge}</div>` : '';
+    d.innerHTML = `<div class="card-ck"></div>${badge}${svgs[shape.id]}<div class="shape-label">${shape.label}</div>`;
+    d.onclick = () => {
+      c.querySelectorAll('.shape-card').forEach(s => s.classList.remove('selected'));
+      d.classList.remove('bounce');
+      void d.offsetWidth;
+      d.classList.add('selected', 'bounce');
+      orderState.bodyShape = shape.label;
+      updateBtn(3);
+    };
+    c.appendChild(d);
   });
 }
 
-// --- SELECT CARD ---
-function selectCard(field, card, container) {
+function mk(cls, val) {
+  const d = document.createElement('div');
+  d.className = cls;
+  d.dataset.value = val;
+  return d;
+}
+
+// ---- CARD SELECT ----
+function pick(field, card, container, step) {
   container.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
-  card.classList.add('selected');
+  card.classList.remove('bounce');
+  void card.offsetWidth;
+  card.classList.add('selected', 'bounce');
   orderState[field] = card.dataset.value;
+  updateBtn(step);
 }
 
-// --- SHOW SCREEN ---
-function showScreen(n, back) {
-  currentScreen = n;
-  document.querySelectorAll('.screen').forEach(s => {
-    s.classList.remove('active', 'slide-back');
-  });
-  const target = document.getElementById('screen-' + n);
-  if (back) target.classList.add('slide-back');
-  target.classList.add('active');
-  window.scrollTo(0, 0);
+// ---- SLIDERS ----
+function initSliders() {
+  const O = CONTENT.order;
+  setupSlider('slider-height', 's-height-val', O.heightUnit);
+  setupSlider('slider-weight', 's-weight-val', O.weightUnit);
+}
 
-  // Update progress bar for screens 2-4
-  if (n >= 2 && n <= 4) {
-    updateProgress(n - 1); // step index 1-3
+function setupSlider(sliderId, valId, unit) {
+  const sl = document.getElementById(sliderId);
+  const valEl = document.getElementById(valId);
+  const update = () => {
+    const pct = ((sl.value - sl.min) / (sl.max - sl.min)) * 100;
+    sl.style.setProperty('--fill', (100 - pct) + '%');
+    valEl.textContent = toAr(sl.value) + ' ' + unit;
+    if (sliderId === 'slider-height') orderState.height = sl.value;
+    if (sliderId === 'slider-weight') orderState.weight = sl.value;
+  };
+  sl.addEventListener('input', update);
+  update();
+}
+
+// ---- INPUT WATCHERS ----
+function attachInputWatchers() {
+  const n = document.getElementById('input-name');
+  const p = document.getElementById('input-phone');
+  const c = document.getElementById('input-city');
+  [n, p].forEach(inp => inp.addEventListener('input', () => updateBtn(4)));
+  c.addEventListener('change', () => updateBtn(4));
+
+  document.querySelectorAll('.line-input-wrap input, .line-input-wrap select').forEach(inp => {
+    const label = inp.closest('.input-row')?.querySelector('label');
+    if (!label) return;
+    inp.addEventListener('focus', () => label.classList.add('float'));
+    inp.addEventListener('blur', () => { if (!inp.value) label.classList.remove('float'); });
+  });
+}
+
+// ---- BUTTON STATE ----
+function updateBtn(step) {
+  let btn, ready = false, readyText = '';
+  if (step === 1) {
+    btn = document.getElementById('btn-next-1');
+    ready = orderState.color && orderState.collar;
+    readyText = 'التالي';
+  } else if (step === 3) {
+    btn = document.getElementById('btn-next-3');
+    ready = !!orderState.bodyShape;
+    readyText = 'التالي';
+  } else if (step === 4) {
+    btn = document.getElementById('btn-next-4');
+    ready = document.getElementById('input-name').value.trim()
+         && document.getElementById('input-phone').value.trim()
+         && document.getElementById('input-city').value;
+    readyText = 'أرسل الطلب';
+  }
+  if (!btn) return;
+  if (ready) { btn.classList.add('ready'); btn.textContent = readyText; }
+  else { btn.classList.remove('ready'); btn.textContent = step === 4 ? 'أرسل الطلب' : 'اختر جميع الخيارات'; }
+}
+
+// ---- SCREEN NAV ----
+function showScreen(n) {
+  const prev = document.getElementById('screen-' + currentScreen);
+  const next = document.getElementById('screen-' + n);
+
+  if (prev && prev !== next) {
+    prev.classList.add('leaving');
+    prev.addEventListener('animationend', function h() {
+      prev.classList.remove('active', 'leaving');
+      prev.removeEventListener('animationend', h);
+    });
   }
 
-  // Update summary when entering step 3
-  if (n === 4) updateSummary();
+  currentScreen = n;
+  next.classList.add('active', 'entering');
+  next.addEventListener('animationend', function h() {
+    next.classList.remove('entering');
+    next.removeEventListener('animationend', h);
+  });
+
+  // Tab bar: visible on screens 2-5 (steps 1-4)
+  const bar = document.getElementById('tab-bar');
+  if (n >= 2 && n <= 5) {
+    bar.classList.add('visible');
+    updateTabs(n - 1); // step = screen - 1
+  } else {
+    bar.classList.remove('visible');
+  }
+
+  if (n === 5) updateSummary();
+  // Update button state for the arriving step
+  if (n === 2) updateBtn(1);
+  if (n === 4) updateBtn(3);
+  if (n === 5) updateBtn(4);
 }
 
-// --- UPDATE PROGRESS BAR ---
-function updateProgress(step) {
-  document.querySelectorAll('.progress-seg').forEach((seg, i) => {
-    seg.classList.toggle('filled', i < step);
-  });
-  document.querySelectorAll('.progress-label').forEach((label, i) => {
-    label.classList.toggle('active', i === step - 1);
-  });
+function goToStep(stepNum) {
+  showScreen(stepNum + 1);
 }
 
-// --- VALIDATION ---
+// ---- TABS ----
+function updateTabs(activeStep) {
+  for (let i = 1; i <= 4; i++) {
+    const tab = document.getElementById('tab-' + i);
+    tab.classList.remove('active', 'completed');
+    tab.onclick = null;
+    tab.style.cursor = 'default';
+
+    if (i < activeStep) {
+      tab.classList.add('completed');
+      tab.style.cursor = 'pointer';
+      tab.onclick = ((s) => () => goToStep(s))(i);
+    } else if (i === activeStep) {
+      tab.classList.add('active');
+    }
+  }
+}
+
+// ---- VALIDATION ----
 function validateStep1() {
-  clearErrors();
-  let valid = true;
-
-  if (!orderState.color)  { showError('error-color');  valid = false; }
-  if (!orderState.fabric) { showError('error-fabric'); valid = false; }
-  if (!orderState.collar) { showError('error-collar'); valid = false; }
-  if (!valid) showError('error-step1');
-
-  if (valid) showScreen(3);
+  clearErr();
+  let ok = true;
+  if (!orderState.color) { showErr('error-color'); ok = false; }
+  if (!orderState.collar) { showErr('error-collar'); ok = false; }
+  if (ok) showScreen(3);
 }
 
 function validateStep2() {
-  clearErrors();
-  let valid = true;
-
-  const h = document.getElementById('input-height').value.trim();
-  const w = document.getElementById('input-weight').value.trim();
-
-  if (!h) { showError('error-height'); valid = false; }
-  if (!w) { showError('error-weight'); valid = false; }
-  if (!orderState.bodyType) { showError('error-body'); valid = false; }
-
-  if (valid) {
-    orderState.height = h;
-    orderState.weight = w;
-    showScreen(4);
-  }
+  // Sliders always have values, so always valid
+  showScreen(4);
 }
 
 function validateStep3() {
-  clearErrors();
-  let valid = true;
-
-  const n = document.getElementById('input-name').value.trim();
-  const p = document.getElementById('input-phone').value.trim();
-  const c = document.getElementById('input-city').value;
-
-  if (!n) { showError('error-name');  valid = false; }
-  if (!p) { showError('error-phone'); valid = false; }
-  if (!c) { showError('error-city');  valid = false; }
-
-  if (valid) {
-    orderState.name = n;
-    orderState.phone = p;
-    orderState.city = c;
-    handleSubmit();
-  }
-}
-
-function showError(id) {
-  const el = document.getElementById(id);
-  if (el) el.classList.add('show');
-}
-
-function clearErrors() {
-  document.querySelectorAll('.error-msg').forEach(el => el.classList.remove('show'));
-}
-
-// --- UPDATE SUMMARY ---
-function updateSummary() {
-  const O = CONTENT.order;
-  const S = CONTENT.site;
-
-  document.getElementById('sum-color').textContent = orderState.color || '—';
-
-  const fabricEl = document.getElementById('sum-fabric');
-  if (orderState.fabric) {
-    const selectedFabric = O.fabrics.find(f => f.label === orderState.fabric);
-    if (selectedFabric && selectedFabric.upcharge > 0) {
-      fabricEl.innerHTML = `${orderState.fabric} <span class="upcharge-badge">+${toArabicNum(selectedFabric.upcharge)} ${O.priceUnit}</span>`;
-    } else {
-      fabricEl.textContent = orderState.fabric;
-    }
-  } else {
-    fabricEl.textContent = '—';
-  }
-
-  document.getElementById('sum-collar').textContent = orderState.collar || '—';
-  document.getElementById('sum-height').textContent = orderState.height ? `${orderState.height} ${O.heightUnit}` : '—';
-  document.getElementById('sum-weight').textContent = orderState.weight ? `${orderState.weight} ${O.weightUnit}` : '—';
-  document.getElementById('sum-body').textContent = orderState.bodyType || '—';
-
-  // Calculate price
-  const upcharge = getUpcharge();
-  const total = S.basePrice + upcharge;
-  document.getElementById('sum-price').textContent = `${toArabicNum(total)} ${O.priceUnit}`;
-}
-
-function getUpcharge() {
-  if (!orderState.fabric) return 0;
-  const fabric = CONTENT.order.fabrics.find(f => f.label === orderState.fabric);
-  return fabric ? fabric.upcharge : 0;
-}
-
-// --- HANDLE SUBMIT ---
-function handleSubmit() {
-  const ref = Math.floor(100000 + Math.random() * 900000);
-  document.getElementById('order-ref').textContent = `${CONTENT.order.confirmRefLabel}: #${ref}`;
-
-  // Build WhatsApp message
-  const O = CONTENT.order;
-  const S = CONTENT.site;
-  const total = S.basePrice + getUpcharge();
-  const msg = [
-    `طلب جديد من ${S.name}:`,
-    `${O.summaryLabels.color}: ${orderState.color}`,
-    `${O.summaryLabels.fabric}: ${orderState.fabric}`,
-    `${O.summaryLabels.collar}: ${orderState.collar}`,
-    `${O.summaryLabels.height}: ${orderState.height} ${O.heightUnit}`,
-    `${O.summaryLabels.weight}: ${orderState.weight} ${O.weightUnit}`,
-    `${O.summaryLabels.bodyType}: ${orderState.bodyType}`,
-    `الاسم: ${orderState.name}`,
-    `الجوال: ${orderState.phone}`,
-    `المدينة: ${orderState.city}`,
-    `${O.summaryLabels.price}: ${total} ${O.priceUnit}`,
-    `رقم الطلب: #${ref}`,
-  ].join('\n');
-
-  const waLink = `https://wa.me/${S.whatsapp}?text=${encodeURIComponent(msg)}`;
-  document.getElementById('confirm-wa-btn').href = waLink;
-
+  clearErr();
+  if (!orderState.bodyShape) { showErr('error-body'); return; }
   showScreen(5);
 }
 
-// --- ARABIC NUMBERS ---
-function toArabicNum(n) {
-  return String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+function validateStep4() {
+  clearErr();
+  let ok = true;
+  if (!document.getElementById('input-name').value.trim()) { showErr('error-name'); ok = false; }
+  if (!document.getElementById('input-phone').value.trim()) { showErr('error-phone'); ok = false; }
+  if (!document.getElementById('input-city').value) { showErr('error-city'); ok = false; }
+  if (ok) {
+    orderState.name = document.getElementById('input-name').value.trim();
+    orderState.phone = document.getElementById('input-phone').value.trim();
+    orderState.city = document.getElementById('input-city').value;
+    submit();
+  }
 }
+
+function showErr(id) { const e = document.getElementById(id); if (e) e.classList.add('show'); }
+function clearErr() { document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show')); }
+
+// ---- SUMMARY ----
+function updateSummary() {
+  const O = CONTENT.order;
+  const S = CONTENT.site;
+  document.getElementById('sum-color').textContent = orderState.color || '—';
+  document.getElementById('sum-collar').textContent = orderState.collar || '—';
+  document.getElementById('sum-height').textContent = toAr(orderState.height) + ' ' + O.heightUnit;
+  document.getElementById('sum-weight').textContent = toAr(orderState.weight) + ' ' + O.weightUnit;
+  document.getElementById('sum-body').textContent = orderState.bodyShape || '—';
+  document.getElementById('sum-price').textContent = toAr(S.basePrice) + ' ' + O.priceUnit;
+}
+
+// ---- SUBMIT ----
+function submit() {
+  const ref = Math.floor(100000 + Math.random() * 900000);
+  document.getElementById('tab-bar').classList.remove('visible');
+  showScreen(6);
+
+  // Animate ref counter
+  const refEl = document.getElementById('order-ref');
+  let cur = 0;
+  const step = Math.ceil(ref / 50);
+  const timer = setInterval(() => {
+    cur += step;
+    if (cur >= ref) { cur = ref; clearInterval(timer); }
+    refEl.textContent = '#' + String(cur).padStart(6, '0');
+  }, 16);
+
+  // WhatsApp
+  const O = CONTENT.order;
+  const S = CONTENT.site;
+  const msg = [
+    `طلب جديد من ${S.name}:`,
+    `${O.summaryLabels.color}: ${orderState.color}`,
+    `${O.summaryLabels.collar}: ${orderState.collar}`,
+    `${O.summaryLabels.height}: ${orderState.height} ${O.heightUnit}`,
+    `${O.summaryLabels.weight}: ${orderState.weight} ${O.weightUnit}`,
+    `${O.summaryLabels.bodyType}: ${orderState.bodyShape}`,
+    `الاسم: ${orderState.name}`,
+    `الجوال: ${orderState.phone}`,
+    `المدينة: ${orderState.city}`,
+    `${O.summaryLabels.price}: ${S.basePrice} ${O.priceUnit}`,
+    `رقم الطلب: #${ref}`,
+  ].join('\n');
+  document.getElementById('confirm-wa-btn').href = `https://wa.me/${S.whatsapp}?text=${encodeURIComponent(msg)}`;
+
+  setTimeout(() => { document.getElementById('confirm-wa-btn').classList.add('pulse'); }, 1200);
+}
+
+// ---- HELPERS ----
+function toAr(n) { return String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]); }

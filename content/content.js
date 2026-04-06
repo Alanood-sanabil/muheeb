@@ -14,7 +14,6 @@ const CONTENT = {
     dir: "rtl",
     whatsapp: "966500000000",
     basePrice: 220,
-    fabricUpcharge: 20,
     deliveryDays: 4,
   },
 
@@ -119,73 +118,53 @@ const CONTENT = {
 
   // --- ORDER FLOW (order.html) ---
   order: {
-    steps: ["تفاصيل الثوب", "المقاسات", "بياناتك"],
+    tabs: ["اللون والياقة", "المقاسات", "شكل الجسم", "تأكيد الطلب"],
 
     // Landing
     landingHeadline: "ثوبك المثالي، يبدأ هنا",
     landingSub: "اختر قماشك، أعطنا مقاساتك، وحنا نوصله لك",
     landingCta: "ابدأ طلبك الآن ←",
-    landingBadges: [
-      { icon: "", label: "من راحة بيتك" },
-      { icon: "", label: "توصيل سريع" },
-      { icon: "", label: "ضمان الجودة" },
-    ],
 
-    // Step 1 — Thoob customization
-    colorLabel: "لون الثوب",
+    // Step 1 — Color + Collar
     colors: [
-      { id: "yellow", label: "أصفر فاتح", sub: "لون دافي مميز",    hex: "#FAF3DC" },
-      { id: "white",  label: "أبيض",       sub: "الكلاسيكي الأنيق", hex: "#FFFFFF" },
+      { id: "white",  label: "أبيض",       image: "images/white-thob.png" },
+      { id: "yellow", label: "أصفر فاتح",  image: "images/yellow-thob.png" },
     ],
-
-    fabricLabel: "نوع القماش",
-    fabricSub: "كل نوع يختلف في وقفة الثوب وثقله",
-    fabrics: [
-      { id: "rub3",  label: "ربع وقفة", sub: "خفيف وناعم",   upcharge: 0 },
-      { id: "nus",   label: "نص وقفة",  sub: "متوازن وخفيف", upcharge: 0 },
-      { id: "tayeh", label: "طايح",      sub: "ناعم ومريح",   upcharge: 0 },
-      { id: "waqfa", label: "وقفة",      sub: "ثقيل وواقف",  upcharge: 20 },
-    ],
-
-    collarLabel: "نوع الياقة",
     collars: [
-      { id: "qalabi", label: "بقلابة",     sub: "الياقة التقليدية" },
-      { id: "no",     label: "بدون قلابة", sub: "ياقة مدورة حديثة" },
+      { id: "qalabi", label: "قلابي" },
+      { id: "no",     label: "بدون قلابي" },
     ],
-
-    nextBtn: "التالي",
-    backBtn: "رجوع →",
 
     // Step 2 — Measurements
-    measurementsTitle: "المقاسات",
-    measurementsIntro: "لا تحتاج خبرة! فقط أدخل هالمعلومات البسيطة",
-    heightLabel: "الطول (من الكتف للقدم)",
-    heightPlaceholder: "مثال: ١٦٥",
+    heightLabel: "الطول",
     heightUnit: "سم",
-    heightHelper: "قِس من أعلى كتفك لأسفل قدمك",
     weightLabel: "الوزن",
-    weightPlaceholder: "مثال: ٨٠",
     weightUnit: "كيلو",
-    bodyTypeLabel: "شكل الجسم",
-    bodyTypeSubtext: "ساعدنا نضبط القصة المناسبة لك",
-    bodyTypes: [
-      { id: "slim", label: "نحيف / عادي" },
-      { id: "full", label: "ممتلئ" },
+
+    // Step 3 — Body shape
+    bodyShapes: [
+      { id: "chest",   label: "صدري أعرض من خصري" },
+      { id: "even",    label: "صدري وخصري بنفس العرض تقريبا", badge: "الأكثر شيوعا" },
+      { id: "belly",   label: "خصري أعرض من صدري" },
     ],
 
-    // Step 3 — Contact
-    contactTitle: "بياناتك",
-    nameLabel: "الاسم الكريم",
-    namePlaceholder: "اسمك الكريم",
+    // Step 4 — Contact
+    nameLabel: "الاسم",
+    namePlaceholder: "اسمك",
     phoneLabel: "رقم الجوال",
     phonePlaceholder: "05XXXXXXXX",
-    phoneNote: "سيتم التواصل معك على هذا الرقم عبر واتساب",
     cityLabel: "المدينة",
     cities: ["اختر مدينتك", "الرياض", "جدة", "الدمام", "مكة المكرمة", "المدينة المنورة", "الطائف", "أخرى"],
+
+    // Summary
     summaryTitle: "ملخص طلبك",
+    summaryGroups: {
+      thoob: "تفاصيل الثوب",
+      measurements: "المقاسات",
+      body: "شكل الجسم",
+    },
     summaryLabels: {
       color: "اللون",
-      fabric: "القماش",
       collar: "الياقة",
       height: "الطول",
       weight: "الوزن",
@@ -193,12 +172,11 @@ const CONTENT = {
       price: "السعر التقديري",
     },
     priceUnit: "ريال",
-    submitBtn: "تأكيد الطلب",
-    validationMsg: "الرجاء اختيار جميع الخيارات",
+    editLabel: "تعديل",
 
-    // Confirmation screen
-    confirmTitle: "تم إرسال طلبك!",
-    confirmSub: "سيتواصل معك فريق مُهيب على واتساب خلال ساعتين لتأكيد الطلب وتنسيق التوصيل",
+    // Confirmation
+    confirmTitle: "شكرا",
+    confirmSub: "سيتواصل معك فريق مُهيب على واتساب خلال ساعتين",
     confirmRefLabel: "رقم طلبك",
     confirmWhatsapp: "تواصل معنا على واتساب",
   },
