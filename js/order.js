@@ -1,3 +1,10 @@
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+const supabase = createClient(
+  'https://mwcmfzzukqiutztkgagg.supabase.co',
+  'sb_publishable_8zuxMDAcYGIozcmi8CS8sg_ZnjLmb6V'
+)
+
 // ============================================================
 //  MUHEEB — ORDER FLOW (4-step + landing + confirmation)
 // ============================================================
@@ -10,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
   buildCards();
   initSliders();
   attachInputWatchers();
+  const bar = document.getElementById('tab-bar');
+  if (bar) bar.style.display = 'none';
   showScreen(1);
 });
 
@@ -19,9 +28,6 @@ function populate() {
   const S = CONTENT.site;
 
   // Landing
-  document.getElementById('order-logo').textContent = S.name;
-  document.getElementById('order-tagline').textContent = S.tagline;
-  document.getElementById('order-headline').textContent = O.landingHeadline;
   document.getElementById('order-sub').textContent = O.landingSub;
   document.getElementById('order-landing-cta').textContent = O.landingCta;
 
@@ -93,10 +99,11 @@ function buildCollarCards() {
   const c = document.getElementById('collar-cards');
   CONTENT.order.collars.forEach(col => {
     const d = mk('card', col.label);
-    const svg = col.id === 'qalabi'
-      ? '<svg class="collar-svg" viewBox="0 0 60 50"><path d="M10 40 L30 15 L50 40" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 40 L5 45" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M50 40 L55 45" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>'
-      : '<svg class="collar-svg" viewBox="0 0 60 50"><circle cx="30" cy="28" r="16" stroke="currentColor" stroke-width="2.5" fill="none"/></svg>';
-    d.innerHTML = `<div class="card-ck"></div>${svg}<div class="card-text"><div class="card-label">${col.label}</div></div>`;
+    d.classList.add('collar-card');
+    const img = col.id === 'qalabi'
+      ? '<img src="images/collar-removebg-preview.png" alt="قلابي">'
+      : '<img src="images/no-collar-removebg-preview.png" alt="بدون قلابي">';
+    d.innerHTML = `<div class="card-ck"></div>${img}<div class="card-label">${col.label}</div>`;
     d.onclick = () => pick('collar', d, c, 1);
     c.appendChild(d);
   });
@@ -105,21 +112,19 @@ function buildCollarCards() {
 function buildShapeCards() {
   const c = document.getElementById('shape-cards');
   const svgs = {
-    chest: '<svg class="shape-svg" viewBox="0 0 36 36"><path d="M4 32 L8 4 L28 4 L32 32 Z"/></svg>',
-    even:  '<svg class="shape-svg" viewBox="0 0 36 36"><rect x="6" y="4" width="24" height="28" rx="2"/></svg>',
-    belly: '<svg class="shape-svg" viewBox="0 0 36 36"><path d="M8 4 L28 4 L32 32 L4 32 Z"/></svg>',
+    slim:   '<svg viewBox="0 0 60 60" width="44" height="44"><polygon points="8,12 52,12 44,48 16,48" fill="none" stroke="#0A0A0A" stroke-width="1.5"/></svg>',
+    normal: '<svg viewBox="0 0 60 60" width="44" height="44"><rect x="14" y="12" width="32" height="36" fill="none" stroke="#0A0A0A" stroke-width="1.5"/></svg>',
+    full:   '<svg viewBox="0 0 60 60" width="44" height="44"><polygon points="16,12 44,12 52,48 8,48" fill="none" stroke="#0A0A0A" stroke-width="1.5"/></svg>',
   };
   CONTENT.order.bodyShapes.forEach(shape => {
     const d = document.createElement('div');
-    d.className = 'shape-card';
+    d.className = 'body-shape-card';
     d.dataset.value = shape.label;
-    const badge = shape.badge ? `<div class="shape-badge">${shape.badge}</div>` : '';
-    d.innerHTML = `<div class="card-ck"></div>${badge}${svgs[shape.id]}<div class="shape-label">${shape.label}</div>`;
+    const badge = shape.badge ? `<div class="most-common-badge">${shape.badge}</div>` : '';
+    d.innerHTML = `${badge}${svgs[shape.id]}<span class="body-shape-label">${shape.label}</span>`;
     d.onclick = () => {
-      c.querySelectorAll('.shape-card').forEach(s => s.classList.remove('selected'));
-      d.classList.remove('bounce');
-      void d.offsetWidth;
-      d.classList.add('selected', 'bounce');
+      c.querySelectorAll('.body-shape-card').forEach(s => s.classList.remove('selected'));
+      d.classList.add('selected');
       orderState.bodyShape = shape.label;
       updateBtn(3);
     };
@@ -147,22 +152,29 @@ function pick(field, card, container, step) {
 // ---- SLIDERS ----
 function initSliders() {
   const O = CONTENT.order;
-  setupSlider('slider-height', 's-height-val', O.heightUnit);
-  setupSlider('slider-weight', 's-weight-val', O.weightUnit);
+  setupSlider('slider-height', 's-height-val', O.heightUnit, 'height');
+  setupSlider('slider-weight', 's-weight-val', O.weightUnit, 'weight');
 }
 
-function setupSlider(sliderId, valId, unit) {
+function setupSlider(sliderId, valId, unit, field) {
   const sl = document.getElementById(sliderId);
   const valEl = document.getElementById(valId);
   const update = () => {
-    const pct = ((sl.value - sl.min) / (sl.max - sl.min)) * 100;
-    sl.style.setProperty('--fill', (100 - pct) + '%');
+    updateSliderFill(sl);
     valEl.textContent = toAr(sl.value) + ' ' + unit;
-    if (sliderId === 'slider-height') orderState.height = sl.value;
-    if (sliderId === 'slider-weight') orderState.weight = sl.value;
+    orderState[field] = sl.value;
   };
   sl.addEventListener('input', update);
   update();
+}
+
+function updateSliderFill(slider) {
+  const min = parseFloat(slider.min);
+  const max = parseFloat(slider.max);
+  const val = parseFloat(slider.value);
+  const pct = ((val - min) / (max - min)) * 100;
+  // direction: ltr wrapper ensures left = min, right = max
+  slider.style.background = `linear-gradient(to right, #0A0A0A ${pct}%, #E5E5E5 ${pct}%)`;
 }
 
 // ---- INPUT WATCHERS ----
@@ -224,13 +236,15 @@ function showScreen(n) {
     next.removeEventListener('animationend', h);
   });
 
-  // Tab bar: visible on screens 2-5 (steps 1-4)
+  // Tab bar: visible on screens 2-5 (steps 1-4), hidden on landing (1) and confirmation (6)
   const bar = document.getElementById('tab-bar');
   if (n >= 2 && n <= 5) {
     bar.classList.add('visible');
+    bar.style.display = 'flex';
     updateTabs(n - 1); // step = screen - 1
   } else {
     bar.classList.remove('visible');
+    bar.style.display = 'none';
   }
 
   if (n === 5) updateSummary();
@@ -312,8 +326,29 @@ function updateSummary() {
 }
 
 // ---- SUBMIT ----
-function submit() {
+async function submit() {
   const ref = Math.floor(100000 + Math.random() * 900000);
+
+  const { error } = await supabase
+    .from('orders')
+    .insert([{
+      order_number: String(ref),
+      name: orderState.name,
+      phone: orderState.phone,
+      city: orderState.city,
+      color: orderState.color,
+      collar: orderState.collar,
+      height: String(orderState.height),
+      weight: String(orderState.weight),
+      body_type: orderState.bodyShape,
+    }])
+
+  if (error) {
+    console.error('Error saving order:', error)
+  } else {
+    console.log('Order saved successfully')
+  }
+
   document.getElementById('tab-bar').classList.remove('visible');
   showScreen(6);
 
@@ -350,3 +385,11 @@ function submit() {
 
 // ---- HELPERS ----
 function toAr(n) { return String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]); }
+
+// ---- EXPOSE FUNCTIONS TO WINDOW (for inline onclick handlers in module mode) ----
+window.showScreen = showScreen;
+window.validateStep1 = validateStep1;
+window.validateStep2 = validateStep2;
+window.validateStep3 = validateStep3;
+window.validateStep4 = validateStep4;
+window.goToStep = goToStep;

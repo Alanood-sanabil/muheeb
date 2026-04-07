@@ -11,14 +11,25 @@
 </head>
 <body>
 
+  <!-- GLOBAL HEADER (logo, always visible) -->
+  <div class="order-header">
+    <img src="images/logo.png" alt="مُهيب" class="logo-img">
+  </div>
+
   <!-- SCREEN 1: Landing -->
   <div id="screen-1" class="screen">
-    <div class="order-hero">
-      <div class="order-logo" id="order-logo"></div>
-      <div class="order-tagline" id="order-tagline"></div>
-      <h2 class="order-headline" id="order-headline"></h2>
-      <p class="order-sub" id="order-sub"></p>
-      <button class="btn-primary-full" id="order-landing-cta" onclick="showScreen(2)"></button>
+    <div class="landing-main">
+      <div class="landing-text">
+        <h1 class="landing-headline">
+          <span class="line1">ثوبك المثالي</span>
+          <span class="line2">يوصلك للبيت</span>
+        </h1>
+        <p class="landing-sub" id="order-sub"></p>
+        <button class="landing-cta" id="order-landing-cta" onclick="showScreen(2)">ابدأ طلبك ←</button>
+      </div>
+      <div class="landing-image">
+        <img src="images/A.N.ZAHY-28 (1).jpg" alt="تفصيل ثوب" class="landing-hero-img">
+      </div>
     </div>
   </div>
 
@@ -56,19 +67,23 @@
     <div class="step-body step-body-center">
       <div class="step-top">
         <h2 class="screen-title serif">المقاسات</h2>
-        <div class="slider-block">
-          <div class="slider-header">
+        <div class="slider-wrapper">
+          <div class="slider-row-label">
             <span class="slider-label" id="s-height-label"></span>
             <span class="slider-value" id="s-height-val">١٧٠ سم</span>
           </div>
-          <input type="range" id="slider-height" min="140" max="210" value="170" step="1" />
+          <div class="slider-track-wrapper">
+            <input type="range" id="slider-height" min="140" max="210" value="170" step="1" />
+          </div>
         </div>
-        <div class="slider-block">
-          <div class="slider-header">
+        <div class="slider-wrapper">
+          <div class="slider-row-label">
             <span class="slider-label" id="s-weight-label"></span>
             <span class="slider-value" id="s-weight-val">٨٠ كيلو</span>
           </div>
-          <input type="range" id="slider-weight" min="40" max="180" value="80" step="1" />
+          <div class="slider-track-wrapper">
+            <input type="range" id="slider-weight" min="40" max="180" value="80" step="1" />
+          </div>
         </div>
       </div>
       <div class="step-bottom">
@@ -107,7 +122,7 @@
           <div class="input-row">
             <label id="phone-label"></label>
             <div class="line-input-wrap">
-              <input type="tel" id="input-phone" placeholder="" />
+              <input type="tel" inputmode="numeric" pattern="[0-9]*" id="input-phone" placeholder="05XXXXXXXX" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
               <div class="line-border"><div class="line-border-fill"></div></div>
             </div>
           </div>
@@ -180,6 +195,6 @@
   </div>
 
   <script src="content/content.js"></script>
-  <script src="js/order.js"></script>
+  <script type="module" src="js/order.js"></script>
 </body>
 </html>

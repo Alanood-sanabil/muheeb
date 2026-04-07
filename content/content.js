@@ -127,12 +127,12 @@ const CONTENT = {
 
     // Step 1 — Color + Collar
     colors: [
-      { id: "white",  label: "أبيض",       image: "images/white-thob.png" },
-      { id: "yellow", label: "أصفر فاتح",  image: "images/yellow-thob.png" },
+      { id: "white",  label: "أبيض",       image: "images/white-thob-cut.png" },
+      { id: "yellow", label: "أصفر فاتح",  image: "images/yellow-thob-cut.png" },
     ],
     collars: [
-      { id: "qalabi", label: "قلابي" },
-      { id: "no",     label: "بدون قلابي" },
+      { id: "qalabi", label: "قلابي",     image: "images/collar-removebg-preview.png" },
+      { id: "no",     label: "بدون قلابي", image: "images/no-collar-removebg-preview.png" },
     ],
 
     // Step 2 — Measurements
@@ -143,9 +143,9 @@ const CONTENT = {
 
     // Step 3 — Body shape
     bodyShapes: [
-      { id: "chest",   label: "صدري أعرض من خصري" },
-      { id: "even",    label: "صدري وخصري بنفس العرض تقريبا", badge: "الأكثر شيوعا" },
-      { id: "belly",   label: "خصري أعرض من صدري" },
+      { id: "slim",   label: "صدري أعرض من خصري",              badge: null },
+      { id: "normal", label: "صدري وخصري بنفس العرض تقريباً",  badge: "الأكثر شيوعاً" },
+      { id: "full",   label: "خصري أعرض من صدري",              badge: null },
     ],
 
     // Step 4 — Contact
@@ -154,7 +154,7 @@ const CONTENT = {
     phoneLabel: "رقم الجوال",
     phonePlaceholder: "05XXXXXXXX",
     cityLabel: "المدينة",
-    cities: ["اختر مدينتك", "الرياض", "جدة", "الدمام", "مكة المكرمة", "المدينة المنورة", "الطائف", "أخرى"],
+    cities: ["اختر مدينتك", "الرياض", "جدة", "الخبر"],
 
     // Summary
     summaryTitle: "ملخص طلبك",
