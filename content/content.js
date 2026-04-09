@@ -127,8 +127,8 @@ const CONTENT = {
 
     // Step 1 — Color + Collar
     colors: [
-      { id: "white",  label: "أبيض",       image: "images/white-thob-cut.png" },
-      { id: "yellow", label: "أصفر فاتح",  image: "images/yellow-thob-cut.png" },
+      { id: "white",  label: "أبيض",       image: "images/new-thob-white.png" },
+      { id: "yellow", label: "أصفر فاتح",  image: "images/new-thob-yellow.png" },
     ],
     collars: [
       { id: "qalabi", label: "قلابي",     image: "images/collar-removebg-preview.png" },
