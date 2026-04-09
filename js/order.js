@@ -74,7 +74,6 @@ function populate() {
   document.getElementById('sum-weight-label').textContent = O.summaryLabels.weight;
   document.getElementById('sum-shoe-label').textContent = O.summaryLabels.shoeSize;
   document.getElementById('sum-body-label').textContent = O.summaryLabels.bodyType;
-  document.getElementById('sum-price-label').textContent = O.summaryLabels.price;
 
   // Edit links
   document.querySelectorAll('.sum-edit').forEach(a => { a.textContent = O.editLabel; });
@@ -392,7 +391,6 @@ function updateSummary() {
   document.getElementById('sum-weight').textContent = toAr(orderState.weight) + ' ' + O.weightUnit;
   document.getElementById('sum-shoe').textContent = toAr(orderState.shoeSize) + ' ' + O.shoeSizeUnit;
   document.getElementById('sum-body').textContent = orderState.bodyShape || '—';
-  document.getElementById('sum-price').textContent = toAr(S.basePrice) + ' ' + O.priceUnit;
 }
 
 // ---- SUBMIT ----
