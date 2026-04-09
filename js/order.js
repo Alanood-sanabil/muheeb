@@ -1,19 +1,19 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-const supabase = createClient(
-  'https://mwcmfzzukqiutztkgagg.supabase.co',
-  'sb_publishable_8zuxMDAcYGIozcmi8CS8sg_ZnjLmb6V'
-)
-
 // ============================================================
 //  MUHEEB — ORDER FLOW (4-step + landing + confirmation)
+//  Supabase is imported lazily inside submit() to avoid blocking
+//  the module load if the CDN is slow or unavailable.
 // ============================================================
 
 const orderState = { color: null, collar: null, height: 170, weight: 80, shoeSize: 42, bodyShape: null, name: null, phone: null, city: null };
 let currentScreen = 1;
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Force hide all screens, then show landing
+  if (typeof CONTENT === 'undefined') {
+    console.error('CONTENT not loaded — check script order in order.html');
+    return;
+  }
+
+  // Ensure landing screen is active, all others hidden
   document.querySelectorAll('.screen').forEach(function(s) {
     s.classList.remove('active');
   });
@@ -399,25 +399,31 @@ function updateSummary() {
 async function submit() {
   const ref = Math.floor(100000 + Math.random() * 900000);
 
-  const { error } = await supabase
-    .from('orders')
-    .insert([{
-      order_number: String(ref),
-      name: orderState.name,
-      phone: orderState.phone,
-      city: orderState.city,
-      color: orderState.color,
-      collar: orderState.collar,
-      height: String(orderState.height),
-      weight: String(orderState.weight),
-      shoe_size: String(orderState.shoeSize),
-      body_type: orderState.bodyShape,
-    }])
-
-  if (error) {
-    console.error('Error saving order:', error)
-  } else {
-    console.log('Order saved successfully')
+  // Lazy-load Supabase so a CDN failure never blocks page load
+  try {
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+    const supabase = createClient(
+      'https://mwcmfzzukqiutztkgagg.supabase.co',
+      'sb_publishable_8zuxMDAcYGIozcmi8CS8sg_ZnjLmb6V'
+    );
+    const { error } = await supabase
+      .from('orders')
+      .insert([{
+        order_number: String(ref),
+        name: orderState.name,
+        phone: orderState.phone,
+        city: orderState.city,
+        color: orderState.color,
+        collar: orderState.collar,
+        height: String(orderState.height),
+        weight: String(orderState.weight),
+        shoe_size: String(orderState.shoeSize),
+        body_type: orderState.bodyShape,
+      }]);
+    if (error) console.error('Error saving order:', error);
+    else console.log('Order saved successfully');
+  } catch (e) {
+    console.error('Supabase unavailable:', e);
   }
 
   showScreen(6);
