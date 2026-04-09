@@ -4,7 +4,7 @@
 //  the module load if the CDN is slow or unavailable.
 // ============================================================
 
-const orderState = { color: null, collar: null, height: 170, weight: 80, shoeSize: 42, bodyShape: null, name: null, phone: null, city: null };
+const orderState = { color: null, collar: null, height: 170, weight: 80, shoeSize: 42, bodyShape: null, name: null, phone: null, city: 'الرياض' };
 let currentScreen = 1;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -54,14 +54,6 @@ function populate() {
   document.getElementById('input-name').placeholder = O.namePlaceholder;
   document.getElementById('phone-label').textContent = O.phoneLabel;
   document.getElementById('input-phone').placeholder = O.phonePlaceholder;
-  document.getElementById('city-label').textContent = O.cityLabel;
-  const sel = document.getElementById('input-city');
-  O.cities.forEach((c, i) => {
-    const o = document.createElement('option');
-    o.value = i === 0 ? '' : c;
-    o.textContent = c;
-    sel.appendChild(o);
-  });
 
   // Summary
   document.getElementById('summary-title').textContent = O.summaryTitle;
@@ -227,9 +219,7 @@ function updateSliderFill(slider) {
 function attachInputWatchers() {
   const n = document.getElementById('input-name');
   const p = document.getElementById('input-phone');
-  const c = document.getElementById('input-city');
   [n, p].forEach(inp => inp.addEventListener('input', () => updateBtn(4)));
-  c.addEventListener('change', () => updateBtn(4));
 
   document.querySelectorAll('.line-input-wrap input, .line-input-wrap select').forEach(inp => {
     const label = inp.closest('.input-row')?.querySelector('label');
@@ -253,8 +243,7 @@ function updateBtn(step) {
   } else if (step === 4) {
     btn = document.getElementById('submit-btn');
     ready = document.getElementById('input-name').value.trim()
-         && document.getElementById('input-phone').value.trim()
-         && document.getElementById('input-city').value;
+         && document.getElementById('input-phone').value.trim();
     readyText = 'أرسل الطلب';
   }
   if (!btn) return;
@@ -369,11 +358,9 @@ function validateStep4() {
   let ok = true;
   if (!document.getElementById('input-name').value.trim()) { showErr('error-name'); ok = false; }
   if (!document.getElementById('input-phone').value.trim()) { showErr('error-phone'); ok = false; }
-  if (!document.getElementById('input-city').value) { showErr('error-city'); ok = false; }
   if (ok) {
     orderState.name = document.getElementById('input-name').value.trim();
     orderState.phone = document.getElementById('input-phone').value.trim();
-    orderState.city = document.getElementById('input-city').value;
     submit();
   }
 }
@@ -470,6 +457,36 @@ function updateFooterPrice() {
   el.textContent = toAr(S.basePrice) + ' ' + O.priceUnit;
 }
 
+// ---- TOOLTIPS ----
+const tooltips = {
+  height: {
+    title: 'لماذا نسأل عن طولك؟',
+    body: 'طولك يساعدنا نحدد الطول الصحيح للثوب والكم بدقة تامة.'
+  },
+  weight: {
+    title: 'لماذا نسأل عن وزنك؟',
+    body: 'وزنك مع شكل الجسم يساعدنا نضبط اتساع الثوب على اكتافك وخصرك.'
+  },
+  shoeSize: {
+    title: 'لماذا نسأل عن مقاس حذاءك؟',
+    body: 'قدمك بنفس طول ساعدك — جرب وشوف! نستخدم مقاس الحذاء كقياس إضافي يساعدنا نطلع لك مقاس أدق بدون ما تحتاج شريط قياس.'
+  }
+};
+
+function showTooltip(type) {
+  const data = tooltips[type];
+  if (!data) return;
+  document.getElementById('tooltip-title').textContent = data.title;
+  document.getElementById('tooltip-body').textContent = data.body;
+  document.getElementById('tooltip-overlay').classList.add('active');
+  document.getElementById('tooltip-sheet').classList.add('active');
+}
+
+function closeTooltip() {
+  document.getElementById('tooltip-overlay').classList.remove('active');
+  document.getElementById('tooltip-sheet').classList.remove('active');
+}
+
 // ---- EXPOSE FUNCTIONS TO WINDOW (for inline onclick handlers in module mode) ----
 window.showScreen = showScreen;
 window.validateStep1 = validateStep1;
@@ -478,3 +495,5 @@ window.validateStep3 = validateStep3;
 window.validateStep4 = validateStep4;
 window.handleSubmit = validateStep4;
 window.goToStep = goToStep;
+window.showTooltip = showTooltip;
+window.closeTooltip = closeTooltip;

@@ -88,7 +88,10 @@
         <h2 class="screen-title serif">المقاسات</h2>
         <div class="slider-wrapper">
           <div class="slider-row-label">
-            <span class="slider-label" id="s-height-label"></span>
+            <span class="slider-label">
+              <span id="s-height-label"></span>
+              <button class="info-btn" onclick="showTooltip('height')">?</button>
+            </span>
             <span class="slider-value" id="s-height-val">١٧٠ سم</span>
           </div>
           <div class="slider-track-wrapper">
@@ -97,7 +100,10 @@
         </div>
         <div class="slider-wrapper">
           <div class="slider-row-label">
-            <span class="slider-label" id="s-weight-label"></span>
+            <span class="slider-label">
+              <span id="s-weight-label"></span>
+              <button class="info-btn" onclick="showTooltip('weight')">?</button>
+            </span>
             <span class="slider-value" id="s-weight-val">٨٠ كيلو</span>
           </div>
           <div class="slider-track-wrapper">
@@ -106,7 +112,10 @@
         </div>
         <div class="slider-wrapper">
           <div class="slider-row-label">
-            <span class="slider-label" id="s-shoe-label"></span>
+            <span class="slider-label">
+              <span id="s-shoe-label"></span>
+              <button class="info-btn" onclick="showTooltip('shoeSize')">?</button>
+            </span>
             <span class="slider-value" id="s-shoe-val">٤٢ EU</span>
           </div>
           <div class="slider-track-wrapper">
@@ -155,14 +164,10 @@
             </div>
           </div>
           <div class="error-msg" id="error-phone">الرجاء إدخال رقم الجوال</div>
-          <div class="input-row">
-            <label id="city-label"></label>
-            <div class="line-input-wrap">
-              <select id="input-city"></select>
-              <div class="line-border"><div class="line-border-fill"></div></div>
-            </div>
+          <div class="city-display">
+            <span class="field-label">المدينة</span>
+            <span class="city-value">الرياض</span>
           </div>
-          <div class="error-msg" id="error-city">الرجاء اختيار المدينة</div>
         </div>
 
         <!-- Grouped summary -->
@@ -230,6 +235,14 @@
         <span id="confirm-wa-text"></span>
       </a>
     </div>
+  </div>
+
+  <div class="tooltip-overlay" id="tooltip-overlay" onclick="closeTooltip()"></div>
+  <div class="tooltip-sheet" id="tooltip-sheet">
+    <div class="tooltip-handle"></div>
+    <h3 class="tooltip-title" id="tooltip-title"></h3>
+    <p class="tooltip-body" id="tooltip-body"></p>
+    <button class="tooltip-close" onclick="closeTooltip()">إغلاق</button>
   </div>
 
   <script src="content/content.js"></script>

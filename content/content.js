@@ -156,7 +156,7 @@ const CONTENT = {
     phoneLabel: "رقم الجوال",
     phonePlaceholder: "05XXXXXXXX",
     cityLabel: "المدينة",
-    cities: ["اختر مدينتك", "الرياض", "جدة", "الخبر"],
+    cities: ["الرياض"],
 
     // Summary
     summaryTitle: "ملخص طلبك",
