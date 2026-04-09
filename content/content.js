@@ -132,7 +132,7 @@ const CONTENT = {
     ],
     collars: [
       { id: "qalabi", label: "قلابي",     image: "images/collar-removebg-preview.png" },
-      { id: "no",     label: "بدون قلابي", image: "images/no-collar-removebg-preview.png" },
+      { id: "no",     label: "كلاسيكي", image: "images/no-collar-removebg-preview.png" },
     ],
 
     // Step 2 — Measurements
@@ -140,12 +140,14 @@ const CONTENT = {
     heightUnit: "سم",
     weightLabel: "الوزن",
     weightUnit: "كيلو",
+    shoeSizeLabel: "مقاس الحذاء",
+    shoeSizeUnit: "EU",
 
     // Step 3 — Body shape
     bodyShapes: [
-      { id: "slim",   label: "صدري أعرض من خصري",              badge: null },
-      { id: "normal", label: "صدري وخصري بنفس العرض تقريباً",  badge: "الأكثر شيوعاً" },
-      { id: "full",   label: "خصري أعرض من صدري",              badge: null },
+      { id: "slim",   label: "اكتافي أعرض من خصري",              badge: null },
+      { id: "normal", label: "اكتافي وخصري بنفس العرض تقريباً",  badge: "الأكثر شيوعاً" },
+      { id: "full",   label: "خصري أعرض من اكتافي",              badge: null },
     ],
 
     // Step 4 — Contact
@@ -168,6 +170,7 @@ const CONTENT = {
       collar: "الياقة",
       height: "الطول",
       weight: "الوزن",
+      shoeSize: "مقاس الحذاء",
       bodyType: "الجسم",
       price: "السعر التقديري",
     },

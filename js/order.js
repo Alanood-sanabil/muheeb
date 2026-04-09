@@ -9,7 +9,7 @@ const supabase = createClient(
 //  MUHEEB — ORDER FLOW (4-step + landing + confirmation)
 // ============================================================
 
-const orderState = { color: null, collar: null, height: 170, weight: 80, bodyShape: null, name: null, phone: null, city: null };
+const orderState = { color: null, collar: null, height: 170, weight: 80, shoeSize: 42, bodyShape: null, name: null, phone: null, city: null };
 let currentScreen = 1;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,8 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   buildCards();
   initSliders();
   attachInputWatchers();
-  const bar = document.getElementById('tab-bar');
-  if (bar) bar.style.display = 'none';
+  updateProgress(1);
   showScreen(1);
 });
 
@@ -31,16 +30,14 @@ function populate() {
   document.getElementById('order-sub').textContent = O.landingSub;
   document.getElementById('order-landing-cta').textContent = O.landingCta;
 
-  // Tab labels
-  O.tabs.forEach((label, i) => {
-    document.getElementById('tab-' + (i + 1)).querySelector('span').textContent = label;
-  });
 
   // Slider labels
   document.getElementById('s-height-label').textContent = O.heightLabel;
   document.getElementById('s-weight-label').textContent = O.weightLabel;
+  document.getElementById('s-shoe-label').textContent = O.shoeSizeLabel;
   document.getElementById('s-height-val').textContent = toAr(170) + ' ' + O.heightUnit;
   document.getElementById('s-weight-val').textContent = toAr(80) + ' ' + O.weightUnit;
+  document.getElementById('s-shoe-val').textContent = toAr(42) + ' ' + O.shoeSizeUnit;
 
   // Contact
   document.getElementById('name-label').textContent = O.nameLabel;
@@ -65,6 +62,7 @@ function populate() {
   document.getElementById('sum-collar-label').textContent = O.summaryLabels.collar;
   document.getElementById('sum-height-label').textContent = O.summaryLabels.height;
   document.getElementById('sum-weight-label').textContent = O.summaryLabels.weight;
+  document.getElementById('sum-shoe-label').textContent = O.summaryLabels.shoeSize;
   document.getElementById('sum-body-label').textContent = O.summaryLabels.bodyType;
   document.getElementById('sum-price-label').textContent = O.summaryLabels.price;
 
@@ -80,31 +78,69 @@ function populate() {
 
 // ---- BUILD CARDS ----
 function buildCards() {
-  buildColorCards();
+  buildColorSwatches();
   buildCollarCards();
   buildShapeCards();
 }
 
-function buildColorCards() {
-  const c = document.getElementById('color-cards');
-  CONTENT.order.colors.forEach(color => {
-    const d = mk('card card-color', color.label);
-    d.innerHTML = `<div class="card-ck"></div><img src="${color.image}" alt="${color.label}" class="color-thob-img"><div class="card-label">${color.label}</div>`;
-    d.onclick = () => pick('color', d, c, 1);
-    c.appendChild(d);
+const swatchBg = { white: '#FFFFFF', yellow: '#FAF3DC' };
+
+function buildColorSwatches() {
+  const container = document.getElementById('color-swatches');
+  const heroImg = document.getElementById('step1-hero-img');
+  const nameEl = document.getElementById('selected-color-name');
+  const colors = CONTENT.order.colors;
+
+  // Default: first color pre-selected
+  orderState.color = colors[0].label;
+  if (nameEl) nameEl.textContent = colors[0].label;
+  if (heroImg) heroImg.src = colors[0].image;
+
+  colors.forEach((color, idx) => {
+    const swatch = document.createElement('div');
+    swatch.className = 'color-swatch' + (idx === 0 ? ' selected' : '');
+    swatch.dataset.color = color.id;
+    swatch.style.background = swatchBg[color.id] || '#FFFFFF';
+    swatch.title = color.label;
+
+    swatch.onclick = () => {
+      container.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+      swatch.classList.add('selected');
+      orderState.color = color.label;
+      if (nameEl) nameEl.textContent = color.label;
+
+      if (heroImg) {
+        heroImg.style.opacity = '0';
+        setTimeout(() => {
+          heroImg.src = color.image;
+          heroImg.style.opacity = '1';
+        }, 200);
+      }
+      updateBtn(1);
+    };
+
+    container.appendChild(swatch);
   });
+
+  updateBtn(1);
 }
 
 function buildCollarCards() {
   const c = document.getElementById('collar-cards');
   CONTENT.order.collars.forEach(col => {
-    const d = mk('card', col.label);
-    d.classList.add('collar-card');
+    const d = document.createElement('div');
+    d.className = 'card collar-card';
+    d.dataset.value = col.label;
     const img = col.id === 'qalabi'
       ? '<img src="images/collar-removebg-preview.png" alt="قلابي">'
       : '<img src="images/no-collar-removebg-preview.png" alt="بدون قلابي">';
-    d.innerHTML = `<div class="card-ck"></div>${img}<div class="card-label">${col.label}</div>`;
-    d.onclick = () => pick('collar', d, c, 1);
+    d.innerHTML = `${img}<div class="card-label">${col.label}</div>`;
+    d.onclick = () => {
+      c.querySelectorAll('.collar-card').forEach(card => card.classList.remove('selected'));
+      d.classList.add('selected');
+      orderState.collar = col.label;
+      updateBtn(1);
+    };
     c.appendChild(d);
   });
 }
@@ -154,6 +190,7 @@ function initSliders() {
   const O = CONTENT.order;
   setupSlider('slider-height', 's-height-val', O.heightUnit, 'height');
   setupSlider('slider-weight', 's-weight-val', O.weightUnit, 'weight');
+  setupSlider('slider-shoe', 's-shoe-val', O.shoeSizeUnit, 'shoeSize');
 }
 
 function setupSlider(sliderId, valId, unit, field) {
@@ -205,7 +242,7 @@ function updateBtn(step) {
     ready = !!orderState.bodyShape;
     readyText = 'التالي';
   } else if (step === 4) {
-    btn = document.getElementById('btn-next-4');
+    btn = document.getElementById('submit-btn');
     ready = document.getElementById('input-name').value.trim()
          && document.getElementById('input-phone').value.trim()
          && document.getElementById('input-city').value;
@@ -218,36 +255,32 @@ function updateBtn(step) {
 
 // ---- SCREEN NAV ----
 function showScreen(n) {
-  const prev = document.getElementById('screen-' + currentScreen);
-  const next = document.getElementById('screen-' + n);
+  // Hide all screens
+  document.querySelectorAll('.screen').forEach(function(s) {
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
 
-  if (prev && prev !== next) {
-    prev.classList.add('leaving');
-    prev.addEventListener('animationend', function h() {
-      prev.classList.remove('active', 'leaving');
-      prev.removeEventListener('animationend', h);
-    });
+  // Show target screen
+  const target = document.getElementById('screen-' + n);
+  if (target) {
+    target.classList.add('active');
+    target.style.display = 'flex';
   }
 
   currentScreen = n;
-  next.classList.add('active', 'entering');
-  next.addEventListener('animationend', function h() {
-    next.classList.remove('entering');
-    next.removeEventListener('animationend', h);
-  });
 
-  // Tab bar: visible on screens 2-5 (steps 1-4), hidden on landing (1) and confirmation (6)
-  const bar = document.getElementById('tab-bar');
-  if (n >= 2 && n <= 5) {
-    bar.classList.add('visible');
-    bar.style.display = 'flex';
-    updateTabs(n - 1); // step = screen - 1
-  } else {
-    bar.classList.remove('visible');
-    bar.style.display = 'none';
-  }
+  // Update progress
+  updateProgress(n);
 
+  // Toggle sticky footer — only visible on step 4 (screen 5)
+  const stickyFooter = document.getElementById('sticky-footer');
+  if (stickyFooter) stickyFooter.classList.toggle('visible', n === 5);
+
+  // Update summary and footer price on step 4
   if (n === 5) updateSummary();
+  if (n === 5) updateFooterPrice();
+
   // Update button state for the arriving step
   if (n === 2) updateBtn(1);
   if (n === 4) updateBtn(3);
@@ -258,21 +291,51 @@ function goToStep(stepNum) {
   showScreen(stepNum + 1);
 }
 
-// ---- TABS ----
-function updateTabs(activeStep) {
+// ---- PROGRESS BAR ----
+function updateProgress(screenNumber) {
+  const container = document.getElementById('progress-container');
+  if (!container) return;
+
+  // Hide on landing and confirmation
+  if (screenNumber === 1 || screenNumber === 6) {
+    container.style.opacity = '0';
+    container.style.pointerEvents = 'none';
+    return;
+  }
+
+  container.style.opacity = '1';
+  container.style.pointerEvents = '';
+
+  // screenNumber 2 = step 1, 3 = step 2, 4 = step 3, 5 = step 4
+  const activeStep = screenNumber - 1;
+
   for (let i = 1; i <= 4; i++) {
-    const tab = document.getElementById('tab-' + i);
-    tab.classList.remove('active', 'completed');
-    tab.onclick = null;
-    tab.style.cursor = 'default';
+    const dot = document.getElementById('step-dot-' + i);
+    if (!dot) continue;
+
+    dot.classList.remove('active', 'completed', 'clickable');
 
     if (i < activeStep) {
-      tab.classList.add('completed');
-      tab.style.cursor = 'pointer';
-      tab.onclick = ((s) => () => goToStep(s))(i);
+      dot.classList.add('completed', 'clickable');
+      dot.style.cursor = 'pointer';
+      dot.onclick = (function(stepIndex) {
+        return function() { showScreen(stepIndex + 1); };
+      })(i);
     } else if (i === activeStep) {
-      tab.classList.add('active');
+      dot.classList.add('active');
+      dot.style.cursor = 'default';
+      dot.onclick = null;
+    } else {
+      dot.style.cursor = 'default';
+      dot.onclick = null;
     }
+  }
+
+  for (let i = 1; i <= 3; i++) {
+    const line = document.getElementById('line-' + i + '-' + (i + 1));
+    if (!line) continue;
+    if (i < activeStep) line.classList.add('filled');
+    else line.classList.remove('filled');
   }
 }
 
@@ -321,6 +384,7 @@ function updateSummary() {
   document.getElementById('sum-collar').textContent = orderState.collar || '—';
   document.getElementById('sum-height').textContent = toAr(orderState.height) + ' ' + O.heightUnit;
   document.getElementById('sum-weight').textContent = toAr(orderState.weight) + ' ' + O.weightUnit;
+  document.getElementById('sum-shoe').textContent = toAr(orderState.shoeSize) + ' ' + O.shoeSizeUnit;
   document.getElementById('sum-body').textContent = orderState.bodyShape || '—';
   document.getElementById('sum-price').textContent = toAr(S.basePrice) + ' ' + O.priceUnit;
 }
@@ -340,6 +404,7 @@ async function submit() {
       collar: orderState.collar,
       height: String(orderState.height),
       weight: String(orderState.weight),
+      shoe_size: String(orderState.shoeSize),
       body_type: orderState.bodyShape,
     }])
 
@@ -349,7 +414,6 @@ async function submit() {
     console.log('Order saved successfully')
   }
 
-  document.getElementById('tab-bar').classList.remove('visible');
   showScreen(6);
 
   // Animate ref counter
@@ -371,6 +435,7 @@ async function submit() {
     `${O.summaryLabels.collar}: ${orderState.collar}`,
     `${O.summaryLabels.height}: ${orderState.height} ${O.heightUnit}`,
     `${O.summaryLabels.weight}: ${orderState.weight} ${O.weightUnit}`,
+    `${O.summaryLabels.shoeSize}: ${orderState.shoeSize} ${O.shoeSizeUnit}`,
     `${O.summaryLabels.bodyType}: ${orderState.bodyShape}`,
     `الاسم: ${orderState.name}`,
     `الجوال: ${orderState.phone}`,
@@ -386,10 +451,20 @@ async function submit() {
 // ---- HELPERS ----
 function toAr(n) { return String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]); }
 
+// ---- FOOTER PRICE ----
+function updateFooterPrice() {
+  const el = document.getElementById('footer-price');
+  if (!el) return;
+  const S = CONTENT.site;
+  const O = CONTENT.order;
+  el.textContent = toAr(S.basePrice) + ' ' + O.priceUnit;
+}
+
 // ---- EXPOSE FUNCTIONS TO WINDOW (for inline onclick handlers in module mode) ----
 window.showScreen = showScreen;
 window.validateStep1 = validateStep1;
 window.validateStep2 = validateStep2;
 window.validateStep3 = validateStep3;
 window.validateStep4 = validateStep4;
+window.handleSubmit = validateStep4;
 window.goToStep = goToStep;

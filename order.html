@@ -11,9 +11,32 @@
 </head>
 <body>
 
-  <!-- GLOBAL HEADER (logo, always visible) -->
+  <!-- GLOBAL HEADER (logo + step progress) -->
   <div class="order-header">
     <img src="images/logo.png" alt="مُهيب" class="logo-img">
+    <div id="progress-container">
+      <div id="progress-steps">
+        <div class="progress-step active" id="step-dot-1">
+          <div class="step-dot"></div>
+          <span class="step-label">اللون والياقة</span>
+        </div>
+        <div class="progress-line" id="line-1-2"></div>
+        <div class="progress-step" id="step-dot-2">
+          <div class="step-dot"></div>
+          <span class="step-label">المقاسات</span>
+        </div>
+        <div class="progress-line" id="line-2-3"></div>
+        <div class="progress-step" id="step-dot-3">
+          <div class="step-dot"></div>
+          <span class="step-label">شكل الجسم</span>
+        </div>
+        <div class="progress-line" id="line-3-4"></div>
+        <div class="progress-step" id="step-dot-4">
+          <div class="step-dot"></div>
+          <span class="step-label">تأكيد الطلب</span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- SCREEN 1: Landing -->
@@ -33,25 +56,21 @@
     </div>
   </div>
 
-  <!-- TAB PROGRESS BAR -->
-  <div class="tab-bar" id="tab-bar">
-    <div class="tab" id="tab-1" data-step="1"><span></span></div>
-    <div class="tab" id="tab-2" data-step="2"><span></span></div>
-    <div class="tab" id="tab-3" data-step="3"><span></span></div>
-    <div class="tab" id="tab-4" data-step="4"><span></span></div>
-  </div>
-
   <!-- SCREEN 2: Step 1 — Color + Collar -->
   <div id="screen-2" class="screen">
-    <div class="step-body">
+    <div class="step1-hero-image">
+      <img id="step1-hero-img" src="images/new-thob-white.png" alt="ثوب">
+    </div>
+    <div class="step1-body">
       <div class="step-top">
         <div class="section-block">
-          <div class="sec-label">اللون</div>
-          <div class="card-row" id="color-cards"></div>
+          <span class="section-micro-label">اللون</span>
+          <div class="color-swatches" id="color-swatches"></div>
+          <div class="selected-color-name" id="selected-color-name"></div>
           <div class="error-msg" id="error-color">الرجاء اختيار اللون</div>
         </div>
         <div class="section-block">
-          <div class="sec-label">الياقة</div>
+          <span class="section-micro-label">الياقة</span>
           <div class="card-row" id="collar-cards"></div>
           <div class="error-msg" id="error-collar">الرجاء اختيار الياقة</div>
         </div>
@@ -83,6 +102,15 @@
           </div>
           <div class="slider-track-wrapper">
             <input type="range" id="slider-weight" min="40" max="180" value="80" step="1" />
+          </div>
+        </div>
+        <div class="slider-wrapper">
+          <div class="slider-row-label">
+            <span class="slider-label" id="s-shoe-label"></span>
+            <span class="slider-value" id="s-shoe-val">٤٢ EU</span>
+          </div>
+          <div class="slider-track-wrapper">
+            <input type="range" id="slider-shoe" min="38" max="48" value="42" step="1" />
           </div>
         </div>
       </div>
@@ -157,6 +185,7 @@
             </div>
             <div class="sum-row"><span class="sum-l" id="sum-height-label"></span><span class="sum-v" id="sum-height">—</span></div>
             <div class="sum-row"><span class="sum-l" id="sum-weight-label"></span><span class="sum-v" id="sum-weight">—</span></div>
+            <div class="sum-row"><span class="sum-l" id="sum-shoe-label"></span><span class="sum-v" id="sum-shoe">—</span></div>
           </div>
 
           <div class="sum-group">
@@ -167,16 +196,25 @@
             <div class="sum-row"><span class="sum-l" id="sum-body-label"></span><span class="sum-v" id="sum-body">—</span></div>
           </div>
 
-          <div class="sum-price-row">
-            <span class="sum-l" id="sum-price-label"></span>
-            <span class="sum-v" id="sum-price">—</span>
-          </div>
         </div>
       </div>
-      <div class="step-bottom">
-        <button class="btn-next btn-submit" id="btn-next-4" onclick="validateStep4()">أرسل الطلب</button>
-      </div>
     </div>
+  </div>
+
+  <!-- STICKY FOOTER (step 4 only) -->
+  <div class="sticky-footer" id="sticky-footer">
+    <div class="price-row">
+      <span class="price-label">السعر التقديري</span>
+      <span class="price-amount" id="footer-price">٢٢٠ ريال</span>
+    </div>
+    <div class="payment-note">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+        <line x1="1" y1="10" x2="23" y2="10"/>
+      </svg>
+      <span>سنشاركك رابط الدفع عبر واتساب بعد تأكيد الطلب</span>
+    </div>
+    <button class="btn-next btn-submit" id="submit-btn" onclick="handleSubmit()">أرسل الطلب</button>
   </div>
 
   <!-- SCREEN 6: Confirmation -->
