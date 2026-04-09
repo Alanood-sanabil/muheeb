@@ -12,13 +12,23 @@ const supabase = createClient(
 const orderState = { color: null, collar: null, height: 170, weight: 80, shoeSize: 42, bodyShape: null, name: null, phone: null, city: null };
 let currentScreen = 1;
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
+  // Force hide all screens, then show landing
+  document.querySelectorAll('.screen').forEach(function(s) {
+    s.classList.remove('active');
+  });
+  const landing = document.getElementById('screen-1');
+  if (landing) landing.classList.add('active');
+
+  // Hide progress bar on landing
+  const progressContainer = document.getElementById('progress-container');
+  if (progressContainer) progressContainer.style.opacity = '0';
+
+  // Initialize content and interactions
   populate();
   buildCards();
   initSliders();
   attachInputWatchers();
-  updateProgress(1);
-  showScreen(1);
 });
 
 // ---- POPULATE ----
@@ -255,18 +265,14 @@ function updateBtn(step) {
 
 // ---- SCREEN NAV ----
 function showScreen(n) {
-  // Hide all screens
+  // Hide all screens via class only (CSS !important handles display)
   document.querySelectorAll('.screen').forEach(function(s) {
     s.classList.remove('active');
-    s.style.display = 'none';
   });
 
   // Show target screen
   const target = document.getElementById('screen-' + n);
-  if (target) {
-    target.classList.add('active');
-    target.style.display = 'flex';
-  }
+  if (target) target.classList.add('active');
 
   currentScreen = n;
 
