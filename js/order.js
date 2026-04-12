@@ -91,12 +91,19 @@ const colorImages = {
   yellow: ['images/thob-yellow1.png','images/thob-yellow2.png','images/thob-yellow3.png','images/thob-yellow4.png','images/thob-yellow5.png'],
 };
 
+let _carouselObserver = null;
+
 function loadCarousel(colorId) {
   const track = document.getElementById('carousel-track');
   const dotsEl = document.getElementById('carousel-dots');
   const images = colorImages[colorId] || [];
+
+  if (_carouselObserver) { _carouselObserver.disconnect(); _carouselObserver = null; }
+
   track.innerHTML = '';
   dotsEl.innerHTML = '';
+
+  const dots = [];
   images.forEach((src, i) => {
     const img = document.createElement('img');
     img.src = src;
@@ -106,12 +113,21 @@ function loadCarousel(colorId) {
     const dot = document.createElement('div');
     dot.className = 'c-dot' + (i === 0 ? ' active' : '');
     dotsEl.appendChild(dot);
+    dots.push(dot);
   });
+
   track.scrollLeft = 0;
-  track.addEventListener('scroll', () => {
-    const index = Math.round(track.scrollLeft / track.offsetWidth);
-    dotsEl.querySelectorAll('.c-dot').forEach((d, i) => d.classList.toggle('active', i === index));
-  });
+
+  _carouselObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const index = Array.from(track.children).indexOf(entry.target);
+        dots.forEach((d, i) => d.classList.toggle('active', i === index));
+      }
+    });
+  }, { root: track, threshold: 0.5 });
+
+  Array.from(track.children).forEach(img => _carouselObserver.observe(img));
 }
 
 function buildColorSwatches() {
