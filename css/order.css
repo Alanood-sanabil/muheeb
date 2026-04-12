@@ -14,7 +14,7 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: auto; overflow-x: hidden; overflow-y: auto; font-size: 16px; }
-body { font-family: 'Cairo', sans-serif; background: var(--white); color: var(--black); direction: rtl; }
+body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--white); color: var(--black); direction: rtl; }
 a { text-decoration: none; color: inherit; }
 .serif { font-family: 'DM Serif Display', serif; }
 
@@ -69,7 +69,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .step-label {
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-size: 9px;
   font-weight: 400;
   color: #CCCCCC;
@@ -111,7 +111,7 @@ a { text-decoration: none; color: inherit; }
   max-width: 560px; margin: 128px auto 0; width: 100%;
   padding: 16px 24px 16px; min-height: calc(100vh - 128px);
 }
-.step-body-center .step-top { display: flex; flex-direction: column; align-items: center; }
+.step-body-center .step-top { display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; flex: 1; }
 .step-top { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overflow-x: visible; }
 .step1-body .step-top { overflow: visible; }
 .step-bottom { flex-shrink: 0; padding: 8px 0 0; }
@@ -165,9 +165,9 @@ a { text-decoration: none; color: inherit; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 10px 8px;
-  height: 80px;
+  padding: 16px 12px;
+  min-height: 110px;
+  flex: 1;
   background: #F9F9F9;
   border: 1px solid #E5E5E5;
 }
@@ -176,16 +176,17 @@ a { text-decoration: none; color: inherit; }
   border: 1.5px solid #0A0A0A;
 }
 .collar-card img {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
   display: block;
+  margin-bottom: 4px;
   filter: brightness(0);
 }
 .collar-card .card-label {
-  font-family: 'Cairo', sans-serif;
-  font-weight: 600;
-  font-size: 11px;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
   color: #0A0A0A;
   text-align: center;
 }
@@ -198,16 +199,11 @@ a { text-decoration: none; color: inherit; }
 }
 
 .step1-hero-image {
+  position: relative;
   width: 100%;
-  height: 320px;
+  height: 380px;
   background: #F5F5F5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
-  padding: 0;
-  margin: 0;
-  flex-shrink: 0;
 }
 
 .step1-hero-image img {
@@ -217,6 +213,58 @@ a { text-decoration: none; color: inherit; }
   object-position: center center;
   display: block;
   transition: opacity 0.2s ease;
+}
+
+.hero-carousel {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  height: 100%;
+  width: 100%;
+}
+
+.carousel-track::-webkit-scrollbar { display: none; }
+
+.carousel-img {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center center;
+  scroll-snap-align: start;
+  background: #F5F5F5;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 0 4px;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+}
+
+.c-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #D0D0D0;
+  transition: background 0.2s;
+}
+
+.c-dot.active {
+  background: #0A0A0A;
 }
 
 .step1-body {
@@ -233,7 +281,7 @@ a { text-decoration: none; color: inherit; }
 
 /* ---- COLOR SWATCHES ---- */
 .section-micro-label {
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-size: 10px;
   font-weight: 400;
   color: #AAAAAA;
@@ -255,9 +303,9 @@ a { text-decoration: none; color: inherit; }
 }
 
 .color-swatch {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
   cursor: pointer;
   border: 1.5px solid #E0E0E0;
   flex-shrink: 0;
@@ -285,7 +333,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .selected-color-name {
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-size: 12px;
   font-weight: 600;
   color: #0A0A0A;
@@ -350,7 +398,7 @@ a { text-decoration: none; color: inherit; }
   margin: 0 auto 20px;
 }
 .tooltip-title {
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #0A0A0A;
@@ -358,7 +406,7 @@ a { text-decoration: none; color: inherit; }
   text-align: right;
 }
 .tooltip-body {
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-size: 14px;
   font-weight: 400;
   color: #555555;
@@ -371,7 +419,7 @@ a { text-decoration: none; color: inherit; }
   height: 52px;
   background: #0A0A0A;
   color: #FFFFFF;
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-size: 14px;
   font-weight: 600;
   border: none;
@@ -383,7 +431,7 @@ a { text-decoration: none; color: inherit; }
 .slider-wrapper {
   width: 100%;
   max-width: 440px;
-  margin-bottom: 36px;
+  margin-bottom: 48px;
 }
 
 .slider-row-label {
@@ -395,14 +443,14 @@ a { text-decoration: none; color: inherit; }
 }
 
 .slider-label {
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-weight: 600;
   font-size: 13px;
   color: #0A0A0A;
 }
 
 .slider-value {
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-weight: 700;
   font-size: 13px;
   color: #0A0A0A;
@@ -483,7 +531,7 @@ input[type=range]::-moz-range-track {
 .body-shape-card svg { display: block; }
 
 .body-shape-label {
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-size: 13px;
   font-weight: 500;
   color: #0A0A0A;
@@ -497,7 +545,7 @@ input[type=range]::-moz-range-track {
   left: 10px;
   background: #E5E5E5;
   color: #555555;
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-size: 9px;
   font-weight: 500;
   padding: 3px 10px;
@@ -514,13 +562,13 @@ input[type=range]::-moz-range-track {
   border-bottom: 1px solid #E5E5E5;
 }
 .field-label {
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-size: 0.78rem;
   font-weight: 600;
   color: #0A0A0A;
 }
 .city-value {
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-size: 14px;
   font-weight: 700;
   color: #0A0A0A;
@@ -538,7 +586,7 @@ input[type=range]::-moz-range-track {
 .line-input-wrap input,
 .line-input-wrap select {
   width: 100%; height: 44px; border: none; border-radius: 0; padding: 0;
-  font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 1rem; color: var(--black);
+  font-family: 'IBM Plex Sans Arabic', sans-serif; font-weight: 700; font-size: 1rem; color: var(--black);
   background: transparent; outline: none; -webkit-appearance: none; appearance: none;
 }
 .line-border { position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: var(--border); }
@@ -553,7 +601,7 @@ input[type=range]::-moz-range-track {
 /* ---- NEXT BUTTON ---- */
 .btn-next {
   width: 100%; height: 52px; border: none; border-radius: 4px;
-  font-family: 'Cairo', sans-serif; font-weight: 700; font-size: .9rem;
+  font-family: 'IBM Plex Sans Arabic', sans-serif; font-weight: 700; font-size: .9rem;
   cursor: pointer; transition: background .3s, color .3s;
   background: #CCCCCC; color: var(--white);
 }
@@ -672,8 +720,8 @@ input[type=range]::-moz-range-track {
 }
 
 .landing-headline {
-  font-family: 'Cairo', sans-serif;
-  font-weight: 700;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-weight: 900;
   font-size: 2.6rem;
   line-height: 1.25;
   letter-spacing: -0.02em;
@@ -687,7 +735,7 @@ input[type=range]::-moz-range-track {
 .landing-headline .line1 { margin-bottom: 4px; }
 
 .landing-sub {
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-weight: 300;
   font-size: .95rem;
   color: #767676;
@@ -701,7 +749,7 @@ input[type=range]::-moz-range-track {
   background: #0A0A0A;
   color: #FFFFFF;
   border-radius: 2px;
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-size: 1rem;
   font-weight: 600;
   margin-top: 28px;
@@ -788,12 +836,12 @@ input[type=range]::-moz-range-track {
   padding: 0 4px;
 }
 .price-label {
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-size: 12px;
   color: #888888;
 }
 .price-amount {
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: #0A0A0A;
@@ -811,7 +859,7 @@ input[type=range]::-moz-range-track {
   border: 1px solid #F0F0F0;
 }
 .payment-note span {
-  font-family: 'Cairo', sans-serif;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-size: 11px;
   font-weight: 400;
   color: #888888;

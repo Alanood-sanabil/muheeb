@@ -86,16 +86,42 @@ function buildCards() {
 
 const swatchBg = { white: '#FFFFFF', yellow: '#FAF3DC' };
 
+const colorImages = {
+  white: ['images/thob-white1.png','images/thob-white2.png','images/thob-white3.png','images/thob-white4.png','images/thob-white5.png','images/thob-white6.png'],
+  yellow: ['images/thob-yellow1.png','images/thob-yellow2.png','images/thob-yellow3.png','images/thob-yellow4.png','images/thob-yellow5.png'],
+};
+
+function loadCarousel(colorId) {
+  const track = document.getElementById('carousel-track');
+  const dotsEl = document.getElementById('carousel-dots');
+  const images = colorImages[colorId] || [];
+  track.innerHTML = '';
+  dotsEl.innerHTML = '';
+  images.forEach((src, i) => {
+    const img = document.createElement('img');
+    img.src = src;
+    img.className = 'carousel-img';
+    img.alt = 'ثوب';
+    track.appendChild(img);
+    const dot = document.createElement('div');
+    dot.className = 'c-dot' + (i === 0 ? ' active' : '');
+    dotsEl.appendChild(dot);
+  });
+  track.scrollLeft = 0;
+  track.addEventListener('scroll', () => {
+    const index = Math.round(track.scrollLeft / track.offsetWidth);
+    dotsEl.querySelectorAll('.c-dot').forEach((d, i) => d.classList.toggle('active', i === index));
+  });
+}
+
 function buildColorSwatches() {
   const container = document.getElementById('color-swatches');
-  const heroImg = document.getElementById('step1-hero-img');
   const nameEl = document.getElementById('selected-color-name');
   const colors = CONTENT.order.colors;
 
-  // Default: first color pre-selected
   orderState.color = colors[0].label;
   if (nameEl) nameEl.textContent = colors[0].label;
-  if (heroImg) heroImg.src = colors[0].image;
+  loadCarousel(colors[0].id);
 
   colors.forEach((color, idx) => {
     const swatch = document.createElement('div');
@@ -103,26 +129,16 @@ function buildColorSwatches() {
     swatch.dataset.color = color.id;
     swatch.style.background = swatchBg[color.id] || '#FFFFFF';
     swatch.title = color.label;
-
     swatch.onclick = () => {
       container.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
       swatch.classList.add('selected');
       orderState.color = color.label;
       if (nameEl) nameEl.textContent = color.label;
-
-      if (heroImg) {
-        heroImg.style.opacity = '0';
-        setTimeout(() => {
-          heroImg.src = color.image;
-          heroImg.style.opacity = '1';
-        }, 200);
-      }
+      loadCarousel(color.id);
       updateBtn(1);
     };
-
     container.appendChild(swatch);
   });
-
   updateBtn(1);
 }
 
@@ -424,22 +440,8 @@ async function submit() {
   }, 16);
 
   // WhatsApp
-  const O = CONTENT.order;
   const S = CONTENT.site;
-  const msg = [
-    `طلب جديد من ${S.name}:`,
-    `${O.summaryLabels.color}: ${orderState.color}`,
-    `${O.summaryLabels.collar}: ${orderState.collar}`,
-    `${O.summaryLabels.height}: ${orderState.height} ${O.heightUnit}`,
-    `${O.summaryLabels.weight}: ${orderState.weight} ${O.weightUnit}`,
-    `${O.summaryLabels.shoeSize}: ${orderState.shoeSize} ${O.shoeSizeUnit}`,
-    `${O.summaryLabels.bodyType}: ${orderState.bodyShape}`,
-    `الاسم: ${orderState.name}`,
-    `الجوال: ${orderState.phone}`,
-    `المدينة: ${orderState.city}`,
-    `${O.summaryLabels.price}: ${S.basePrice} ${O.priceUnit}`,
-    `رقم الطلب: #${ref}`,
-  ].join('\n');
+  const msg = `ياهلا، رقم طلبي #${ref}`;
   document.getElementById('confirm-wa-btn').href = `https://wa.me/${S.whatsapp}?text=${encodeURIComponent(msg)}`;
 
   setTimeout(() => { document.getElementById('confirm-wa-btn').classList.add('pulse'); }, 1200);
