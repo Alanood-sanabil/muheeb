@@ -299,6 +299,9 @@ function showScreen(n) {
   // Update progress
   updateProgress(n);
 
+  // GA: track funnel entry from landing
+  if (n === 2 && currentScreen === 1) gtag('event', 'start_order', { event_category: 'funnel' });
+
   // Toggle sticky footer — only visible on step 4 (screen 5)
   const stickyFooter = document.getElementById('sticky-footer');
   if (stickyFooter) stickyFooter.classList.toggle('visible', n === 5);
@@ -371,17 +374,19 @@ function validateStep1() {
   let ok = true;
   if (!orderState.color) { showErr('error-color'); ok = false; }
   if (!orderState.collar) { showErr('error-collar'); ok = false; }
-  if (ok) showScreen(3);
+  if (ok) { gtag('event', 'complete_step1', { event_category: 'funnel' }); showScreen(3); }
 }
 
 function validateStep2() {
   // Sliders always have values, so always valid
+  gtag('event', 'complete_step2', { event_category: 'funnel' });
   showScreen(4);
 }
 
 function validateStep3() {
   clearErr();
   if (!orderState.bodyShape) { showErr('error-body'); return; }
+  gtag('event', 'complete_step3', { event_category: 'funnel' });
   showScreen(5);
 }
 
@@ -438,7 +443,7 @@ async function submit() {
         body_type: orderState.bodyShape,
       }]);
     if (error) console.error('Error saving order:', error);
-    else console.log('Order saved successfully');
+    else { console.log('Order saved successfully'); gtag('event', 'order_submitted', { event_category: 'conversion' }); }
   } catch (e) {
     console.error('Supabase unavailable:', e);
   }
@@ -459,6 +464,9 @@ async function submit() {
   const S = CONTENT.site;
   const msg = `ياهلا، رقم طلبي #${ref}`;
   document.getElementById('confirm-wa-btn').href = `https://wa.me/${S.whatsapp}?text=${encodeURIComponent(msg)}`;
+  document.getElementById('confirm-wa-btn').addEventListener('click', () => {
+    gtag('event', 'whatsapp_click', { event_category: 'engagement' });
+  });
 
   setTimeout(() => { document.getElementById('confirm-wa-btn').classList.add('pulse'); }, 1200);
 }
