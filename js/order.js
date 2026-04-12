@@ -29,6 +29,25 @@ document.addEventListener('DOMContentLoaded', function() {
   buildCards();
   initSliders();
   attachInputWatchers();
+
+  document.getElementById('order-landing-cta').onclick = function() {
+    gtag('event', 'start_order', { event_category: 'funnel' });
+    const loader = document.getElementById('loader-screen');
+    const bar = document.getElementById('loader-bar');
+    loader.classList.add('visible');
+    loader.classList.remove('hide');
+    bar.style.animation = 'none';
+    void bar.offsetWidth;
+    bar.style.animation = '';
+    setTimeout(() => {
+      document.getElementById('screen-1').classList.remove('active');
+      loader.classList.add('hide');
+      setTimeout(() => {
+        loader.classList.remove('visible', 'hide');
+        showScreen(2);
+      }, 400);
+    }, 950);
+  };
 });
 
 // ---- POPULATE ----
@@ -285,35 +304,48 @@ function updateBtn(step) {
 
 // ---- SCREEN NAV ----
 function showScreen(n) {
-  // Hide all screens via class only (CSS !important handles display)
-  document.querySelectorAll('.screen').forEach(function(s) {
-    s.classList.remove('active');
-  });
+  const current = document.querySelector('.screen.active');
 
-  // Show target screen
-  const target = document.getElementById('screen-' + n);
-  if (target) target.classList.add('active');
+  function doSwitch() {
+    document.querySelectorAll('.screen').forEach(function(s) {
+      s.classList.remove('active');
+    });
 
-  currentScreen = n;
+    const target = document.getElementById('screen-' + n);
+    if (target) target.classList.add('active');
 
-  // Update progress
-  updateProgress(n);
+    // GA: track funnel entry from landing
+    if (n === 2 && currentScreen === 1) gtag('event', 'start_order', { event_category: 'funnel' });
 
-  // GA: track funnel entry from landing
-  if (n === 2 && currentScreen === 1) gtag('event', 'start_order', { event_category: 'funnel' });
+    currentScreen = n;
+    updateProgress(n);
 
-  // Toggle sticky footer — only visible on step 4 (screen 5)
-  const stickyFooter = document.getElementById('sticky-footer');
-  if (stickyFooter) stickyFooter.classList.toggle('visible', n === 5);
+    const stickyFooter = document.getElementById('sticky-footer');
+    if (stickyFooter) stickyFooter.classList.toggle('visible', n === 5);
 
-  // Update summary and footer price on step 4
-  if (n === 5) updateSummary();
-  if (n === 5) updateFooterPrice();
+    if (n === 5) updateSummary();
+    if (n === 5) updateFooterPrice();
 
-  // Update button state for the arriving step
-  if (n === 2) updateBtn(1);
-  if (n === 4) updateBtn(3);
-  if (n === 5) updateBtn(4);
+    if (n === 2) updateBtn(1);
+    if (n === 4) updateBtn(3);
+    if (n === 5) updateBtn(4);
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  if (current) {
+    current.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
+    current.style.opacity = '0';
+    current.style.transform = 'translateY(-16px)';
+    setTimeout(() => {
+      current.style.transition = '';
+      current.style.opacity = '';
+      current.style.transform = '';
+      doSwitch();
+    }, 450);
+  } else {
+    doSwitch();
+  }
 }
 
 function goToStep(stepNum) {
