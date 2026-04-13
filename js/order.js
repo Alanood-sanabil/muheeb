@@ -36,6 +36,8 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('.fit-opt-btn[data-fit="normal"]')?.classList.add('selected');
   const btn4bInit = document.getElementById('btn-next-4b');
   if (btn4bInit) { btn4bInit.classList.add('ready'); btn4bInit.textContent = 'التالي'; }
+  const fitDescEl = document.getElementById('fit-desc');
+  if (fitDescEl) { fitDescEl.textContent = ''; fitDescEl.style.opacity = '0'; }
 
   document.getElementById('order-landing-cta').onclick = function() {
     gtag('event', 'start_order', { event_category: 'funnel' });
