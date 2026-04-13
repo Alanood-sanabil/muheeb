@@ -56,6 +56,11 @@
         <div class="progress-line" id="line-3-4"></div>
         <div class="progress-step" id="step-dot-4">
           <div class="step-dot"></div>
+          <span class="step-label">المقاس المفضل</span>
+        </div>
+        <div class="progress-line" id="line-4-5"></div>
+        <div class="progress-step" id="step-dot-5">
+          <div class="step-dot"></div>
           <span class="step-label">تأكيد الطلب</span>
         </div>
       </div>
@@ -169,7 +174,33 @@
     </div>
   </div>
 
-  <!-- SCREEN 5: Step 4 — Contact + Summary -->
+  <!-- SCREEN 4b: Step 4 — Fit Preference -->
+  <div id="screen-4b" class="screen">
+    <div class="step-body step-body-center">
+      <div class="step-top">
+        <h2 class="screen-title serif">كيف قياس ثوبك؟</h2>
+        <div class="fit-preview-wrap">
+          <div class="fit-img-stack" id="fit-img-stack">
+            <img class="fit-img" id="fit-img-slim"   src="images/Slim thob.svg"   alt="ضيق" />
+            <img class="fit-img" id="fit-img-normal" src="images/normal thob.svg" alt="عادي" />
+            <img class="fit-img" id="fit-img-loose"  src="images/Losse thob.svg"  alt="واسع" />
+          </div>
+        </div>
+        <div class="fit-desc-text" id="fit-desc">اختر الفيت المناسب لك</div>
+        <div class="fit-options-row">
+          <button class="fit-opt-btn" data-fit="slim" data-label="ضيق" onclick="selectFit(this)">ضيق</button>
+          <button class="fit-opt-btn" data-fit="normal" data-label="عادي" onclick="selectFit(this)">عادي</button>
+          <button class="fit-opt-btn" data-fit="loose" data-label="واسع" onclick="selectFit(this)">واسع</button>
+        </div>
+        <div class="error-msg" id="error-fit">الرجاء اختيار المقاس المفضل</div>
+      </div>
+      <div class="step-bottom">
+        <button class="btn-next" id="btn-next-4b" onclick="validateStep4b()">اختر الفيت</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: Step 5 — Contact + Summary -->
   <div id="screen-5" class="screen">
     <div class="step-body">
       <div class="step-top">

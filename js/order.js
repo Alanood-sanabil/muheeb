@@ -4,7 +4,7 @@
 //  the module load if the CDN is slow or unavailable.
 // ============================================================
 
-const orderState = { color: null, collar: null, height: 170, weight: 80, shoeSize: 42, bodyShape: null, name: null, phone: null, city: 'الرياض' };
+const orderState = { color: null, collar: null, height: 170, weight: 80, shoeSize: 42, bodyShape: null, fitPreference: null, name: null, phone: null, city: 'الرياض' };
 let currentScreen = 1;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -29,6 +29,13 @@ document.addEventListener('DOMContentLoaded', function() {
   buildCards();
   initSliders();
   attachInputWatchers();
+
+  const defaultImg = document.getElementById('fit-img-normal');
+  if (defaultImg) defaultImg.classList.add('visible');
+  orderState.fitPreference = 'normal';
+  document.querySelector('.fit-opt-btn[data-fit="normal"]')?.classList.add('selected');
+  const btn4bInit = document.getElementById('btn-next-4b');
+  if (btn4bInit) { btn4bInit.classList.add('ready'); btn4bInit.textContent = 'التالي'; }
 
   document.getElementById('order-landing-cta').onclick = function() {
     gtag('event', 'start_order', { event_category: 'funnel' });
@@ -270,7 +277,7 @@ function updateSliderFill(slider) {
 function attachInputWatchers() {
   const n = document.getElementById('input-name');
   const p = document.getElementById('input-phone');
-  [n, p].forEach(inp => inp.addEventListener('input', () => updateBtn(4)));
+  [n, p].forEach(inp => inp.addEventListener('input', () => updateBtn(5)));
 
   document.querySelectorAll('.line-input-wrap input, .line-input-wrap select').forEach(inp => {
     const label = inp.closest('.input-row')?.querySelector('label');
@@ -291,7 +298,7 @@ function updateBtn(step) {
     btn = document.getElementById('btn-next-3');
     ready = !!orderState.bodyShape;
     readyText = 'التالي';
-  } else if (step === 4) {
+  } else if (step === 5) {
     btn = document.getElementById('submit-btn');
     ready = document.getElementById('input-name').value.trim()
          && document.getElementById('input-phone').value.trim();
@@ -299,7 +306,7 @@ function updateBtn(step) {
   }
   if (!btn) return;
   if (ready) { btn.classList.add('ready'); btn.textContent = readyText; }
-  else { btn.classList.remove('ready'); btn.textContent = step === 4 ? 'أرسل الطلب' : 'اختر جميع الخيارات'; }
+  else { btn.classList.remove('ready'); btn.textContent = step === 5 ? 'أرسل الطلب' : 'اختر جميع الخيارات'; }
 }
 
 // ---- SCREEN NAV ----
@@ -328,7 +335,8 @@ function showScreen(n) {
 
     if (n === 2) updateBtn(1);
     if (n === 4) updateBtn(3);
-    if (n === 5) updateBtn(4);
+    if (n === '4b') updateBtn('4b');
+    if (n === 5) updateBtn(5);
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -367,10 +375,13 @@ function updateProgress(screenNumber) {
   container.style.opacity = '1';
   container.style.pointerEvents = '';
 
-  // screenNumber 2 = step 1, 3 = step 2, 4 = step 3, 5 = step 4
-  const activeStep = screenNumber - 1;
+  // Map screen to activeStep (1-5)
+  // screen 2=step1, 3=step2, 4=step3, '4b'=step4, 5=step5
+  const stepMap = { 2: 1, 3: 2, 4: 3, '4b': 4, 5: 5 };
+  const screenTargets = [null, 2, 3, 4, '4b', 5]; // index = step number
+  const activeStep = stepMap[screenNumber] || 1;
 
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= 5; i++) {
     const dot = document.getElementById('step-dot-' + i);
     if (!dot) continue;
 
@@ -379,9 +390,9 @@ function updateProgress(screenNumber) {
     if (i < activeStep) {
       dot.classList.add('completed', 'clickable');
       dot.style.cursor = 'pointer';
-      dot.onclick = (function(stepIndex) {
-        return function() { showScreen(stepIndex + 1); };
-      })(i);
+      dot.onclick = (function(target) {
+        return function() { showScreen(target); };
+      })(screenTargets[i]);
     } else if (i === activeStep) {
       dot.classList.add('active');
       dot.style.cursor = 'default';
@@ -392,7 +403,7 @@ function updateProgress(screenNumber) {
     }
   }
 
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= 4; i++) {
     const line = document.getElementById('line-' + i + '-' + (i + 1));
     if (!line) continue;
     if (i < activeStep) line.classList.add('filled');
@@ -419,8 +430,46 @@ function validateStep3() {
   clearErr();
   if (!orderState.bodyShape) { showErr('error-body'); return; }
   gtag('event', 'complete_step3', { event_category: 'funnel' });
+  showScreen('4b');
+}
+
+const fitDescriptions = {
+  slim:   'يلتصق بالجسم — أنيق وعصري',
+  normal: 'لا ضيق ولا واسع — الأنسب لمعظم الناس',
+  loose:  'مريح وواسع — مناسب للجلسات الطويلة',
+};
+
+function selectFit(btn) {
+  document.querySelectorAll('.fit-opt-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const fit = btn.dataset.fit;
+  orderState.fitPreference = fit;
+
+  const imgs = document.querySelectorAll('.fit-img');
+  imgs.forEach(img => img.classList.remove('visible'));
+
+  const target = document.getElementById('fit-img-' + fit);
+  if (target) target.classList.add('visible');
+
+  const desc = document.getElementById('fit-desc');
+  if (desc) {
+    desc.style.opacity = '0';
+    setTimeout(() => {
+      desc.textContent = fitDescriptions[fit];
+      desc.style.opacity = '1';
+    }, 180);
+  }
+
+  const btn4b = document.getElementById('btn-next-4b');
+  if (btn4b) { btn4b.classList.add('ready'); btn4b.textContent = 'التالي'; }
+}
+window.selectFit = selectFit;
+
+function validateStep4b() {
+  if (!orderState.fitPreference) { showErr('error-fit'); return; }
   showScreen(5);
 }
+window.validateStep4b = validateStep4b;
 
 function validateStep4() {
   clearErr();
@@ -473,6 +522,7 @@ async function submit() {
         weight: String(orderState.weight),
         shoe_size: String(orderState.shoeSize),
         body_type: orderState.bodyShape,
+        fit_preference: orderState.fitPreference,
       }]);
     if (error) console.error('Error saving order:', error);
     else { console.log('Order saved successfully'); gtag('event', 'order_submitted', { event_category: 'conversion' }); }
