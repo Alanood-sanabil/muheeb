@@ -953,6 +953,58 @@ input[type=range]::-moz-range-track {
   to { left: 0%; }
 }
 
+/* ---- PROCESSING SCREEN ---- */
+#screen-processing {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #fff;
+}
+
+#screen-processing.active {
+  display: flex !important;
+}
+
+.processing-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.processing-bar-wrap {
+  width: 140px;
+  height: 1.5px;
+  background: #E5E5E5;
+  position: relative;
+  overflow: hidden;
+}
+
+.processing-bar {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: #0A0A0A;
+}
+
+.processing-bar.animate {
+  animation: processFill 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes processFill {
+  0%   { left: -100%; }
+  100% { left: 0%; }
+}
+
+.processing-text {
+  font-size: 0.95rem;
+  color: #888;
+  font-family: inherit;
+}
+
 /* ---- FIT PREFERENCE STEP ---- */
 #screen-4b .step-body {
   display: flex;

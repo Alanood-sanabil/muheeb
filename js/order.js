@@ -367,8 +367,8 @@ function updateProgress(screenNumber) {
   const container = document.getElementById('progress-container');
   if (!container) return;
 
-  // Hide on landing and confirmation
-  if (screenNumber === 1 || screenNumber === 6) {
+  // Hide on landing, processing, and confirmation
+  if (screenNumber === 1 || screenNumber === 6 || screenNumber === 'processing') {
     container.style.opacity = '0';
     container.style.pointerEvents = 'none';
     return;
@@ -469,7 +469,18 @@ window.selectFit = selectFit;
 
 function validateStep4b() {
   if (!orderState.fitPreference) { showErr('error-fit'); return; }
-  showScreen(5);
+  showScreen('processing');
+  const bar = document.getElementById('processing-bar');
+  const txt = document.getElementById('processing-text');
+  bar.classList.remove('animate');
+  void bar.offsetWidth;
+  bar.classList.add('animate');
+
+  if (txt) txt.textContent = 'جاري تجهيز مقاس ثوبك...';
+
+  setTimeout(() => {
+    showScreen(5);
+  }, 4000);
 }
 window.validateStep4b = validateStep4b;
 
