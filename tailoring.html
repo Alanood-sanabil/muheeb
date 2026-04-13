@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KP4MV75XLM"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KP4MV75XLM');
+  </script>
+  <!-- Hotjar Tracking Code for Muheeb -->
+  <script>
+      (function(h,o,t,j,a,r){
+          h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+          h._hjSettings={hjid:6688595,hjsv:6};
+          a=o.getElementsByTagName('head')[0];
+          r=o.createElement('script');r.async=1;
+          r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+          a.appendChild(r);
+      })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>مُهيب — تفصيل في منزلك</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/order.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* =========================================================
+       TAILORING — additional styles
+       ========================================================= */
+
+    /* --- Landing screen overrides --- */
+    #t-screen-1 .landing-main {
+      flex-direction: column;
+      padding: 0;
+      gap: 0;
+    }
+
+    #t-screen-1 .landing-image {
+      width: 100%;
+      min-height: 55vh;
+      flex: none;
+    }
+
+    #t-screen-1 .landing-hero-img {
+      width: 100%;
+      height: 55vh;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    #t-screen-1 .landing-text {
+      padding: 20px 24px 32px;
+      width: 100%;
+      box-sizing: border-box;
+      margin: 0;
+    }
+
+    /* --- Package cards (screen 2) --- */
+    .pkg-cards-row {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .pkg-card {
+      position: relative;
+      background: #F9F9F9;
+      border: 1.5px solid #E5E5E5;
+      border-radius: 12px;
+      padding: 22px 16px 20px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s, box-shadow .2s;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      user-select: none;
+    }
+
+    .pkg-card.selected {
+      border: 2px solid #0A0A0A;
+      background: #FFFFFF;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+
+    .pkg-card-ck {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #0A0A0A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: scale(0);
+      transition: transform .22s cubic-bezier(.34,1.56,.64,1);
+    }
+    .pkg-card.selected .pkg-card-ck { transform: scale(1); }
+    .pkg-card-ck::after {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 9px;
+      border: solid #FFFFFF;
+      border-width: 0 1.5px 1.5px 0;
+      transform: rotate(45deg) translate(-0.5px,-0.5px);
+    }
+
+    .pkg-card-title {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #0A0A0A;
+      line-height: 1.3;
+    }
+
+    .pkg-card-sub {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-weight: 400;
+      font-size: 0.78rem;
+      color: #767676;
+      line-height: 1.6;
+    }
+
+    .pkg-card-price {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: #0A0A0A;
+      margin-top: 6px;
+    }
+
+    .pkg-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 10;
+      background: green;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+    }
+
+    /* --- Day chips (screen 3) --- */
+    .day-chips-scroll {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 4px 2px 8px;
+      width: 100%;
+    }
+    .day-chips-scroll::-webkit-scrollbar { display: none; }
+
+    .day-chip {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      min-width: 60px;
+      height: 64px;
+      border: 1.5px solid #E5E5E5;
+      border-radius: 10px;
+      background: #F9F9F9;
+      cursor: pointer;
+      transition: border-color .18s, background .18s, color .18s;
+      user-select: none;
+      padding: 0 8px;
+    }
+
+    .day-chip.selected {
+      background: #0A0A0A;
+      border-color: #0A0A0A;
+    }
+
+    .day-chip-name {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: #767676;
+      transition: color .18s;
+    }
+
+    .day-chip-date {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #0A0A0A;
+      transition: color .18s;
+    }
+
+    .day-chip.selected .day-chip-name,
+    .day-chip.selected .day-chip-date {
+      color: #FFFFFF;
+    }
+
+    /* --- Time grid (screen 3) --- */
+    .time-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .time-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 18px 12px;
+      background: #F9F9F9;
+      border: 1.5px solid #E5E5E5;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: border-color .18s, background .18s;
+      user-select: none;
+    }
+
+    .time-card.selected {
+      border: 2px solid #0A0A0A;
+      background: #FFFFFF;
+    }
+
+    .time-card-label {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #0A0A0A;
+    }
+
+    .time-card-sub {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: #999999;
+    }
+
+    /* --- Screen 2 / 3 layout helpers --- */
+    .t-screen-body {
+      display: flex;
+      flex-direction: column;
+      max-width: 560px;
+      margin: 128px auto 0;
+      width: 100%;
+      padding: 24px 24px 32px;
+      min-height: calc(100vh - 128px);
+    }
+
+    .t-screen-top {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .t-screen-bottom {
+      flex-shrink: 0;
+      padding-top: 16px;
+    }
+
+    .t-section-title {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-weight: 700;
+      font-size: 1.35rem;
+      color: #0A0A0A;
+      text-align: right;
+      width: 100%;
+      margin-bottom: 4px;
+      direction: rtl;
+    }
+
+    .t-section-sub {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-weight: 400;
+      font-size: 0.82rem;
+      color: #999999;
+      text-align: right;
+      width: 100%;
+      margin-bottom: 18px;
+      direction: rtl;
+    }
+
+    /* --- Back button --- */
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #767676;
+      padding: 0;
+      margin-bottom: 20px;
+      direction: rtl;
+      align-self: flex-end;
+    }
+    .back-btn:hover { color: #0A0A0A; }
+    .back-btn svg { flex-shrink: 0; }
+
+    /* --- Summary card (screen 4) --- */
+    .t-summary-card {
+      background: #F5F5F5;
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 20px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .t-sum-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0 !important;
+      direction: rtl;
+      padding: 8px 0;
+      border-bottom: 1px solid #E5E5E5;
+    }
+    .t-sum-row:last-child { border-bottom: none; }
+
+    .t-sum-l {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 400;
+      color: #767676;
+    }
+
+    .t-sum-v {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #0A0A0A;
+    }
+
+    .t-sum-price-row {
+      border-bottom: none !important;
+      padding-top: 12px !important;
+      margin-top: 4px;
+      border-top: 1px solid #E5E5E5;
+    }
+
+    .t-sum-price-row .t-sum-l {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #0A0A0A;
+    }
+    .t-sum-price-row .t-sum-v {
+      font-size: 1.05rem;
+    }
+
+    /* --- Submit button (screen 4) --- */
+    .btn-submit-tailoring {
+      width: 100%;
+      height: 56px;
+      background: #0A0A0A;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 4px;
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .18s;
+      margin-top: 16px;
+    }
+    .btn-submit-tailoring:hover { opacity: .88; }
+
+    .submit-note {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #0A0A0A;
+      text-align: center;
+      direction: rtl;
+      margin-top: 10px;
+    }
+
+    /* --- Animated checkmark (screen 5) --- */
+    .checkmark-svg {
+      display: block;
+      margin: 0 auto 24px;
+    }
+
+    .check-circle {
+      animation: drawCircle 0.5s ease forwards;
+    }
+
+    .check-tick {
+      animation: drawTick 0.4s ease 0.5s forwards;
+    }
+
+    @keyframes drawCircle {
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes drawTick {
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* --- Tailoring confirmation screen --- */
+    #t-screen-5 .confirm-wrap {
+      padding-top: 48px;
+    }
+
+    .t-confirm-title {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: #0A0A0A;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .t-confirm-sub {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+      font-weight: 400;
+      font-size: 0.92rem;
+      color: #767676;
+      line-height: 1.7;
+      text-align: center;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    /* --- Progress hidden on screens 1 and 5 --- */
+    .progress-hidden #progress-container {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* --- Spacing helpers --- */
+    .mt-20 { margin-top: 20px; }
+    .mt-24 { margin-top: 24px; }
+    .w-full { width: 100%; }
+
+    /* --- Step 2 screen title alignment --- */
+    #t-screen-2 .t-screen-top,
+    #t-screen-3 .t-screen-top {
+      align-items: flex-start;
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 390px) {
+      .pkg-cards-row { grid-template-columns: 1fr; }
+      .t-confirm-title { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- GLOBAL HEADER -->
+  <div class="order-header" id="order-header">
+    <img src="images/logo.png" alt="مُهيب" class="logo-img">
+    <div id="progress-container">
+      <div id="progress-steps">
+        <div class="progress-step active" id="step-dot-1">
+          <div class="step-dot"></div>
+          <span class="step-label">الباقة</span>
+        </div>
+        <div class="progress-line" id="line-1-2"></div>
+        <div class="progress-step" id="step-dot-2">
+          <div class="step-dot"></div>
+          <span class="step-label">الموعد</span>
+        </div>
+        <div class="progress-line" id="line-2-3"></div>
+        <div class="progress-step" id="step-dot-3">
+          <div class="step-dot"></div>
+          <span class="step-label">التأكيد</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SCREEN 1 — Landing
+       ======================================================== -->
+  <div id="t-screen-1" class="screen active">
+    <div class="landing-main">
+      <div class="landing-image">
+        <img src="images/A.N.ZAHY-28 (1).jpg" alt="تفصيل في منزلك" class="landing-hero-img">
+      </div>
+      <div class="landing-text">
+        <h1 class="landing-headline">
+          <span class="line1">تفصيل في منزلك</span>
+        </h1>
+        <p class="landing-sub">خياط يجي عندك — تختار، تقيس، وتستلم ثوبك</p>
+        <button class="landing-cta" onclick="gtag('event','tailoring_start',{event_category:'tailoring_flow',event_label:'landing_cta'}); showScreen(2)">ابدأ الآن ←</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SCREEN 2 — اختر الباقة
+       ======================================================== -->
+  <div id="t-screen-2" class="screen">
+    <div class="t-screen-body">
+      <div class="t-screen-top">
+        <button class="back-btn" onclick="goBack(1)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+          رجوع
+        </button>
+
+        <div class="t-section-title">اختر الباقة</div>
+        <div class="t-section-sub">اختر الباقة المناسبة لك</div>
+
+        <div class="pkg-cards-row" id="pkg-cards-row">
+
+          <!-- Package 1 -->
+          <div class="pkg-card" data-package="أساسية" data-price="٢٩٩" data-price-num="299" onclick="selectPackage(this)">
+            <div class="pkg-card-ck"></div>
+            <div class="pkg-card-title">الباقة الأساسية</div>
+            <div class="pkg-card-sub">ثوب واحد مفصّل على مقاسك</div>
+            <div class="pkg-card-price">٢٩٩ ريال</div>
+          </div>
+
+          <!-- Package 2 (الأوفر badge) -->
+          <div class="pkg-card" data-package="بريميوم" data-price="٤٩٩" data-price-num="499" onclick="selectPackage(this)">
+            <div class="pkg-card-ck"></div>
+            <span class="pkg-badge">الأوفر</span>
+            <div class="pkg-card-title">الباقة البريميوم</div>
+            <div class="pkg-card-sub">٣ ثياب مفصلة على مقاسك</div>
+            <div class="pkg-card-price">٤٩٩ ريال</div>
+          </div>
+
+        </div>
+
+        <div class="error-msg mt-20" id="error-package">الرجاء اختيار الباقة</div>
+      </div>
+
+      <div class="t-screen-bottom">
+        <button class="btn-next" id="btn-next-1" onclick="validateStep1()">اختر الباقة للمتابعة</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SCREEN 3 — حدد الموعد
+       ======================================================== -->
+  <div id="t-screen-3" class="screen">
+    <div class="t-screen-body">
+      <div class="t-screen-top">
+        <button class="back-btn" onclick="goBack(2)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+          رجوع
+        </button>
+
+        <div class="t-section-title">اختار الوقت لزيارة الخياط</div>
+        <div class="t-section-sub">اختر اليوم والوقت المناسبين لك</div>
+
+        <span class="section-micro-label w-full">اليوم</span>
+        <div class="day-chips-scroll" id="day-chips-scroll"></div>
+
+        <div class="error-msg" id="error-day" style="margin-bottom:12px;">الرجاء اختيار اليوم</div>
+
+        <span class="section-micro-label w-full mt-20">الوقت</span>
+        <span class="section-micro-label w-full" style="font-size:10px;color:#AAAAAA;margin-bottom:6px;">الصباح</span>
+        <div class="time-grid" id="time-grid-morning"></div>
+        <span class="section-micro-label w-full" style="font-size:10px;color:#AAAAAA;margin-top:12px;margin-bottom:6px;">المساء</span>
+        <div class="time-grid" id="time-grid-evening"></div>
+
+        <div class="error-msg" id="error-time">الرجاء اختيار الوقت</div>
+      </div>
+
+      <div class="t-screen-bottom">
+        <button class="btn-next" id="btn-next-2" onclick="validateStep2()">التالي</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SCREEN 4 — تأكيد الطلب (inputs + summary)
+       ======================================================== -->
+  <div id="t-screen-4" class="screen">
+    <div class="t-screen-body">
+      <div class="t-screen-top" style="align-items:flex-start;">
+        <button class="back-btn" onclick="goBack(3)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+          رجوع
+        </button>
+
+        <div class="section-block w-full">
+          <div class="input-row">
+            <label for="t-input-name">الاسم</label>
+            <div class="line-input-wrap">
+              <input type="text" id="t-input-name" placeholder="اسمك" />
+              <div class="line-border"><div class="line-border-fill"></div></div>
+            </div>
+          </div>
+          <div class="error-msg" id="error-name">الرجاء إدخال الاسم</div>
+
+          <div class="input-row">
+            <label for="t-input-phone">رقم الجوال</label>
+            <div class="line-input-wrap">
+              <input type="tel" inputmode="numeric" pattern="[0-9]*" id="t-input-phone" placeholder="05XXXXXXXX" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+              <div class="line-border"><div class="line-border-fill"></div></div>
+            </div>
+          </div>
+          <div class="error-msg" id="error-phone">الرجاء إدخال رقم جوال صحيح (10 أرقام)</div>
+
+          <div class="input-row">
+            <label for="t-input-city">المدينة</label>
+            <div class="line-input-wrap">
+              <input type="text" id="t-input-city" value="الرياض" readonly />
+              <div class="line-border"><div class="line-border-fill"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary card -->
+        <div class="t-summary-card" id="t-summary-card">
+          <div class="t-sum-row">
+            <span class="t-sum-l">الباقة</span>
+            <span class="t-sum-v" id="sum-package">—</span>
+          </div>
+          <div class="t-sum-row">
+            <span class="t-sum-l">الموعد</span>
+            <span class="t-sum-v" id="sum-datetime">—</span>
+          </div>
+          <div class="t-sum-row">
+            <span class="t-sum-l">المدينة</span>
+            <span class="t-sum-v" id="sum-city">الرياض</span>
+          </div>
+          <div class="t-sum-row t-sum-price-row">
+            <span class="t-sum-l">السعر</span>
+            <span class="t-sum-v" id="sum-price">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="t-screen-bottom">
+        <button class="btn-submit-tailoring" onclick="handleSubmit()">تأكيد الطلب</button>
+        <p class="submit-note">سنتواصل معك عبر واتساب لتأكيد الموعد والدفع</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SCREEN 5 — Confirmation
+       ======================================================== -->
+  <div id="t-screen-5" class="screen">
+    <div class="confirm-wrap">
+
+      <!-- Animated checkmark -->
+      <svg class="checkmark-svg" viewBox="0 0 80 80" width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="40" cy="40" r="36" fill="none" stroke="#0A0A0A" stroke-width="3" stroke-dasharray="226" stroke-dashoffset="226" class="check-circle"/>
+        <polyline points="24,40 35,52 56,28" fill="none" stroke="#0A0A0A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="50" stroke-dashoffset="50" class="check-tick"/>
+      </svg>
+
+      <div class="t-confirm-title">تم استلام طلبك!</div>
+      <p class="t-confirm-sub">سيتواصل معك فريقنا عبر واتساب لتأكيد الموعد وتفاصيل الدفع</p>
+
+      <div class="confirm-line"></div>
+
+      <div class="ref-label">رقم الطلب</div>
+      <div class="ref-num" id="t-order-ref">——</div>
+
+      <a class="btn-wa" id="t-wa-btn" href="https://wa.me/966545244222" target="_blank">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        <span>تواصل معنا على واتساب</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       INLINE SCRIPT
+       ======================================================== -->
+  <script type="module">
+
+    /* ---- Arabic digit conversion ---- */
+    function toAr(n) {
+      return String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+    }
+
+    /* ---- State ---- */
+    const tailoringState = {
+      package: null,
+      packagePrice: null,
+      packagePriceNum: null,
+      day: null,
+      time: null,
+      name: null,
+      phone: null,
+      city: 'الرياض'
+    };
+
+    let currentScreen = 1;
+
+    /* ---- Screen transition ---- */
+    function showScreen(n) {
+      const current = document.getElementById('t-screen-' + currentScreen);
+      const next    = document.getElementById('t-screen-' + n);
+      if (!next) return;
+
+      /* Fade out current */
+      if (current) {
+        current.style.animation = 'fadeOut 0.25s ease forwards';
+        setTimeout(() => {
+          current.classList.remove('active');
+          current.style.animation = '';
+
+          /* Fade in next */
+          next.classList.add('active');
+          next.style.animation = 'screenIn 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+
+          currentScreen = n;
+          updateProgress(n);
+          window.scrollTo(0, 0);
+        }, 250);
+      } else {
+        next.classList.add('active');
+        currentScreen = n;
+        updateProgress(n);
+        window.scrollTo(0, 0);
+      }
+    }
+
+    /* ---- Progress bar ---- */
+    function updateProgress(screenNum) {
+      const header = document.getElementById('order-header');
+
+      /* Hide progress on landing and confirmation */
+      if (screenNum === 1 || screenNum === 5) {
+        header.classList.add('progress-hidden');
+      } else {
+        header.classList.remove('progress-hidden');
+      }
+
+      /* Map screen → step dot */
+      /* screen 2 = step 1, screen 3 = step 2, screen 4 = step 3 */
+      const stepMap = { 2: 1, 3: 2, 4: 3 };
+      const activeStep = stepMap[screenNum] || null;
+
+      const dots  = [1, 2, 3];
+      const lines = ['line-1-2', 'line-2-3'];
+
+      dots.forEach(d => {
+        const el = document.getElementById('step-dot-' + d);
+        el.classList.remove('active', 'completed', 'clickable');
+
+        if (d < activeStep) {
+          el.classList.add('completed', 'clickable');
+        } else if (d === activeStep) {
+          el.classList.add('active');
+        }
+      });
+
+      /* Fill lines */
+      lines.forEach((id, idx) => {
+        const lineEl = document.getElementById(id);
+        /* line between step idx+1 and idx+2 fills when step idx+2 is active or past */
+        lineEl.classList.toggle('filled', activeStep > idx + 1);
+      });
+
+      /* Clickable completed dots — back navigation */
+      if (activeStep > 1) {
+        const dot1 = document.getElementById('step-dot-1');
+        dot1.onclick = () => goBack(2);
+      }
+      if (activeStep > 2) {
+        const dot2 = document.getElementById('step-dot-2');
+        dot2.onclick = () => goBack(3);
+      }
+
+      /* Trigger btn update for step screens */
+      if (screenNum === 2) updateBtn(1);
+      if (screenNum === 3) updateBtn(2);
+      if (screenNum === 4) updateBtn(3);
+    }
+
+    /* ---- Button enable/disable ---- */
+    function updateBtn(step) {
+      if (step === 1) {
+        const btn = document.getElementById('btn-next-1');
+        const ready = !!tailoringState.package;
+        btn.classList.toggle('ready', ready);
+        btn.textContent = ready
+          ? ('التالي — ' + tailoringState.package)
+          : 'اختر الباقة للمتابعة';
+      }
+      if (step === 2) {
+        const btn = document.getElementById('btn-next-2');
+        const ready = !!(tailoringState.day && tailoringState.time);
+        btn.classList.toggle('ready', ready);
+        btn.textContent = ready ? 'التالي' : 'اختر اليوم والوقت';
+      }
+      if (step === 3) {
+        /* step 3 has a submit button — always styled, validation on click */
+      }
+    }
+
+    /* ---- Build package cards (event delegation via onclick already in HTML) ---- */
+    function selectPackage(el) {
+      document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      tailoringState.package    = el.dataset.package;
+      tailoringState.packagePrice    = el.dataset.price;
+      tailoringState.packagePriceNum = parseInt(el.dataset.priceNum, 10);
+      hideError('error-package');
+      updateBtn(1);
+      gtag('event', 'tailoring_package_selected', { event_category: 'tailoring_flow', event_label: tailoringState.package });
+    }
+
+    /* ---- Build day chips ---- */
+    function buildDayChips() {
+      const container = document.getElementById('day-chips-scroll');
+      container.innerHTML = '';
+      const dayNames = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+      const monthNames = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
+      const today = new Date();
+      for (let i = 0; i < 6; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + i);
+
+        const dayName  = dayNames[d.getDay()];
+        const dateNum  = toAr(d.getDate());
+        const fullLabel = dayName + ' ' + dateNum + ' ' + monthNames[d.getMonth()];
+
+        const chip = document.createElement('div');
+        chip.className = 'day-chip';
+        chip.dataset.day = fullLabel;
+        chip.innerHTML = `
+          <span class="day-chip-name">${dayName}</span>
+          <span class="day-chip-date">${dateNum}</span>
+        `;
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('.day-chip').forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+          tailoringState.day = fullLabel;
+          hideError('error-day');
+          updateBtn(2);
+          gtag('event', 'tailoring_day_selected', { event_category: 'tailoring_flow', event_label: fullLabel });
+        });
+        container.appendChild(chip);
+      }
+    }
+
+    /* ---- Build time slots ---- */
+    function buildTimeSlots() {
+      const groups = [
+        { id: 'time-grid-morning', slots: ['٩:٠٠ — ١١:٠٠', '١١:٠٠ — ١:٠٠'] },
+        { id: 'time-grid-evening', slots: ['٢:٠٠ — ٤:٠٠',  '٤:٠٠ — ٦:٠٠']  },
+      ];
+
+      groups.forEach(group => {
+        const grid = document.getElementById(group.id);
+        grid.innerHTML = '';
+        group.slots.forEach(slot => {
+          const card = document.createElement('div');
+          card.className = 'time-card';
+          card.innerHTML = `<span class="time-card-label">${slot}</span>`;
+          card.addEventListener('click', () => {
+            document.querySelectorAll('.time-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            tailoringState.time = slot;
+            hideError('error-time');
+            updateBtn(2);
+            gtag('event', 'tailoring_time_selected', { event_category: 'tailoring_flow', event_label: slot });
+          });
+          grid.appendChild(card);
+        });
+      });
+    }
+
+    /* ---- Update summary on screen 4 ---- */
+    function updateSummary() {
+      const pkg  = tailoringState.package || '—';
+      const day  = tailoringState.day     || '—';
+      const time = tailoringState.time    || '—';
+      const price = tailoringState.packagePrice
+        ? (tailoringState.packagePrice + ' ريال')
+        : '—';
+
+      document.getElementById('sum-package').textContent  = pkg;
+      document.getElementById('sum-datetime').textContent = day + ' — ' + time;
+      document.getElementById('sum-city').textContent     = tailoringState.city;
+      document.getElementById('sum-price').textContent    = price;
+    }
+
+    /* ---- Validation ---- */
+    function validateStep1() {
+      if (!tailoringState.package) {
+        showError('error-package');
+        return;
+      }
+      hideError('error-package');
+      gtag('event', 'tailoring_package_confirmed', { event_category: 'tailoring_flow', event_label: tailoringState.package });
+      showScreen(3);
+    }
+
+    function validateStep2() {
+      let valid = true;
+      if (!tailoringState.day) { showError('error-day'); valid = false; }
+      else hideError('error-day');
+      if (!tailoringState.time) { showError('error-time'); valid = false; }
+      else hideError('error-time');
+      if (!valid) return;
+      gtag('event', 'tailoring_schedule_confirmed', { event_category: 'tailoring_flow', event_label: (tailoringState.day || '') + ' ' + (tailoringState.time || '') });
+      showScreen(4);
+      updateSummary();
+    }
+
+    const _supabase = supabase.createClient(
+      'https://mwcmfzzukqiutztkgagg.supabase.co',
+      'sb_publishable_8zuxMDAcYGIozcmi8CS8sg_ZnjLmb6V'
+    );
+
+    function handleSubmit() {
+      const nameEl  = document.getElementById('t-input-name');
+      const phoneEl = document.getElementById('t-input-phone');
+      const name    = nameEl.value.trim();
+      const phone   = phoneEl.value.trim();
+      let valid = true;
+
+      if (!name) { showError('error-name'); valid = false; } else hideError('error-name');
+      if (!phone || phone.length < 10 || !phone.startsWith('0')) {
+        showError('error-phone'); valid = false;
+      } else hideError('error-phone');
+
+      if (!valid) return;
+
+      tailoringState.name  = name;
+      tailoringState.phone = phone;
+
+      /* Generate ref number */
+      const ref = Math.floor(100000 + Math.random() * 900000);
+
+      /* Save to Supabase (non-blocking) */
+      _supabase.from('tailoring_orders').insert([{
+        order_number: String(ref),
+        name:         name,
+        phone:        phone,
+        city:         'الرياض',
+        package:      tailoringState.package,
+        price:        tailoringState.packagePriceNum,
+        visit_day:    tailoringState.day,
+        visit_time:   tailoringState.time,
+      }]).then(({ error }) => {
+        if (error) console.error('Supabase insert error:', error);
+        else console.log('Tailoring order saved');
+      });
+
+      /* Animate ref counter on screen 5 */
+      showScreen(5);
+
+      const refEl = document.getElementById('t-order-ref');
+      animateCounter(refEl, ref, 900);
+
+      /* Append phone to WhatsApp link */
+      gtag('event', 'tailoring_order_submitted', { event_category: 'tailoring_flow', event_label: tailoringState.package });
+
+      const waBtn = document.getElementById('t-wa-btn');
+      const msg = encodeURIComponent(`ياهلا، رقم طلبي ${ref}`);
+      waBtn.href = 'https://wa.me/966545244222?text=' + msg;
+      waBtn.addEventListener('click', () => {
+        gtag('event', 'tailoring_whatsapp_clicked', { event_category: 'tailoring_flow', event_label: 'confirmation' });
+      });
+    }
+
+    /* ---- Animated counter ---- */
+    function animateCounter(el, target, duration) {
+      const start = Date.now();
+      function step() {
+        const elapsed = Date.now() - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(eased * target);
+        el.textContent = toAr(current);
+        if (progress < 1) requestAnimationFrame(step);
+        else el.textContent = toAr(target);
+      }
+      requestAnimationFrame(step);
+    }
+
+    /* ---- Go back ---- */
+    function goBack(toScreen) {
+      showScreen(toScreen);
+    }
+
+    /* ---- Error helpers ---- */
+    function showError(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('show');
+    }
+    function hideError(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('show');
+    }
+
+    /* ---- Init ---- */
+    function init() {
+      buildDayChips();
+      buildTimeSlots();
+      updateProgress(1);
+    }
+
+    init();
+
+    /* ---- Expose to global for inline onclick handlers ---- */
+    window.showScreen     = showScreen;
+    window.goBack         = goBack;
+    window.selectPackage  = selectPackage;
+    window.validateStep1  = validateStep1;
+    window.validateStep2  = validateStep2;
+    window.handleSubmit   = handleSubmit;
+
+  </script>
+</body>
+</html>
