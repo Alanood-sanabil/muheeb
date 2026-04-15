@@ -145,14 +145,13 @@
       margin: 8px 0 0;
     }
 
-    /* Zone 2: Steps — centered */
+    /* Zone 2: Steps */
     #screen-1 .landing-steps-zone {
-      flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       gap: 36px;
-      padding: 16px 0 32px;
+      padding: 16px 0 0;
+      margin-top: 32px;
     }
 
     #screen-1 .landing-step-row {
@@ -189,23 +188,6 @@
       font-weight: 400;
       font-size: 1rem;
       color: rgba(255,255,255,0.7);
-    }
-
-    /* Zone 3: Note + CTA pinned to bottom */
-    #screen-1 .landing-footer-zone {
-      padding-bottom: max(32px, env(safe-area-inset-bottom, 32px));
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    #screen-1 .landing-note {
-      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
-      font-weight: 300;
-      font-size: 0.72rem;
-      color: rgba(255,255,255,0.5);
-      text-align: center;
-      margin: 0;
     }
 
     #screen-1 .landing-cta-btn {
@@ -318,11 +300,7 @@
         </div>
       </div>
 
-      <!-- Zone 3: Note + CTA pinned to bottom -->
-      <div class="landing-footer-zone">
-        <p class="landing-note">تقدر تلغي أو تعدل طلبك في أي وقت</p>
-        <button class="landing-cta-btn" id="order-landing-cta">ابدأ طلبك ←</button>
-      </div>
+      <button class="landing-cta-btn" id="order-landing-cta" style="margin-top:32px;">ابدأ طلبك ←</button>
 
     </div>
   </div>
