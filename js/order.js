@@ -226,9 +226,9 @@ function buildCollarCards() {
 function buildShapeCards() {
   const c = document.getElementById('shape-cards');
   const svgs = {
-    slim:   '<svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg"><polygon points="10,20 90,20 60,85 40,85" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>',
-    normal: '<svg viewBox="0 0 60 60" width="44" height="44"><rect x="14" y="12" width="32" height="36" fill="none" stroke="#0A0A0A" stroke-width="1.5"/></svg>',
-    full:   '<svg viewBox="0 0 60 60" width="44" height="44"><polygon points="16,12 44,12 52,48 8,48" fill="none" stroke="#0A0A0A" stroke-width="1.5"/></svg>',
+    slim:   '<svg viewBox="0 0 100 120" width="60" height="60" xmlns="http://www.w3.org/2000/svg"><polygon points="5,15 95,15 65,105 35,105" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>',
+    normal: '<svg viewBox="0 0 100 120" width="60" height="60" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="15" width="60" height="90" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>',
+    full:   '<svg viewBox="0 0 100 120" width="60" height="60" xmlns="http://www.w3.org/2000/svg"><polygon points="30,15 70,15 95,105 5,105" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>',
   };
   CONTENT.order.bodyShapes.forEach(shape => {
     const d = document.createElement('div');
