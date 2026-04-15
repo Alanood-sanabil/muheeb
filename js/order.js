@@ -39,24 +39,33 @@ document.addEventListener('DOMContentLoaded', function() {
   const fitDescEl = document.getElementById('fit-desc');
   if (fitDescEl) { fitDescEl.textContent = ''; fitDescEl.style.opacity = '0'; }
 
-  document.getElementById('order-landing-cta').onclick = function() {
-    gtag('event', 'start_order', { event_category: 'funnel' });
-    const loader = document.getElementById('loader-screen');
-    const bar = document.getElementById('loader-bar');
-    loader.classList.add('visible');
-    loader.classList.remove('hide');
-    bar.style.animation = 'none';
-    void bar.offsetWidth;
-    bar.style.animation = '';
-    setTimeout(() => {
-      document.getElementById('screen-1').classList.remove('active');
-      loader.classList.add('hide');
+  const ctaBtn = document.getElementById('order-landing-cta');
+  if (!ctaBtn) {
+    console.error('[Muheeb] order-landing-cta button not found in DOM');
+  } else {
+    console.log('[Muheeb] CTA button found:', ctaBtn);
+    ctaBtn.onclick = function() {
+      console.log('[Muheeb] CTA clicked — starting loader');
+      gtag('event', 'start_order', { event_category: 'funnel' });
+      const loader = document.getElementById('loader-screen');
+      const bar = document.getElementById('loader-bar');
+      loader.classList.add('visible');
+      loader.classList.remove('hide');
+      bar.style.animation = 'none';
+      void bar.offsetWidth;
+      bar.style.animation = '';
       setTimeout(() => {
-        loader.classList.remove('visible', 'hide');
-        showScreen(2);
-      }, 400);
-    }, 950);
-  };
+        console.log('[Muheeb] Loader done — switching to screen-2');
+        document.getElementById('screen-1').classList.remove('active');
+        loader.classList.add('hide');
+        setTimeout(() => {
+          loader.classList.remove('visible', 'hide');
+          showScreen(2);
+          console.log('[Muheeb] showScreen(2) called, currentScreen =', currentScreen);
+        }, 400);
+      }, 950);
+    };
+  }
 });
 
 // ---- POPULATE ----
@@ -64,45 +73,53 @@ function populate() {
   const O = CONTENT.order;
   const S = CONTENT.site;
 
-  // Landing
-  document.getElementById('order-sub').textContent = O.landingSub;
-  document.getElementById('order-landing-cta').textContent = O.landingCta;
+  function setText(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  }
+  function setPlaceholder(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.placeholder = val;
+  }
 
+  // Landing
+  setText('order-sub', O.landingSub);
+  setText('order-landing-cta', O.landingCta);
 
   // Slider labels
-  document.getElementById('s-height-label').textContent = O.heightLabel;
-  document.getElementById('s-weight-label').textContent = O.weightLabel;
-  document.getElementById('s-shoe-label').textContent = O.shoeSizeLabel;
-  document.getElementById('s-height-val').textContent = toAr(170) + ' ' + O.heightUnit;
-  document.getElementById('s-weight-val').textContent = toAr(80) + ' ' + O.weightUnit;
-  document.getElementById('s-shoe-val').textContent = toAr(42) + ' ' + O.shoeSizeUnit;
+  setText('s-height-label', O.heightLabel);
+  setText('s-weight-label', O.weightLabel);
+  setText('s-shoe-label', O.shoeSizeLabel);
+  setText('s-height-val', toAr(170) + ' ' + O.heightUnit);
+  setText('s-weight-val', toAr(80) + ' ' + O.weightUnit);
+  setText('s-shoe-val', toAr(42) + ' ' + O.shoeSizeUnit);
 
   // Contact
-  document.getElementById('name-label').textContent = O.nameLabel;
-  document.getElementById('input-name').placeholder = O.namePlaceholder;
-  document.getElementById('phone-label').textContent = O.phoneLabel;
-  document.getElementById('input-phone').placeholder = O.phonePlaceholder;
+  setText('name-label', O.nameLabel);
+  setPlaceholder('input-name', O.namePlaceholder);
+  setText('phone-label', O.phoneLabel);
+  setPlaceholder('input-phone', O.phonePlaceholder);
 
   // Summary
-  document.getElementById('summary-title').textContent = O.summaryTitle;
-  document.getElementById('sum-grp-thoob').textContent = O.summaryGroups.thoob;
-  document.getElementById('sum-grp-meas').textContent = O.summaryGroups.measurements;
-  document.getElementById('sum-grp-body').textContent = O.summaryGroups.body;
-  document.getElementById('sum-color-label').textContent = O.summaryLabels.color;
-  document.getElementById('sum-collar-label').textContent = O.summaryLabels.collar;
-  document.getElementById('sum-height-label').textContent = O.summaryLabels.height;
-  document.getElementById('sum-weight-label').textContent = O.summaryLabels.weight;
-  document.getElementById('sum-shoe-label').textContent = O.summaryLabels.shoeSize;
-  document.getElementById('sum-body-label').textContent = O.summaryLabels.bodyType;
+  setText('summary-title', O.summaryTitle);
+  setText('sum-grp-thoob', O.summaryGroups.thoob);
+  setText('sum-grp-meas', O.summaryGroups.measurements);
+  setText('sum-grp-body', O.summaryGroups.body);
+  setText('sum-color-label', O.summaryLabels.color);
+  setText('sum-collar-label', O.summaryLabels.collar);
+  setText('sum-height-label', O.summaryLabels.height);
+  setText('sum-weight-label', O.summaryLabels.weight);
+  setText('sum-shoe-label', O.summaryLabels.shoeSize);
+  setText('sum-body-label', O.summaryLabels.bodyType);
 
   // Edit links
   document.querySelectorAll('.sum-edit').forEach(a => { a.textContent = O.editLabel; });
 
   // Confirmation
-  document.getElementById('confirm-title').textContent = O.confirmTitle;
-  document.getElementById('confirm-sub').textContent = O.confirmSub;
-  document.getElementById('confirm-ref-label').textContent = O.confirmRefLabel;
-  document.getElementById('confirm-wa-text').textContent = O.confirmWhatsapp;
+  setText('confirm-title', O.confirmTitle);
+  setText('confirm-sub', O.confirmSub);
+  setText('confirm-ref-label', O.confirmRefLabel);
+  setText('confirm-wa-text', O.confirmWhatsapp);
 }
 
 // ---- BUILD CARDS ----
@@ -329,16 +346,9 @@ function showScreen(n) {
     currentScreen = n;
     updateProgress(n);
 
-    const stickyFooter = document.getElementById('sticky-footer');
-    if (stickyFooter) stickyFooter.classList.toggle('visible', n === 5);
-
-    if (n === 5) updateSummary();
-    if (n === 5) updateFooterPrice();
-
     if (n === 2) updateBtn(1);
     if (n === 4) updateBtn(3);
     if (n === '4b') updateBtn('4b');
-    if (n === 5) updateBtn(5);
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -377,13 +387,13 @@ function updateProgress(screenNumber) {
   container.style.opacity = '1';
   container.style.pointerEvents = '';
 
-  // Map screen to activeStep (1-5)
-  // screen 2=step1, 3=step2, 4=step3, '4b'=step4, 5=step5
-  const stepMap = { 2: 1, 3: 2, 4: 3, '4b': 4, 5: 5 };
-  const screenTargets = [null, 2, 3, 4, '4b', 5]; // index = step number
+  // Map screen to activeStep (1-4)
+  // screen 2=step1, 3=step2, 4=step3, '4b'=step4
+  const stepMap = { 2: 1, 3: 2, 4: 3, '4b': 4 };
+  const screenTargets = [null, 2, 3, 4, '4b']; // index = step number
   const activeStep = stepMap[screenNumber] || 1;
 
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 4; i++) {
     const dot = document.getElementById('step-dot-' + i);
     if (!dot) continue;
 
@@ -405,7 +415,7 @@ function updateProgress(screenNumber) {
     }
   }
 
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= 3; i++) {
     const line = document.getElementById('line-' + i + '-' + (i + 1));
     if (!line) continue;
     if (i < activeStep) line.classList.add('filled');
@@ -479,10 +489,36 @@ function validateStep4b() {
   if (txt) txt.textContent = 'جاري تجهيز مقاس ثوبك...';
 
   setTimeout(() => {
-    showScreen(5);
+    openOrderModal();
   }, 4000);
 }
 window.validateStep4b = validateStep4b;
+
+function openOrderModal() {
+  const O = CONTENT.order;
+  const S = CONTENT.site;
+  const sumColor = document.getElementById('sum-color');
+  const sumCollar = document.getElementById('sum-collar');
+  const sumMeas = document.getElementById('modal-sum-meas');
+  const sumPrice = document.getElementById('modal-sum-price');
+  if (sumColor) sumColor.textContent = orderState.color || '—';
+  if (sumCollar) sumCollar.textContent = orderState.collar || '—';
+  if (sumMeas) sumMeas.textContent = toAr(orderState.height) + ' سم — ' + toAr(orderState.weight) + ' كيلو';
+  if (sumPrice) sumPrice.textContent = toAr(S.basePrice) + ' ' + O.priceUnit;
+  const overlay = document.getElementById('order-modal-overlay');
+  if (overlay) {
+    overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+}
+window.openOrderModal = openOrderModal;
+
+function closeOrderModal() {
+  const overlay = document.getElementById('order-modal-overlay');
+  if (overlay) overlay.style.display = 'none';
+  document.body.style.overflow = '';
+}
+window.closeOrderModal = closeOrderModal;
 
 function validateStep4() {
   clearErr();
@@ -609,12 +645,27 @@ function closeTooltip() {
 }
 
 // ---- EXPOSE FUNCTIONS TO WINDOW (for inline onclick handlers in module mode) ----
+function handleSubmit() {
+  clearErr();
+  let ok = true;
+  const nameEl = document.getElementById('input-name');
+  const phoneEl = document.getElementById('input-phone');
+  if (!nameEl || !nameEl.value.trim()) { showErr('error-name'); ok = false; }
+  if (!phoneEl || !phoneEl.value.trim()) { showErr('error-phone'); ok = false; }
+  if (ok) {
+    orderState.name = nameEl.value.trim();
+    orderState.phone = phoneEl.value.trim();
+    closeOrderModal();
+    submit();
+  }
+}
+
 window.showScreen = showScreen;
 window.validateStep1 = validateStep1;
 window.validateStep2 = validateStep2;
 window.validateStep3 = validateStep3;
 window.validateStep4 = validateStep4;
-window.handleSubmit = validateStep4;
+window.handleSubmit = handleSubmit;
 window.goToStep = goToStep;
 window.showTooltip = showTooltip;
 window.closeTooltip = closeTooltip;

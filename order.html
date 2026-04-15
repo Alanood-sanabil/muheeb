@@ -28,6 +28,28 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/order.css" />
   <style>
+    @font-face {
+      font-family: 'YearOfTheCamel';
+      src: url('fonts/TheYearofTheCamel-Bold.otf') format('opentype');
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: 'YearOfTheCamel';
+      src: url('fonts/TheYearofTheCamel-Regular.otf') format('opentype');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'YearOfTheCamel';
+      src: url('fonts/TheYearofTheCamel-Medium.otf') format('opentype');
+      font-weight: 500;
+    }
+    @font-face {
+      font-family: 'YearOfTheCamel';
+      src: url('fonts/TheYearofTheCamel-Light.otf') format('opentype');
+      font-weight: 300;
+    }
+  </style>
+  <style>
     /* === ORDER LANDING REDESIGN === */
 
     /* Hide white fixed header on landing screen */
@@ -103,7 +125,7 @@
     }
 
     #screen-1 .landing-big-title {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 700;
       font-size: 2rem;
       color: #FFFFFF;
@@ -114,7 +136,7 @@
     }
 
     #screen-1 .landing-sub-title {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 300;
       font-size: 1rem;
       color: #FFFFFF;
@@ -156,14 +178,14 @@
     }
 
     #screen-1 .landing-step-bold {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 700;
       font-size: 1.3rem;
       color: #FFFFFF;
     }
 
     #screen-1 .landing-step-muted {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 400;
       font-size: 1rem;
       color: rgba(255,255,255,0.7);
@@ -178,7 +200,7 @@
     }
 
     #screen-1 .landing-note {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 300;
       font-size: 0.72rem;
       color: rgba(255,255,255,0.5);
@@ -191,7 +213,7 @@
       height: 54px;
       background: #FFFFFF;
       color: #0A0A0A;
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 700;
       font-size: 1rem;
       border: none;
@@ -200,6 +222,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
     }
   </style>
 </head>
@@ -232,11 +259,6 @@
         <div class="progress-step" id="step-dot-4">
           <div class="step-dot"></div>
           <span class="step-label">المقاس المفضل</span>
-        </div>
-        <div class="progress-line" id="line-4-5"></div>
-        <div class="progress-step" id="step-dot-5">
-          <div class="step-dot"></div>
-          <span class="step-label">تأكيد الطلب</span>
         </div>
       </div>
     </div>
@@ -431,65 +453,64 @@
   </div>
 
   <!-- SCREEN 5: Step 5 — Contact + Summary -->
-  <div id="screen-5" class="screen">
-    <div class="step-body">
-      <div class="step-top">
-        <div class="section-block">
-          <div class="input-row">
-            <label id="name-label"></label>
-            <div class="line-input-wrap">
-              <input type="text" id="input-name" placeholder="" />
-              <div class="line-border"><div class="line-border-fill"></div></div>
-            </div>
-          </div>
-          <div class="error-msg" id="error-name">الرجاء إدخال الاسم</div>
-          <div class="input-row">
-            <label id="phone-label"></label>
-            <div class="line-input-wrap">
-              <input type="tel" inputmode="numeric" pattern="[0-9]*" id="input-phone" placeholder="05XXXXXXXX" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
-              <div class="line-border"><div class="line-border-fill"></div></div>
-            </div>
-          </div>
-          <div class="error-msg" id="error-phone">الرجاء إدخال رقم الجوال</div>
-          <div class="city-display">
-            <span class="field-label">المدينة</span>
-            <span class="city-value">الرياض</span>
+  <!-- ORDER MODAL -->
+  <div id="order-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:flex-end;justify-content:center;">
+    <div id="order-modal" style="background:#FFFFFF;border-radius:20px 20px 0 0;padding:28px 24px 36px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;direction:rtl;position:relative;animation:slideUp 0.3s cubic-bezier(0.4,0,0.2,1) forwards;">
+      <button onclick="closeOrderModal()" style="position:absolute;top:20px;left:20px;background:#F5F5F5;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;color:#767676;line-height:1;">✕</button>
+
+      <p style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-weight:700;font-size:1.2rem;color:#0A0A0A;text-align:right;margin:0 0 4px;">أكمل طلبك</p>
+      <p style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-weight:400;font-size:0.85rem;color:#999999;text-align:right;margin:0 0 20px;">أدخل بياناتك وحنا نتواصل معك</p>
+
+      <div class="section-block w-full">
+        <div class="input-row">
+          <label id="name-label" for="input-name"></label>
+          <div class="line-input-wrap">
+            <input type="text" id="input-name" placeholder="" />
+            <div class="line-border"><div class="line-border-fill"></div></div>
           </div>
         </div>
+        <div class="error-msg" id="error-name">الرجاء إدخال الاسم</div>
 
-        <!-- Grouped summary -->
-        <div class="summary-wrap">
-          <div class="sum-title" id="summary-title"></div>
-
-          <div class="sum-group">
-            <div class="sum-group-head">
-              <span id="sum-grp-thoob"></span>
-              <a class="sum-edit" onclick="goToStep(1)"></a>
-            </div>
-            <div class="sum-row"><span class="sum-l" id="sum-color-label"></span><span class="sum-v" id="sum-color">—</span></div>
-            <div class="sum-row"><span class="sum-l" id="sum-collar-label"></span><span class="sum-v" id="sum-collar">—</span></div>
+        <div class="input-row">
+          <label id="phone-label" for="input-phone"></label>
+          <div class="line-input-wrap">
+            <input type="tel" inputmode="numeric" pattern="[0-9]*" id="input-phone" placeholder="05XXXXXXXX" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+            <div class="line-border"><div class="line-border-fill"></div></div>
           </div>
+        </div>
+        <div class="error-msg" id="error-phone">الرجاء إدخال رقم الجوال</div>
 
-          <div class="sum-group">
-            <div class="sum-group-head">
-              <span id="sum-grp-meas"></span>
-              <a class="sum-edit" onclick="goToStep(2)"></a>
-            </div>
-            <div class="sum-row"><span class="sum-l" id="sum-height-label"></span><span class="sum-v" id="sum-height">—</span></div>
-            <div class="sum-row"><span class="sum-l" id="sum-weight-label"></span><span class="sum-v" id="sum-weight">—</span></div>
-            <div class="sum-row"><span class="sum-l" id="sum-shoe-label"></span><span class="sum-v" id="sum-shoe">—</span></div>
+        <div class="input-row">
+          <label style="display:block;font-weight:600;font-size:.78rem;margin-bottom:4px;color:#0A0A0A;">المدينة</label>
+          <div class="line-input-wrap">
+            <input type="text" value="الرياض" readonly />
+            <div class="line-border"><div class="line-border-fill"></div></div>
           </div>
-
-          <div class="sum-group">
-            <div class="sum-group-head">
-              <span id="sum-grp-body"></span>
-              <a class="sum-edit" onclick="goToStep(3)"></a>
-            </div>
-            <div class="sum-row"><span class="sum-l" id="sum-body-label"></span><span class="sum-v" id="sum-body">—</span></div>
-          </div>
-
         </div>
       </div>
+
+      <!-- Summary -->
+      <div style="background:#F5F5F5;border-radius:10px;padding:12px 16px;margin-bottom:20px;direction:rtl;">
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E5E5E5;">
+          <span style="font-size:0.82rem;color:#767676;">اللون</span>
+          <span style="font-size:0.85rem;font-weight:700;" id="sum-color">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E5E5E5;">
+          <span style="font-size:0.82rem;color:#767676;">الياقة</span>
+          <span style="font-size:0.85rem;font-weight:700;" id="sum-collar">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E5E5E5;">
+          <span style="font-size:0.82rem;color:#767676;">المقاسات</span>
+          <span style="font-size:0.82rem;font-weight:700;" id="modal-sum-meas">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0 0;">
+          <span style="font-size:0.95rem;font-weight:700;color:#0A0A0A;">السعر التقديري</span>
+          <span style="font-size:1rem;font-weight:700;" id="modal-sum-price">—</span>
+        </div>
+      </div>
+
+      <button onclick="handleSubmit()" style="width:100%;height:52px;background:#0A0A0A;color:#FFFFFF;border:none;border-radius:8px;font-family:'YearOfTheCamel','Cairo',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .18s;">تأكيد الطلب</button>
+      <p style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-size:0.8rem;font-weight:700;color:#0A0A0A;text-align:center;margin-top:10px;">سنشاركك رابط الدفع بعد تأكيد الطلب</p>
     </div>
   </div>
 
