@@ -558,21 +558,23 @@ async function submit() {
       'https://mwcmfzzukqiutztkgagg.supabase.co',
       'sb_publishable_8zuxMDAcYGIozcmi8CS8sg_ZnjLmb6V'
     );
+    const payload = {
+      order_number: String(ref),
+      name: orderState.name,
+      phone: orderState.phone,
+      city: orderState.city,
+      color: orderState.color,
+      collar: orderState.collar,
+      height: String(orderState.height),
+      weight: String(orderState.weight),
+      shoe_size: String(orderState.shoeSize),
+      body_type: orderState.bodyShape,
+      fit_preference: orderState.fitPreference,
+    };
+    console.log('[Muheeb] Supabase insert payload:', payload);
     const { error } = await supabase
       .from('orders')
-      .insert([{
-        order_number: String(ref),
-        name: orderState.name,
-        phone: orderState.phone,
-        city: orderState.city,
-        color: orderState.color,
-        collar: orderState.collar,
-        height: String(orderState.height),
-        weight: String(orderState.weight),
-        shoe_size: String(orderState.shoeSize),
-        body_type: orderState.bodyShape,
-        fit_preference: orderState.fitPreference,
-      }]);
+      .insert([payload]);
     if (error) console.error('Error saving order:', error);
     else { console.log('Order saved successfully'); gtag('event', 'order_submitted', { event_category: 'conversion' }); }
   } catch (e) {
