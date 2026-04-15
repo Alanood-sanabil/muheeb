@@ -226,7 +226,7 @@ a { text-decoration: none; color: inherit; }
   filter: brightness(0);
 }
 .collar-card .card-label {
-  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-family: 'YearOfTheCamel', 'IBM Plex Sans Arabic', sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
   color: #0A0A0A;
@@ -488,7 +488,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .slider-value {
-  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-family: 'YearOfTheCamel', 'IBM Plex Sans Arabic', sans-serif;
   font-weight: 700;
   font-size: 13px;
   color: #0A0A0A;
@@ -606,7 +606,7 @@ input[type=range]::-moz-range-track {
   color: #0A0A0A;
 }
 .city-value {
-  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-family: 'YearOfTheCamel', 'IBM Plex Sans Arabic', sans-serif;
   font-size: 14px;
   font-weight: 700;
   color: #0A0A0A;
@@ -914,7 +914,12 @@ input[type=range]::-moz-range-track {
   align-items: center; justify-content: center; text-align: center;
   padding: 24px; max-width: 480px; margin: 0 auto;
 }
-.confirm-title { font-size: 4rem; font-weight: 400; margin-bottom: 16px; }
+.confirm-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 16px; margin-top: 20px; }
+.checkmark-svg { display: block; margin: 0 auto; }
+.check-circle { animation: drawCircle 0.5s ease forwards; }
+.check-tick   { animation: drawTick  0.4s ease 0.5s forwards; }
+@keyframes drawCircle { to { stroke-dashoffset: 0; } }
+@keyframes drawTick   { to { stroke-dashoffset: 0; } }
 .confirm-sub { font-weight: 300; font-size: 1rem; color: var(--gray); line-height: 1.6; max-width: 340px; }
 .confirm-line { width: 200px; height: 1px; background: var(--border); margin: 32px auto; }
 .ref-label { font-weight: 300; font-size: .72rem; color: var(--muted); letter-spacing: .08em; margin-bottom: 6px; }
@@ -936,7 +941,7 @@ input[type=range]::-moz-range-track {
   .screen-title { font-size: 1.8rem; margin-bottom: 28px; }
   .card.card-color { min-height: 180px; }
   .color-thob-img { max-height: 130px; }
-  .confirm-title { font-size: 3rem; }
+  .confirm-title { font-size: 1.4rem; }
 }
 
 /* ---- LOADER ---- */
