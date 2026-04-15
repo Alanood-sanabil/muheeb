@@ -27,6 +27,181 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/order.css" />
+  <style>
+    /* === ORDER LANDING REDESIGN === */
+
+    /* Hide white fixed header on landing screen */
+    body:has(#screen-1.active) .order-header {
+      display: none !important;
+    }
+
+    #screen-1 {
+      position: fixed !important;
+      inset: 0;
+      height: 100vh !important;
+      min-height: 100vh !important;
+      overflow: hidden;
+    }
+
+    #screen-1 .landing-bg-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 60%;
+      display: block;
+      z-index: 0;
+    }
+
+    /* Top vignette so logo is readable */
+    #screen-1::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 140px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, transparent 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    #screen-1 .landing-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        transparent 25%,
+        rgba(0,0,0,0.55) 55%,
+        rgba(0,0,0,0.88) 75%,
+        rgba(0,0,0,0.94) 100%
+      );
+      z-index: 1;
+    }
+
+    #screen-1 .landing-topbar {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 20px 24px;
+      z-index: 10;
+    }
+
+    /* Full-height flex column over the image */
+    #screen-1 .landing-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 0 24px;
+      z-index: 10;
+    }
+
+    /* Zone 1: Title */
+    #screen-1 .landing-title-zone {
+      padding-top: 96px;
+      padding-bottom: 0;
+    }
+
+    #screen-1 .landing-big-title {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 2rem;
+      color: #FFFFFF;
+      text-align: right;
+      margin: 0;
+      margin-top: 60px;
+      line-height: 1.2;
+    }
+
+    #screen-1 .landing-sub-title {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 300;
+      font-size: 1rem;
+      color: #FFFFFF;
+      opacity: 0.85;
+      text-align: right;
+      margin: 8px 0 0;
+    }
+
+    /* Zone 2: Steps — centered */
+    #screen-1 .landing-steps-zone {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 36px;
+      padding: 16px 0 32px;
+    }
+
+    #screen-1 .landing-step-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
+    }
+
+    #screen-1 .landing-step-icon {
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    #screen-1 .landing-step-text {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+      text-align: right;
+    }
+
+    #screen-1 .landing-step-bold {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #FFFFFF;
+    }
+
+    #screen-1 .landing-step-muted {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* Zone 3: Note + CTA pinned to bottom */
+    #screen-1 .landing-footer-zone {
+      padding-bottom: max(32px, env(safe-area-inset-bottom, 32px));
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    #screen-1 .landing-note {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 300;
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      margin: 0;
+    }
+
+    #screen-1 .landing-cta-btn {
+      width: 100%;
+      height: 54px;
+      background: #FFFFFF;
+      color: #0A0A0A;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
 </head>
 <body>
 
@@ -69,18 +244,64 @@
 
   <!-- SCREEN 1: Landing -->
   <div id="screen-1" class="screen active">
-    <div class="landing-main">
-      <div class="landing-text">
-        <h1 class="landing-headline">
-          <span class="line1">ثوبك المثالي</span>
-          <span class="line2">يوصلك للبيت</span>
-        </h1>
-        <p class="landing-sub" id="order-sub"></p>
-        <button class="landing-cta" id="order-landing-cta">ابدأ طلبك ←</button>
+    <img src="images/A.N.ZAHY-28 (1).jpg" alt="ثوبك المثالي" class="landing-bg-img">
+    <div class="landing-gradient"></div>
+
+    <div class="landing-topbar">
+      <img src="images/logo.png" alt="مُهيب" style="height:56px;width:auto;display:block;object-fit:contain;filter:invert(1) brightness(2);">
+    </div>
+
+    <div class="landing-overlay">
+
+      <!-- Zone 1: Title -->
+      <div class="landing-title-zone">
+        <h1 class="landing-big-title">ثوبك المثالي يوصلك للبيت</h1>
+        <p class="landing-sub-title">اختر قماشك، أعطنا مقاساتك — نوصله لك في ٤ أيام</p>
       </div>
-      <div class="landing-image">
-        <img src="images/A.N.ZAHY-28 (1).jpg" alt="تفصيل ثوب" class="landing-hero-img">
+
+      <!-- Zone 2: Steps (centered) -->
+      <div class="landing-steps-zone">
+        <!-- Row 1 -->
+        <div class="landing-step-row">
+          <svg class="landing-step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/>
+            <line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/>
+            <line x1="8.12" y1="8.12" x2="12" y2="12"/>
+          </svg>
+          <div class="landing-step-text">
+            <span class="landing-step-bold">اختر لونك وياقتك</span>
+            <span class="landing-step-muted">اختار اللون والقماش والياقة اللي تناسبك</span>
+          </div>
+        </div>
+        <!-- Row 2 -->
+        <div class="landing-step-row">
+          <svg class="landing-step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 3H3v7l9 2 9-2V3z"/><line x1="12" y1="12" x2="12" y2="21"/>
+            <line x1="9" y1="21" x2="15" y2="21"/>
+          </svg>
+          <div class="landing-step-text">
+            <span class="landing-step-bold">أدخل مقاساتك</span>
+            <span class="landing-step-muted">طولك، وزنك، وشكل جسمك</span>
+          </div>
+        </div>
+        <!-- Row 3 -->
+        <div class="landing-step-row">
+          <svg class="landing-step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <div class="landing-step-text">
+            <span class="landing-step-bold">تأكيد وانتظر</span>
+            <span class="landing-step-muted">نوصل ثوبك لبابك في الوقت المحدد</span>
+          </div>
+        </div>
       </div>
+
+      <!-- Zone 3: Note + CTA pinned to bottom -->
+      <div class="landing-footer-zone">
+        <p class="landing-note">تقدر تلغي أو تعدل طلبك في أي وقت</p>
+        <button class="landing-cta-btn" id="order-landing-cta">ابدأ طلبك ←</button>
+      </div>
+
     </div>
   </div>
 
