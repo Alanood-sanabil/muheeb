@@ -13,7 +13,7 @@ const CONTENT = {
     lang: "ar",
     dir: "rtl",
     whatsapp: "966545244222",
-    basePrice: 220,
+    basePrice: 169,
     deliveryDays: 4,
   },
 
