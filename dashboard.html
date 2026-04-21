@@ -225,7 +225,7 @@
     /* ── STATS ── */
     .stats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 12px;
       margin-bottom: 20px;
     }
@@ -427,7 +427,6 @@
     <div class="stats">
       <div class="stat-card"><div class="stat-num" id="s-total">—</div><div class="stat-label">إجمالي الطلبات</div></div>
       <div class="stat-card"><div class="stat-num" id="s-today">—</div><div class="stat-label">طلبات اليوم</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-riyadh">—</div><div class="stat-label">الرياض</div></div>
     </div>
 
     <!-- SEARCH -->
@@ -556,12 +555,10 @@
       const today = new Date().toISOString().slice(0, 10);
       document.getElementById('s-total').textContent  = rows.length;
       document.getElementById('s-today').textContent  = rows.filter(r => (r.created_at||'').startsWith(today)).length;
-      const ry = rows.filter(r => (r.city||'').trim() === 'الرياض').length;
-      document.getElementById('s-riyadh').textContent = ry;
     }
 
     function resetStats() {
-      ['s-total','s-today','s-riyadh'].forEach(id => {
+      ['s-total','s-today'].forEach(id => {
         document.getElementById(id).textContent = '—';
       });
     }
