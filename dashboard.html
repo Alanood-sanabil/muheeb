@@ -225,7 +225,7 @@
     /* ── STATS ── */
     .stats {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 12px;
       margin-bottom: 20px;
     }
@@ -428,7 +428,6 @@
       <div class="stat-card"><div class="stat-num" id="s-total">—</div><div class="stat-label">إجمالي الطلبات</div></div>
       <div class="stat-card"><div class="stat-num" id="s-today">—</div><div class="stat-label">طلبات اليوم</div></div>
       <div class="stat-card"><div class="stat-num" id="s-riyadh">—</div><div class="stat-label">الرياض</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-other">—</div><div class="stat-label">غير الرياض</div></div>
     </div>
 
     <!-- SEARCH -->
@@ -559,11 +558,10 @@
       document.getElementById('s-today').textContent  = rows.filter(r => (r.created_at||'').startsWith(today)).length;
       const ry = rows.filter(r => (r.city||'').trim() === 'الرياض').length;
       document.getElementById('s-riyadh').textContent = ry;
-      document.getElementById('s-other').textContent  = rows.length - ry;
     }
 
     function resetStats() {
-      ['s-total','s-today','s-riyadh','s-other'].forEach(id => {
+      ['s-total','s-today','s-riyadh'].forEach(id => {
         document.getElementById(id).textContent = '—';
       });
     }
