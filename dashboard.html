@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مُهيب — لوحة الطلبات</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:  #0A0A0A;
+      --white:  #FFFFFF;
+      --gray:   #767676;
+      --light:  #F5F5F5;
+      --faint:  #FAFAFA;
+      --border: #E8E8E8;
+      --err:    #C0392B;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--white);
+      color: var(--black);
+      direction: rtl;
+      min-height: 100vh;
+    }
+
+    /* ── LOGIN GATE ── */
+    #login-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    #login-screen.hidden { display: none; }
+
+    .login-card {
+      width: 100%;
+      max-width: 380px;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .login-logo {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--black);
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .login-sub {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--gray);
+      margin-bottom: 36px;
+    }
+
+    .login-input {
+      width: 100%;
+      height: 52px;
+      padding: 0 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.95rem;
+      color: var(--black);
+      background: var(--white);
+      outline: none;
+      direction: rtl;
+      text-align: right;
+      transition: border-color 0.15s;
+      margin-bottom: 12px;
+    }
+
+    .login-input:focus { border-color: var(--black); }
+    .login-input::placeholder { color: #CCCCCC; }
+
+    .login-input.shake {
+      animation: shake 0.35s ease;
+      border-color: var(--err);
+    }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-7px); }
+      40%      { transform: translateX(7px); }
+      60%      { transform: translateX(-5px); }
+      80%      { transform: translateX(5px); }
+    }
+
+    .login-btn {
+      width: 100%;
+      height: 52px;
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      margin-bottom: 10px;
+    }
+
+    .login-btn:hover { opacity: 0.85; }
+
+    .login-error {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: var(--err);
+      text-align: center;
+      min-height: 1.2em;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .login-error.visible { opacity: 1; }
+
+    /* Dashboard hidden until authenticated */
+    #dashboard { display: none; }
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 28px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--black);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    .brand p {
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: var(--gray);
+      margin-top: 2px;
+    }
+
+    .conn-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: var(--gray);
+    }
+
+    .conn-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      flex-shrink: 0;
+      transition: background 0.3s;
+    }
+    .conn-dot.ok  { background: #27AE60; }
+    .conn-dot.err { background: var(--err); }
+
+    /* ── MAIN ── */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 20px 60px;
+    }
+
+    /* ── TABS ── */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      height: 40px;
+      padding: 0 20px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      border: 1.5px solid var(--black);
+      background: var(--white);
+      color: var(--black);
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    /* ── STATS ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 700px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+    }
+
+    .stat-card {
+      background: var(--light);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .stat-num {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--black);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--gray);
+    }
+
+    /* ── SEARCH ── */
+    .search-wrap {
+      margin-bottom: 16px;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 46px;
+      padding: 0 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.9rem;
+      color: var(--black);
+      background: var(--white);
+      outline: none;
+      direction: rtl;
+      transition: border-color 0.15s;
+    }
+
+    .search-input:focus { border-color: var(--black); }
+    .search-input::placeholder { color: #CCCCCC; }
+
+    /* ── TABLE ── */
+    .table-wrap {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+
+    thead tr {
+      background: var(--black);
+    }
+
+    thead th {
+      padding: 12px 16px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--white);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+
+    tbody tr:nth-child(even) { background: var(--faint); }
+    tbody tr:nth-child(odd)  { background: var(--white); }
+    tbody tr:last-child      { border-bottom: none; }
+    tbody tr:hover           { background: var(--light); }
+
+    td {
+      padding: 12px 16px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.85rem;
+      color: var(--black);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    td.num-cell {
+      font-weight: 700;
+      direction: ltr;
+      text-align: right;
+    }
+
+    td.date-cell {
+      font-size: 0.78rem;
+      color: var(--gray);
+      direction: ltr;
+      text-align: right;
+    }
+
+    td.phone-cell {
+      direction: ltr;
+      text-align: right;
+    }
+
+    /* ── STATES ── */
+    .state-row td {
+      text-align: center;
+      padding: 52px 16px;
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+
+    .state-row.error td {
+      color: var(--err);
+    }
+
+    /* ── LOADING SPINNER ── */
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--black);
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+      vertical-align: middle;
+      margin-left: 8px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── TABLE FOOTER ── */
+    .tfoot {
+      margin-top: 10px;
+      font-size: 0.74rem;
+      color: var(--gray);
+      text-align: left;
+      padding: 0 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN GATE -->
+  <div id="login-screen">
+    <div class="login-card">
+      <div class="login-logo">مُهيب</div>
+      <div class="login-sub">لوحة الطلبات — الدخول مقيّد</div>
+      <input
+        type="password"
+        class="login-input"
+        id="login-input"
+        placeholder="كلمة المرور"
+        onkeydown="if(event.key==='Enter') attemptLogin()"
+      />
+      <button class="login-btn" onclick="attemptLogin()">دخول</button>
+      <div class="login-error" id="login-error">كلمة المرور غير صحيحة</div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <h1>مُهيب</h1>
+        <p>لوحة الطلبات</p>
+      </div>
+      <div class="conn-status">
+        <div class="conn-dot" id="conn-dot"></div>
+        <span id="conn-label">جاري الاتصال...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-orders"    onclick="switchTab('orders')">الطلبات العادية</button>
+      <button class="tab-btn"        id="tab-tailoring" onclick="switchTab('tailoring')">طلبات التفصيل</button>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat-card"><div class="stat-num" id="s-total">—</div><div class="stat-label">إجمالي الطلبات</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-today">—</div><div class="stat-label">طلبات اليوم</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-riyadh">—</div><div class="stat-label">الرياض</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-other">—</div><div class="stat-label">غير الرياض</div></div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="search-wrap">
+      <input
+        type="text"
+        class="search-input"
+        id="search-input"
+        placeholder="ابحث بالاسم أو الهاتف..."
+        oninput="applyFilter()"
+      />
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <table id="data-table">
+        <thead id="table-head"></thead>
+        <tbody id="table-body">
+          <tr class="state-row">
+            <td colspan="10"><span class="spinner"></span> جاري تحميل البيانات...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tfoot" id="tfoot"></div>
+
+  </main>
+
+  </div><!-- /#dashboard -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ── AUTH GATE ────────────────────────────────────────────────
+    const AUTH_KEY  = 'muheeb_admin_auth';
+    const AUTH_PASS = 'Muheeb2025';
+
+    function showDashboard() {
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('dashboard').style.display = 'block';
+    }
+
+    function attemptLogin() {
+      const input = document.getElementById('login-input');
+      const err   = document.getElementById('login-error');
+      if (input.value === AUTH_PASS) {
+        sessionStorage.setItem(AUTH_KEY, '1');
+        showDashboard();
+        loadTab('orders');
+      } else {
+        err.classList.add('visible');
+        input.classList.remove('shake');
+        void input.offsetWidth; // reflow to restart animation
+        input.classList.add('shake');
+        input.value = '';
+        input.focus();
+      }
+    }
+
+    // Check auth on load
+    if (sessionStorage.getItem(AUTH_KEY) === '1') {
+      showDashboard();
+    }
+
+    // ── CONFIG ───────────────────────────────────────────────────
+    const SUPABASE_URL = 'https://mwcmfzzukqiutztkgagg.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_8zuxMDAcYGIozcmi8CS8sg_ZnjLmb6V';
+
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // ── TABLE SCHEMAS ────────────────────────────────────────────
+    const SCHEMAS = {
+      orders: {
+        table: 'orders',
+        cols: [
+          { label: 'رقم الطلب',   key: 'order_number', cls: 'num-cell'   },
+          { label: 'الاسم',       key: 'name'                             },
+          { label: 'الهاتف',      key: 'phone',         cls: 'phone-cell' },
+          { label: 'المدينة',     key: 'city'                             },
+          { label: 'اللون',       key: 'color'                            },
+          { label: 'الياقة',      key: 'collar'                           },
+          { label: 'نوع الجسم',   key: 'body_type'                        },
+          { label: 'الطول',       key: 'height'                           },
+          { label: 'الوزن',       key: 'weight'                           },
+          { label: 'تاريخ الطلب', key: 'created_at',    cls: 'date-cell', fmt: 'date' },
+        ],
+      },
+      tailoring: {
+        table: 'tailoring_orders',
+        cols: [
+          { label: 'رقم الطلب',   key: 'order_number', cls: 'num-cell'   },
+          { label: 'الاسم',       key: 'name'                             },
+          { label: 'الهاتف',      key: 'phone',         cls: 'phone-cell' },
+          { label: 'المدينة',     key: 'city'                             },
+          { label: 'الباقة',      key: 'package'                          },
+          { label: 'السعر',       key: 'price'                            },
+          { label: 'يوم الزيارة', key: 'visit_day'                        },
+          { label: 'وقت الزيارة', key: 'visit_time'                       },
+          { label: 'تاريخ الطلب', key: 'created_at',    cls: 'date-cell', fmt: 'date' },
+        ],
+      },
+    };
+
+    // ── STATE ────────────────────────────────────────────────────
+    let activeTab    = 'orders';
+    let allRows      = [];
+    let filteredRows = [];
+
+    // ── HELPERS ──────────────────────────────────────────────────
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      const d   = new Date(iso);
+      const p   = n => String(n).padStart(2, '0');
+      return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
+    }
+
+    function cellVal(row, col) {
+      const v = row[col.key];
+      if (v === null || v === undefined || v === '') return '—';
+      if (col.fmt === 'date') return fmtDate(v);
+      return v;
+    }
+
+    // ── STATS ────────────────────────────────────────────────────
+    function updateStats(rows) {
+      const today = new Date().toISOString().slice(0, 10);
+      document.getElementById('s-total').textContent  = rows.length;
+      document.getElementById('s-today').textContent  = rows.filter(r => (r.created_at||'').startsWith(today)).length;
+      const ry = rows.filter(r => (r.city||'').trim() === 'الرياض').length;
+      document.getElementById('s-riyadh').textContent = ry;
+      document.getElementById('s-other').textContent  = rows.length - ry;
+    }
+
+    function resetStats() {
+      ['s-total','s-today','s-riyadh','s-other'].forEach(id => {
+        document.getElementById(id).textContent = '—';
+      });
+    }
+
+    // ── RENDER HEAD ───────────────────────────────────────────────
+    function renderHead(schema) {
+      document.getElementById('table-head').innerHTML =
+        '<tr>' + schema.cols.map(c => `<th>${c.label}</th>`).join('') + '</tr>';
+    }
+
+    // ── RENDER BODY ───────────────────────────────────────────────
+    function renderBody(rows, schema) {
+      const tbody  = document.getElementById('table-body');
+      const tfoot  = document.getElementById('tfoot');
+      const colLen = schema.cols.length;
+
+      if (!rows.length) {
+        tbody.innerHTML = `<tr class="state-row"><td colspan="${colLen}">لا توجد طلبات بعد</td></tr>`;
+        tfoot.textContent = '';
+        return;
+      }
+
+      tbody.innerHTML = rows.map(row =>
+        '<tr>' + schema.cols.map(col => {
+          const cls = col.cls ? ` class="${col.cls}"` : '';
+          return `<td${cls}>${cellVal(row, col)}</td>`;
+        }).join('') + '</tr>'
+      ).join('');
+
+      tfoot.textContent = `عرض ${rows.length} من ${allRows.length} طلب`;
+    }
+
+    // ── SEARCH ───────────────────────────────────────────────────
+    function applyFilter() {
+      const q = document.getElementById('search-input').value.trim().toLowerCase();
+      filteredRows = q
+        ? allRows.filter(r =>
+            (r.name  || '').toLowerCase().includes(q) ||
+            (r.phone || '').toLowerCase().includes(q)
+          )
+        : [...allRows];
+      renderBody(filteredRows, SCHEMAS[activeTab]);
+    }
+
+    // ── LOAD ─────────────────────────────────────────────────────
+    async function loadTab(tab) {
+      const schema = SCHEMAS[tab];
+      const tbody  = document.getElementById('table-body');
+      const tfoot  = document.getElementById('tfoot');
+
+      // Reset UI
+      document.getElementById('search-input').value = '';
+      tfoot.textContent = '';
+      resetStats();
+      renderHead(schema);
+      tbody.innerHTML = `<tr class="state-row"><td colspan="${schema.cols.length}"><span class="spinner"></span> جاري التحميل...</td></tr>`;
+
+      try {
+        const { data, error } = await db
+          .from(schema.table)
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        allRows      = data || [];
+        filteredRows = [...allRows];
+
+        updateStats(allRows);
+        renderBody(filteredRows, schema);
+
+        document.getElementById('conn-dot').className   = 'conn-dot ok';
+        document.getElementById('conn-label').textContent = 'متصل';
+
+      } catch (err) {
+        console.error('[Dashboard] Fetch error:', err);
+        tbody.innerHTML = `<tr class="state-row error"><td colspan="${schema.cols.length}">تعذّر تحميل البيانات — تحقق من المفتاح والاتصال</td></tr>`;
+        document.getElementById('conn-dot').className    = 'conn-dot err';
+        document.getElementById('conn-label').textContent = 'خطأ في الاتصال';
+      }
+    }
+
+    // ── TAB SWITCH ───────────────────────────────────────────────
+    function switchTab(tab) {
+      if (tab === activeTab) return;
+      activeTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+      loadTab(tab);
+    }
+
+    // ── INIT ─────────────────────────────────────────────────────
+    // Only load data if already authenticated (login calls loadTab itself)
+    if (sessionStorage.getItem(AUTH_KEY) === '1') {
+      loadTab('orders');
+    }
+  </script>
+</body>
+</html>
