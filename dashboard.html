@@ -620,9 +620,12 @@
       tbody.innerHTML = `<tr class="state-row"><td colspan="${schema.cols.length}"><span class="spinner"></span> جاري التحميل...</td></tr>`;
 
       try {
+        // NOTE: Go to Supabase → Authentication → Policies → orders table → Add policy
+        // → Allow SELECT for anon → set condition to: true
+        // Do the same for tailoring_orders table.
         const { data, error } = await db
           .from(schema.table)
-          .select('*')
+          .select('*', { count: 'exact' })
           .order('created_at', { ascending: false });
 
         if (error) throw error;
