@@ -4,7 +4,7 @@
 //  the module load if the CDN is slow or unavailable.
 // ============================================================
 
-const orderState = { color: null, collar: null, height: 170, weight: 80, shoeSize: 42, bodyShape: null, fitPreference: null, name: null, phone: null, city: 'الرياض' };
+const orderState = { color: null, collar: null, height: 170, weight: 80, shoeSize: 42, bodyShape: null, fitPreference: null, name: null, phone: null, city: null };
 let currentScreen = 1;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -347,6 +347,7 @@ function showScreen(n) {
     updateProgress(n);
 
     if (n === 2) updateBtn(1);
+    if (n === 'scan') resetScanFlow();
     if (n === 4) updateBtn(3);
     if (n === '4b') updateBtn('4b');
 
@@ -387,13 +388,13 @@ function updateProgress(screenNumber) {
   container.style.opacity = '1';
   container.style.pointerEvents = '';
 
-  // Map screen to activeStep (1-4)
-  // screen 2=step1, 3=step2, 4=step3, '4b'=step4
-  const stepMap = { 2: 1, 3: 2, 4: 3, '4b': 4 };
-  const screenTargets = [null, 2, 3, 4, '4b']; // index = step number
+  // Map screen to activeStep (1-5)
+  // screen 2=step1, 'scan'=step2, 3=step3, 4=step4, '4b'=step5
+  const stepMap = { 2: 1, 'scan': 2, 3: 3, 4: 4, '4b': 5 };
+  const screenTargets = [null, 2, 'scan', 3, 4, '4b']; // index = step number
   const activeStep = stepMap[screenNumber] || 1;
 
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= 5; i++) {
     const dot = document.getElementById('step-dot-' + i);
     if (!dot) continue;
 
@@ -415,7 +416,7 @@ function updateProgress(screenNumber) {
     }
   }
 
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= 4; i++) {
     const line = document.getElementById('line-' + i + '-' + (i + 1));
     if (!line) continue;
     if (i < activeStep) line.classList.add('filled');
@@ -525,9 +526,11 @@ function validateStep4() {
   let ok = true;
   if (!document.getElementById('input-name').value.trim()) { showErr('error-name'); ok = false; }
   if (!document.getElementById('input-phone').value.trim()) { showErr('error-phone'); ok = false; }
+  if (!document.getElementById('input-city').value.trim()) { showErr('error-city'); ok = false; }
   if (ok) {
-    orderState.name = document.getElementById('input-name').value.trim();
+    orderState.name  = document.getElementById('input-name').value.trim();
     orderState.phone = document.getElementById('input-phone').value.trim();
+    orderState.city  = document.getElementById('input-city').value.trim();
     submit();
   }
 }
@@ -647,6 +650,260 @@ function closeTooltip() {
 }
 
 // ---- EXPOSE FUNCTIONS TO WINDOW (for inline onclick handlers in module mode) ----
+// ---- BODY SCAN ----
+let _scanMode = null;
+let _scanParticleRAF = null;
+let _cameraStream = null;
+
+function resetScanFlow() {
+  _scanMode = null;
+  _stopCamera();
+  if (_scanParticleRAF) { cancelAnimationFrame(_scanParticleRAF); _scanParticleRAF = null; }
+  document.querySelectorAll('.scan-toggle-btn').forEach(c => c.classList.remove('selected'));
+  const privacyCheck = document.getElementById('scan-privacy-check');
+  if (privacyCheck) privacyCheck.checked = false;
+  // Reset hero SVG to default (two people)
+  const svgSelf  = document.getElementById('scan-svg-self');
+  const svgOther = document.getElementById('scan-svg-other');
+  if (svgSelf)  svgSelf.style.display  = 'none';
+  if (svgOther) svgOther.style.display = 'block';
+  const btn = document.getElementById('btn-scan-1');
+  if (btn) { btn.classList.remove('ready'); btn.textContent = 'اختر طريقة القياس'; }
+  // Reset sub-3 state
+  const bar = document.getElementById('scan-progress-bar');
+  if (bar) bar.style.width = '0%';
+  const label = document.getElementById('scan-analysis-label');
+  if (label) { label.textContent = ''; label.classList.remove('visible'); }
+  const frozenBg = document.getElementById('scan-frozen-bg');
+  if (frozenBg) frozenBg.style.display = 'none';
+  showScanSub(1);
+}
+
+function _stopCamera() {
+  if (_cameraStream) {
+    _cameraStream.getTracks().forEach(t => t.stop());
+    _cameraStream = null;
+  }
+  const video = document.getElementById('scan-video');
+  if (video) { video.srcObject = null; video.style.display = 'none'; }
+  const overlay = document.getElementById('scan-cam-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
+function showScanSub(n) {
+  document.querySelectorAll('.scan-sub').forEach(s => s.classList.remove('active'));
+  const sub = document.getElementById('scan-sub-' + n);
+  if (sub) sub.classList.add('active');
+}
+
+function selectScanMode(mode, card) {
+  _scanMode = mode;
+  document.querySelectorAll('.scan-toggle-btn').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+
+  // Swap hero SVG
+  const svgSelf  = document.getElementById('scan-svg-self');
+  const svgOther = document.getElementById('scan-svg-other');
+  if (svgSelf && svgOther) {
+    svgSelf.style.display  = mode === 'self'  ? 'block' : 'none';
+    svgOther.style.display = mode === 'other' ? 'block' : 'none';
+  }
+
+  updateScanSub1Btn();
+}
+
+function updateScanSub1Btn() {
+  const checked = document.getElementById('scan-privacy-check')?.checked;
+  const btn = document.getElementById('btn-scan-1');
+  if (!btn) return;
+  if (_scanMode && checked) { btn.classList.add('ready'); }
+  else { btn.classList.remove('ready'); }
+}
+
+function validateScanSub1() {
+  const checked = document.getElementById('scan-privacy-check')?.checked;
+  if (!_scanMode) { showErr('error-scan-mode'); return; }
+  if (!checked) { showErr('error-scan-mode'); return; }
+  clearErr();
+  showScanSub(2);
+  _openCamera();
+}
+
+async function _openCamera() {
+  const loading = document.getElementById('scan-cam-loading');
+  const error   = document.getElementById('scan-cam-error');
+  const video   = document.getElementById('scan-video');
+  const overlay = document.getElementById('scan-cam-overlay');
+
+  if (loading) loading.style.display = 'flex';
+  if (error)   error.style.display   = 'none';
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+    _cameraStream = stream;
+    video.srcObject = stream;
+    await video.play();
+
+    if (loading) loading.style.display = 'none';
+    video.style.display = 'block';
+    if (overlay) overlay.style.display = 'block';
+  } catch (err) {
+    console.warn('[Muheeb] Camera error:', err);
+    if (loading) loading.style.display = 'none';
+    if (error)   error.style.display   = 'flex';
+  }
+}
+
+function startScanCapture() {
+  const video    = document.getElementById('scan-video');
+  const cdOverlay = document.getElementById('scan-countdown');
+  const cdNum    = document.getElementById('scan-countdown-num');
+  if (!cdOverlay || !cdNum) { _doShutterAndProcess(); return; }
+
+  // 3-second countdown
+  let count = 3;
+  cdNum.textContent = count;
+  cdOverlay.classList.add('visible');
+
+  function tick() {
+    count--;
+    if (count <= 0) {
+      cdOverlay.classList.remove('visible');
+      _doShutterAndProcess();
+    } else {
+      cdNum.style.animation = 'none';
+      void cdNum.offsetWidth; // reflow to restart animation
+      cdNum.style.animation = '';
+      cdNum.textContent = count;
+      setTimeout(tick, 1000);
+    }
+  }
+  setTimeout(tick, 1000);
+}
+
+function _doShutterAndProcess() {
+  const video = document.getElementById('scan-video');
+
+  // Capture frozen frame into canvas
+  let frozenDataUrl = null;
+  try {
+    const cap = document.createElement('canvas');
+    cap.width  = video.videoWidth  || 320;
+    cap.height = video.videoHeight || 320;
+    cap.getContext('2d').drawImage(video, 0, 0, cap.width, cap.height);
+    frozenDataUrl = cap.toDataURL('image/jpeg', 0.7);
+  } catch(e) { /* cross-origin or no stream — ignore */ }
+
+  // Stop camera
+  _stopCamera();
+
+  // Shutter flash
+  const flash = document.getElementById('shutter-flash');
+  if (flash) {
+    flash.style.display = 'block';
+    flash.style.opacity = '1';
+    flash.style.transition = 'none';
+    setTimeout(() => {
+      flash.style.transition = 'opacity 0.2s ease';
+      flash.style.opacity = '0';
+      setTimeout(() => { flash.style.display = 'none'; }, 220);
+    }, 150);
+  }
+
+  // Apply frozen frame as blurred bg in sub-3
+  if (frozenDataUrl) {
+    const bg = document.getElementById('scan-frozen-bg');
+    if (bg) {
+      bg.style.backgroundImage = `url(${frozenDataUrl})`;
+      bg.style.display = 'block';
+    }
+  }
+
+  // Move to processing
+  setTimeout(() => _startScanProcessing(), 150);
+}
+
+function _startScanProcessing() {
+  showScanSub(3);
+  _startScanParticles();
+
+  const bar   = document.getElementById('scan-progress-bar');
+  const label = document.getElementById('scan-analysis-label');
+  if (!bar) return;
+
+  const steps = [
+    { at: 0,  text: 'جاري تحديد نقاط الجسم...' },
+    { at: 25, text: 'قياس الكتفين والصدر...' },
+    { at: 50, text: 'تحليل الخصر والطول...' },
+    { at: 75, text: 'حساب القياسات النهائية...' },
+  ];
+  let shownStep = -1;
+  bar.style.width = '0%';
+
+  const start    = performance.now();
+  const duration = 4000;
+
+  function tick(now) {
+    const pct = Math.min((now - start) / duration * 100, 100);
+    bar.style.width = pct + '%';
+
+    // Fade in analysis labels at their thresholds
+    const stepIdx = steps.filter(s => pct >= s.at).length - 1;
+    if (stepIdx > shownStep && label) {
+      shownStep = stepIdx;
+      label.classList.remove('visible');
+      void label.offsetWidth;
+      label.textContent = steps[stepIdx].text;
+      requestAnimationFrame(() => label.classList.add('visible'));
+    }
+
+    if (pct < 100) {
+      requestAnimationFrame(tick);
+    } else {
+      setTimeout(() => {
+        if (_scanParticleRAF) { cancelAnimationFrame(_scanParticleRAF); _scanParticleRAF = null; }
+        showScanSub(4);
+      }, 500);
+    }
+  }
+  requestAnimationFrame(tick);
+}
+
+function _startScanParticles() {
+  const canvas = document.getElementById('scan-particle-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = 260, H = 260, cx = W / 2, cy = H / 2;
+  if (_scanParticleRAF) cancelAnimationFrame(_scanParticleRAF);
+  const NUM = 28;
+  const particles = Array.from({ length: NUM }, (_, i) => ({
+    angle: (i / NUM) * Math.PI * 2,
+    speed: 0.35 + Math.random() * 0.4,
+    maxR: 60 + Math.random() * 40,
+    size: 1.5,
+    phase: Math.random() * Math.PI * 2,
+  }));
+  const t0 = performance.now();
+  function draw(now) {
+    const t = (now - t0) / 1000;
+    ctx.clearRect(0, 0, W, H);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#0A0A0A';
+    ctx.fill();
+    particles.forEach(p => {
+      const r = p.maxR * (0.5 + 0.5 * Math.sin(t * p.speed + p.phase));
+      const alpha = 0.12 + 0.55 * (0.5 + 0.5 * Math.sin(t * p.speed + p.phase));
+      ctx.beginPath();
+      ctx.arc(cx + Math.cos(p.angle) * r, cy + Math.sin(p.angle) * r, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(10,10,10,${alpha.toFixed(2)})`;
+      ctx.fill();
+    });
+    _scanParticleRAF = requestAnimationFrame(draw);
+  }
+  _scanParticleRAF = requestAnimationFrame(draw);
+}
+
 function handleSubmit() {
   clearErr();
   let ok = true;
@@ -663,6 +920,11 @@ function handleSubmit() {
 }
 
 window.showScreen = showScreen;
+window.selectScanMode = selectScanMode;
+window.updateScanSub1Btn = updateScanSub1Btn;
+window.validateScanSub1 = validateScanSub1;
+window.startScanCapture = startScanCapture;
+window.showScanSub = showScanSub;
 window.validateStep1 = validateStep1;
 window.validateStep2 = validateStep2;
 window.validateStep3 = validateStep3;
