@@ -12,7 +12,7 @@ const CONTENT = {
     tagline: "ثوبك المثالي، من بيتك",
     lang: "ar",
     dir: "rtl",
-    whatsapp: "966545244222",
+    whatsapp: "966552177857",
     basePrice: 179,
     deliveryDays: 4,
   },
