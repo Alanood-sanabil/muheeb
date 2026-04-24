@@ -211,6 +211,382 @@
       to   { transform: translateY(0);    opacity: 1; }
     }
   </style>
+  <style>
+    /* === BODY SCAN SUB-SCREENS === */
+    .scan-sub { display: none; flex-direction: column; flex: 1; }
+    .scan-sub.active { display: flex; flex-direction: column; flex: 1; }
+
+    /* Privacy banner */
+    .scan-privacy-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      background: #F5F5F5;
+      border-radius: 8px;
+      padding: 10px 14px;
+      width: 100%;
+      margin-bottom: 20px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.78rem;
+      color: #767676;
+      text-align: center;
+      direction: rtl;
+    }
+
+    /* Hero image placeholder */
+    .scan-hero-placeholder {
+      width: 100%;
+      height: 220px;
+      background: #E8E8E8;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .scan-hero-svg {
+      transition: opacity 0.25s ease;
+    }
+
+    /* Stacked toggle buttons */
+    .scan-mode-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .scan-toggle-btn {
+      width: 100%;
+      height: 52px;
+      background: #FFFFFF;
+      color: #0A0A0A;
+      border: 1.5px solid #0A0A0A;
+      border-radius: 12px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      text-align: center;
+    }
+    .scan-toggle-btn.selected {
+      background: #0A0A0A;
+      color: #FFFFFF;
+      border-color: #0A0A0A;
+    }
+
+    /* Privacy checkbox */
+    .scan-checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      direction: rtl;
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+    .scan-checkbox-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #0A0A0A;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .scan-checkbox-row label {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.78rem;
+      color: #767676;
+      cursor: pointer;
+      line-height: 1.5;
+    }
+
+    .scan-camera-box {
+      width: 100%;
+      height: 320px;
+      background: #1A1A1A;
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 16px;
+      flex-shrink: 0;
+    }
+
+    /* Loading / error states inside camera box */
+    .scan-cam-state {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #F5F5F5;
+      border-radius: 16px;
+    }
+
+    .scan-cam-state-title {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #0A0A0A;
+      text-align: center;
+    }
+
+    .scan-cam-state-sub {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.8rem;
+      color: #767676;
+      text-align: center;
+    }
+
+    .btn-scan-manual {
+      margin-top: 6px;
+      height: 40px;
+      padding: 0 20px;
+      background: #FFFFFF;
+      color: #0A0A0A;
+      border: 1.5px solid #0A0A0A;
+      border-radius: 8px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    #scan-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    /* Live camera overlay (silhouette + corners + scan line + label) */
+    #scan-cam-overlay {
+      position: absolute;
+      inset: 0;
+      display: none;
+      pointer-events: none;
+    }
+
+    .scan-top-label {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.45);
+      border-radius: 6px;
+      padding: 4px 12px;
+      white-space: nowrap;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: #FFFFFF;
+      z-index: 3;
+    }
+
+    /* Corner bracket marks */
+    .scan-corner {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-color: rgba(255,255,255,0.85);
+      border-style: solid;
+    }
+    .scan-corner-tl { top: 10px; right: 10px; border-width: 2px 0 0 2px; }
+    .scan-corner-tr { top: 10px; left: 10px;  border-width: 2px 2px 0 0; }
+    .scan-corner-bl { bottom: 10px; right: 10px; border-width: 0 0 2px 2px; }
+    .scan-corner-br { bottom: 10px; left: 10px;  border-width: 0 2px 2px 0; }
+
+    /* Body silhouette guide */
+    .scan-silhouette {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.55;
+      z-index: 2;
+    }
+
+    /* Scanning beam */
+    .scan-beam {
+      position: absolute;
+      left: 20%;
+      width: 60%;
+      height: 2px;
+      background: rgba(255,255,255,0.55);
+      box-shadow: 0 0 8px 2px rgba(255,255,255,0.3);
+      animation: scanBeam 2.5s linear infinite;
+      z-index: 4;
+    }
+    @keyframes scanBeam {
+      0%   { top: 10%; }
+      100% { top: 90%; }
+    }
+
+    /* Countdown overlay */
+    #scan-countdown {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.35);
+      z-index: 10;
+    }
+    #scan-countdown.visible { display: flex; }
+
+    #scan-countdown-num {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 5rem;
+      color: #FFFFFF;
+      line-height: 1;
+      text-shadow: 0 2px 16px rgba(0,0,0,0.5);
+      animation: countPulse 1s ease-in-out;
+    }
+    @keyframes countPulse {
+      0%   { transform: scale(1.4); opacity: 0; }
+      30%  { transform: scale(1);   opacity: 1; }
+      80%  { transform: scale(1);   opacity: 1; }
+      100% { transform: scale(0.8); opacity: 0; }
+    }
+
+    /* Shutter flash (full screen) */
+    #shutter-flash {
+      position: fixed;
+      inset: 0;
+      background: #FFFFFF;
+      z-index: 9999;
+      display: none;
+      pointer-events: none;
+    }
+
+    /* Frozen frame background in sub-3 */
+    #scan-frozen-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: blur(10px);
+      transform: scale(1.05);
+      z-index: 0;
+      display: none;
+    }
+
+    #scan-sub-3 .step-body { position: relative; z-index: 1; }
+
+    /* Analysis step labels */
+    .scan-analysis-step {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.82rem;
+      color: #767676;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      min-height: 1.2em;
+    }
+    .scan-analysis-step.visible { opacity: 1; }
+
+    .scan-camera-hint {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.82rem;
+      color: #767676;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .scan-proc-title {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #0A0A0A;
+      text-align: center;
+    }
+
+    .scan-proc-sub {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.82rem;
+      color: #767676;
+      text-align: center;
+      max-width: 280px;
+      line-height: 1.6;
+    }
+
+    .scan-prog-wrap {
+      width: 70%;
+      max-width: 320px;
+      height: 4px;
+      background: #E8E8E8;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .scan-prog-fill {
+      height: 100%;
+      width: 0%;
+      background: #0A0A0A;
+      border-radius: 2px;
+    }
+
+    .scan-check-circle { animation: drawCircle 0.5s ease forwards; }
+    .scan-check-tick   { animation: drawTick  0.4s ease 0.5s forwards; }
+
+    .scan-meas-card {
+      width: 100%;
+      background: #F5F5F5;
+      border-radius: 12px;
+      padding: 0 16px;
+      margin-bottom: 8px;
+    }
+
+    .scan-meas-header {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      color: #0A0A0A;
+      padding: 14px 0 10px;
+      border-bottom: 1px solid #E8E8E8;
+      text-align: right;
+    }
+
+    .scan-meas-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #E8E8E8;
+      direction: rtl;
+    }
+    .scan-meas-row:last-child { border-bottom: none; }
+
+    .scan-meas-label {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.85rem;
+      color: #767676;
+    }
+
+    .scan-meas-value {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #0A0A0A;
+    }
+  </style>
 </head>
 <body>
 
@@ -228,17 +604,22 @@
           <span class="step-label">اللون والياقة</span>
         </div>
         <div class="progress-line" id="line-1-2"></div>
-        <div class="progress-step" id="step-dot-2">
+        <div class="progress-step" id="step-dot-2" style="display:none;">
+          <div class="step-dot"></div>
+          <span class="step-label">قياس الجسم</span>
+        </div>
+        <div class="progress-line" id="line-2-3" style="display:none;"></div>
+        <div class="progress-step" id="step-dot-3">
           <div class="step-dot"></div>
           <span class="step-label">المقاسات</span>
         </div>
-        <div class="progress-line" id="line-2-3"></div>
-        <div class="progress-step" id="step-dot-3">
+        <div class="progress-line" id="line-3-4"></div>
+        <div class="progress-step" id="step-dot-4">
           <div class="step-dot"></div>
           <span class="step-label">شكل الجسم</span>
         </div>
-        <div class="progress-line" id="line-3-4"></div>
-        <div class="progress-step" id="step-dot-4">
+        <div class="progress-line" id="line-4-5"></div>
+        <div class="progress-step" id="step-dot-5">
           <div class="step-dot"></div>
           <span class="step-label">المقاس المفضل</span>
         </div>
@@ -333,7 +714,198 @@
     </div>
   </div>
 
-  <!-- SCREEN 3: Step 2 — Measurements (sliders) -->
+  <!-- SCREEN scan: Step 2 — Body Scan -->
+  <div id="screen-scan" class="screen">
+
+    <!-- SUB-SCREEN 1: Choose mode -->
+    <div class="scan-sub active" id="scan-sub-1">
+      <div class="step-body">
+        <div class="step-top">
+          <h2 class="screen-title serif" style="text-align:center;margin-bottom:16px;">قياس الجسم</h2>
+
+          <!-- Privacy banner -->
+          <div class="scan-privacy-banner">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#767676" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span>صورك تُحذف فور المعالجة — خصوصيتك أهم شيء</span>
+          </div>
+
+          <!-- Big image placeholder — swaps SVG based on selection -->
+          <div class="scan-hero-placeholder" id="scan-hero-placeholder">
+            <!-- Single person (shown when بنفسي selected) -->
+            <svg id="scan-svg-self" class="scan-hero-svg" viewBox="0 0 120 220" width="90" height="165" fill="none" stroke="#BBBBBB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+              <circle cx="60" cy="28" r="20"/>
+              <path d="M20,65 C20,57 36,50 60,50 C84,50 100,57 100,65 L95,140 C95,146 82,152 60,152 C38,152 25,146 25,140 Z"/>
+              <line x1="25" y1="140" x2="18" y2="210"/>
+              <line x1="95" y1="140" x2="102" y2="210"/>
+              <line x1="42" y1="66" x2="12" y2="118"/>
+              <line x1="78" y1="66" x2="108" y2="118"/>
+            </svg>
+            <!-- Two people (default + when مع شخص ثاني selected) -->
+            <svg id="scan-svg-other" class="scan-hero-svg" viewBox="0 0 200 220" width="150" height="165" fill="none" stroke="#BBBBBB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <!-- Person 1 -->
+              <circle cx="60" cy="28" r="18"/>
+              <path d="M22,63 C22,56 36,50 60,50 C84,50 98,56 98,63 L93,135 C93,141 81,147 60,147 C39,147 27,141 27,135 Z"/>
+              <line x1="27"  y1="135" x2="20"  y2="210"/>
+              <line x1="93"  y1="135" x2="100" y2="210"/>
+              <line x1="40"  y1="64"  x2="12"  y2="112"/>
+              <line x1="80"  y1="64"  x2="98"  y2="112"/>
+              <!-- Person 2 -->
+              <circle cx="140" cy="28" r="18"/>
+              <path d="M102,63 C102,56 116,50 140,50 C164,50 178,56 178,63 L173,135 C173,141 161,147 140,147 C119,147 107,141 107,135 Z"/>
+              <line x1="107" y1="135" x2="100" y2="210"/>
+              <line x1="173" y1="135" x2="180" y2="210"/>
+              <line x1="120" y1="64"  x2="100" y2="112"/>
+              <line x1="160" y1="64"  x2="180" y2="112"/>
+            </svg>
+          </div>
+
+          <!-- Two stacked toggle buttons -->
+          <div class="scan-mode-list">
+            <button class="scan-toggle-btn" id="scan-opt-self" onclick="selectScanMode('self', this)">بنفسي</button>
+            <button class="scan-toggle-btn" id="scan-opt-other" onclick="selectScanMode('other', this)">مع شخص ثاني</button>
+          </div>
+
+          <div class="error-msg" id="error-scan-mode">الرجاء اختيار طريقة القياس</div>
+
+          <!-- Privacy checkbox -->
+          <div class="scan-checkbox-row">
+            <input type="checkbox" id="scan-privacy-check" onchange="updateScanSub1Btn()" />
+            <label for="scan-privacy-check">أوافق على سياسة الخصوصية والشروط</label>
+          </div>
+        </div>
+        <div class="step-bottom">
+          <button class="btn-next" id="btn-scan-1" onclick="validateScanSub1()">التالي</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-SCREEN 2: Real Camera -->
+    <div class="scan-sub" id="scan-sub-2">
+      <div class="step-body step-body-center">
+        <div class="step-top">
+          <h2 class="screen-title serif" style="text-align:center;margin-bottom:16px;">قياس الجسم</h2>
+
+          <div class="scan-camera-box" id="scan-camera-box">
+
+            <!-- Loading state -->
+            <div class="scan-cam-state" id="scan-cam-loading">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#AAAAAA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+              <p class="scan-cam-state-title">جاري فتح الكاميرا...</p>
+            </div>
+
+            <!-- Error state -->
+            <div class="scan-cam-state" id="scan-cam-error" style="display:none;">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#AAAAAA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              <p class="scan-cam-state-title">تعذّر فتح الكاميرا</p>
+              <p class="scan-cam-state-sub">يمكنك إدخال قياساتك يدوياً</p>
+              <button class="btn-scan-manual" onclick="showScanSub(4)">إدخال يدوي</button>
+            </div>
+
+            <!-- Live video -->
+            <video id="scan-video" autoplay muted playsinline></video>
+
+            <!-- Camera overlays (shown when video is live) -->
+            <div id="scan-cam-overlay">
+              <span class="scan-top-label">اضبط جسمك داخل الإطار</span>
+
+              <!-- Corner brackets -->
+              <div class="scan-corner scan-corner-tl"></div>
+              <div class="scan-corner scan-corner-tr"></div>
+              <div class="scan-corner scan-corner-bl"></div>
+              <div class="scan-corner scan-corner-br"></div>
+
+              <!-- Body silhouette -->
+              <svg class="scan-silhouette" viewBox="0 0 70 180" width="70" height="180" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Head -->
+                <circle cx="35" cy="16" r="12"/>
+                <!-- Neck -->
+                <line x1="35" y1="28" x2="35" y2="38"/>
+                <!-- Shoulders to waist -->
+                <path d="M10,45 C10,42 22,38 35,38 C48,38 60,42 60,45 L57,95 C57,98 48,102 35,102 C22,102 13,98 13,95 Z"/>
+                <!-- Left arm -->
+                <path d="M10,47 C6,55 4,75 6,100"/>
+                <!-- Right arm -->
+                <path d="M60,47 C64,55 66,75 64,100"/>
+                <!-- Left leg -->
+                <path d="M22,102 L18,170"/>
+                <!-- Right leg -->
+                <path d="M48,102 L52,170"/>
+              </svg>
+
+              <!-- Scan beam -->
+              <div class="scan-beam"></div>
+            </div>
+
+            <!-- Countdown overlay -->
+            <div id="scan-countdown">
+              <span id="scan-countdown-num">3</span>
+            </div>
+
+          </div>
+
+          <p class="scan-camera-hint">قف بعيد بما يكفي حتى يظهر جسمك كاملاً</p>
+        </div>
+        <div class="step-bottom">
+          <button class="btn-next ready" id="btn-scan-capture" onclick="startScanCapture()">ابدأ التحليل</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-SCREEN 3: Processing -->
+    <div class="scan-sub" id="scan-sub-3">
+      <!-- Frozen frame background -->
+      <div id="scan-frozen-bg"></div>
+      <div class="step-body step-body-center">
+        <div class="step-top" style="gap:16px;">
+          <canvas id="scan-particle-canvas" width="260" height="260"></canvas>
+          <p class="scan-proc-title">جاري التحليل...</p>
+          <p class="scan-proc-sub">الذكاء الاصطناعي يحلل قياساتك</p>
+          <p class="scan-analysis-step" id="scan-analysis-label"></p>
+          <div class="scan-prog-wrap">
+            <div id="scan-progress-bar" class="scan-prog-fill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-SCREEN 4: Results -->
+    <div class="scan-sub" id="scan-sub-4">
+      <div class="step-body">
+        <div class="step-top" style="align-items:center;display:flex;flex-direction:column;">
+          <div style="margin-top:16px;margin-bottom:12px;">
+            <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="28" cy="28" r="25" stroke="#0A0A0A" stroke-width="2.5" stroke-dasharray="157" stroke-dashoffset="157" class="scan-check-circle"/>
+              <polyline points="17,28 24,36 38,20" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="35" stroke-dashoffset="35" class="scan-check-tick"/>
+            </svg>
+          </div>
+          <p style="font-family:'Cairo',sans-serif;font-weight:700;font-size:1.3rem;color:#0A0A0A;text-align:center;margin-bottom:4px;">تم بنجاح! 🎉</p>
+          <p style="font-family:'Cairo',sans-serif;font-weight:400;font-size:0.82rem;color:#767676;text-align:center;margin-bottom:20px;">إليك قياسات جسمك</p>
+          <div class="scan-meas-card">
+            <div class="scan-meas-header">القياسات</div>
+            <div class="scan-meas-row"><span class="scan-meas-label">محيط الصدر</span><span class="scan-meas-value">٩٦ سم</span></div>
+            <div class="scan-meas-row"><span class="scan-meas-label">محيط الخصر</span><span class="scan-meas-value">٨٢ سم</span></div>
+            <div class="scan-meas-row"><span class="scan-meas-label">محيط الأرداف</span><span class="scan-meas-value">٩٨ سم</span></div>
+            <div class="scan-meas-row"><span class="scan-meas-label">طول الكتف</span><span class="scan-meas-value">٤٤ سم</span></div>
+            <div class="scan-meas-row"><span class="scan-meas-label">طول الجسم</span><span class="scan-meas-value">١٧٠ سم</span></div>
+            <div class="scan-meas-row"><span class="scan-meas-label">محيط الرقبة</span><span class="scan-meas-value">٣٨ سم</span></div>
+          </div>
+        </div>
+        <div class="step-bottom">
+          <button class="btn-next ready" onclick="showScreen(3)">استخدم هذه القياسات</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCREEN 3: Step 3 — Measurements (sliders) -->
   <div id="screen-3" class="screen">
     <div class="step-body step-body-center">
       <div class="step-top">
@@ -496,7 +1068,7 @@
   <div class="sticky-footer" id="sticky-footer">
     <div class="price-row">
       <span class="price-label">السعر التقديري</span>
-      <span class="price-amount" id="footer-price">١٦٩ ريال</span>
+      <span class="price-amount" id="footer-price">١٧٩ ريال</span>
     </div>
     <div class="payment-note">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -534,6 +1106,9 @@
     <p class="tooltip-body" id="tooltip-body"></p>
     <button class="tooltip-close" onclick="closeTooltip()">إغلاق</button>
   </div>
+
+  <!-- Shutter flash overlay -->
+  <div id="shutter-flash"></div>
 
   <script src="content/content.js"></script>
   <script type="module" src="js/order.js"></script>
