@@ -369,6 +369,39 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* ── DATE GROUP HEADERS ── */
+    tr.group-header td {
+      padding: 8px 16px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.78rem;
+      border-bottom: none;
+      white-space: nowrap;
+    }
+
+    tr.group-today td {
+      background: var(--black);
+      color: var(--white);
+      font-weight: 700;
+    }
+
+    tr.group-yesterday td,
+    tr.group-older td {
+      background: var(--light);
+      color: var(--black);
+    }
+
+    tr.group-yesterday td { font-weight: 700; }
+    tr.group-older td     { font-weight: 400; color: var(--gray); }
+
+    /* ── ROW AGE BORDER ── */
+    tbody tr.row-today     td:last-child { border-left: 3px solid var(--black); }
+    tbody tr.row-yesterday td:last-child { border-left: 3px solid var(--gray);  }
+    tbody tr.row-older     td:last-child { border-left: 3px solid var(--border); }
+
+    tbody tr.row-today     { border-right: 3px solid var(--black); }
+    tbody tr.row-yesterday { border-right: 3px solid var(--gray);  }
+    tbody tr.row-older     { border-right: 3px solid var(--border); }
+
     /* ── TABLE FOOTER ── */
     .tfoot {
       margin-top: 10px;
@@ -551,6 +584,40 @@
       return v;
     }
 
+    // ── DATE GROUPING ─────────────────────────────────────────────
+    const RIYADH_TZ = 'Asia/Riyadh';
+
+    function toRiyadhDateStr(iso) {
+      if (!iso) return '';
+      return new Date(iso).toLocaleDateString('en-CA', { timeZone: RIYADH_TZ }); // YYYY-MM-DD
+    }
+
+    function todayRiyadh() {
+      return new Date().toLocaleDateString('en-CA', { timeZone: RIYADH_TZ });
+    }
+
+    function yesterdayRiyadh() {
+      const d = new Date();
+      d.setDate(d.getDate() - 1);
+      return d.toLocaleDateString('en-CA', { timeZone: RIYADH_TZ });
+    }
+
+    const AR_DAYS   = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+    const AR_MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
+    function fmtGroupLabel(dateStr) {
+      // dateStr = YYYY-MM-DD
+      const [y, m, day] = dateStr.split('-').map(Number);
+      const d = new Date(y, m - 1, day);
+      return `${AR_DAYS[d.getDay()]}، ${day} ${AR_MONTHS[m - 1]}`;
+    }
+
+    function rowAgeClass(dateStr, todayStr, yestStr) {
+      if (dateStr === todayStr) return 'row-today';
+      if (dateStr === yestStr)  return 'row-yesterday';
+      return 'row-older';
+    }
+
     // ── STATS ────────────────────────────────────────────────────
     function updateStats(rows) {
       const today = new Date().toISOString().slice(0, 10);
@@ -572,9 +639,9 @@
 
     // ── RENDER BODY ───────────────────────────────────────────────
     function renderBody(rows, schema) {
-      const tbody  = document.getElementById('table-body');
-      const tfoot  = document.getElementById('tfoot');
-      const colLen = schema.cols.length;
+      const tbody   = document.getElementById('table-body');
+      const tfoot   = document.getElementById('tfoot');
+      const colLen  = schema.cols.length;
 
       if (!rows.length) {
         tbody.innerHTML = `<tr class="state-row"><td colspan="${colLen}">لا توجد طلبات بعد</td></tr>`;
@@ -582,13 +649,39 @@
         return;
       }
 
-      tbody.innerHTML = rows.map(row =>
-        '<tr>' + schema.cols.map(col => {
-          const cls = col.cls ? ` class="${col.cls}"` : '';
-          return `<td${cls}>${cellVal(row, col)}</td>`;
-        }).join('') + '</tr>'
-      ).join('');
+      const todayStr = todayRiyadh();
+      const yestStr  = yesterdayRiyadh();
+      let   lastDate = null;
+      const html     = [];
 
+      rows.forEach(row => {
+        const dateStr = toRiyadhDateStr(row.created_at);
+
+        // Inject group header when date changes
+        if (dateStr !== lastDate) {
+          lastDate = dateStr;
+          if (dateStr === todayStr) {
+            html.push(`<tr class="group-header group-today"><td colspan="${colLen}">اليوم</td></tr>`);
+          } else if (dateStr === yestStr) {
+            html.push(`<tr class="group-header group-yesterday"><td colspan="${colLen}">أمس</td></tr>`);
+          } else {
+            const label = dateStr ? fmtGroupLabel(dateStr) : '—';
+            html.push(`<tr class="group-header group-older"><td colspan="${colLen}">${label}</td></tr>`);
+          }
+        }
+
+        const ageCls = rowAgeClass(dateStr, todayStr, yestStr);
+        html.push(
+          `<tr class="${ageCls}">` +
+          schema.cols.map(col => {
+            const cls = col.cls ? ` class="${col.cls}"` : '';
+            return `<td${cls}>${cellVal(row, col)}</td>`;
+          }).join('') +
+          '</tr>'
+        );
+      });
+
+      tbody.innerHTML = html.join('');
       tfoot.textContent = `عرض ${rows.length} من ${allRows.length} طلب`;
     }
 
