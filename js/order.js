@@ -131,8 +131,8 @@ function buildCards() {
 }
 
 const FABRICS = [
-  { value: 'ياباني نصف وقفة', label: 'نصف وقفة', sub: 'ياباني', img: 'images/Fabric.png'  },
-  { value: 'ياباني سميراميس', label: 'سميراميس',  sub: 'ياباني', img: 'images/Fabric2.png' },
+  { value: 'كوري ربع وقفة', label: 'ربع وقفة', sub: 'كوري', img: 'images/Fabric.png'  },
+  { value: 'كوري سميراميس', label: 'سميراميس', sub: 'كوري', img: 'images/Fabric2.png' },
 ];
 
 function buildFabricCards() {
