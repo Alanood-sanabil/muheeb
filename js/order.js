@@ -606,7 +606,7 @@ async function submit() {
       body_type: orderState.bodyShape,
       fit_preference: orderState.fitPreference,
     };
-    console.log('[Muheeb] Supabase insert payload:', payload);
+    console.log('[Muheeb] Supabase insert payload:', JSON.stringify(payload, null, 2));
     const { error } = await supabase
       .from('orders')
       .insert([payload]);
@@ -939,13 +939,16 @@ function _startScanParticles() {
 function handleSubmit() {
   clearErr();
   let ok = true;
-  const nameEl = document.getElementById('input-name');
+  const nameEl  = document.getElementById('input-name');
   const phoneEl = document.getElementById('input-phone');
-  if (!nameEl || !nameEl.value.trim()) { showErr('error-name'); ok = false; }
+  const cityEl  = document.getElementById('input-city');
+  if (!nameEl  || !nameEl.value.trim())  { showErr('error-name');  ok = false; }
   if (!phoneEl || !phoneEl.value.trim()) { showErr('error-phone'); ok = false; }
+  if (!cityEl  || !cityEl.value.trim())  { showErr('error-city');  ok = false; }
   if (ok) {
-    orderState.name = nameEl.value.trim();
+    orderState.name  = nameEl.value.trim();
     orderState.phone = phoneEl.value.trim();
+    orderState.city  = cityEl.value.trim();
     closeOrderModal();
     submit();
   }
