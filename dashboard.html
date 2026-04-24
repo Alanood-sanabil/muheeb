@@ -20,10 +20,6 @@
       --err:    #C0392B;
     }
 
-    html, body {
-      height: 100%;
-    }
-
     body {
       font-family: 'Cairo', sans-serif;
       background: var(--white);
@@ -369,38 +365,35 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── DATE GROUP HEADERS ── */
-    tr.group-header td {
-      padding: 8px 16px;
+    /* ── DAY SECTIONS ── */
+    .day-section {
+      margin-bottom: 24px;
+    }
+
+    .day-label-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .day-label {
       font-family: 'Cairo', sans-serif;
-      font-size: 0.78rem;
-      border-bottom: none;
-      white-space: nowrap;
-    }
-
-    tr.group-today td {
-      background: var(--black);
-      color: var(--white);
-      font-weight: 700;
-    }
-
-    tr.group-yesterday td,
-    tr.group-older td {
-      background: var(--light);
+      font-size: 1rem;
+      font-weight: 800;
       color: var(--black);
     }
 
-    tr.group-yesterday td { font-weight: 700; }
-    tr.group-older td     { font-weight: 400; color: var(--gray); }
-
-    /* ── ROW AGE BORDER ── */
-    tbody tr.row-today     td:last-child { border-left: 3px solid var(--black); }
-    tbody tr.row-yesterday td:last-child { border-left: 3px solid var(--gray);  }
-    tbody tr.row-older     td:last-child { border-left: 3px solid var(--border); }
-
-    tbody tr.row-today     { border-right: 3px solid var(--black); }
-    tbody tr.row-yesterday { border-right: 3px solid var(--gray);  }
-    tbody tr.row-older     { border-right: 3px solid var(--border); }
+    .day-badge {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border-radius: 20px;
+      padding: 2px 10px;
+      white-space: nowrap;
+    }
 
     /* ── TABLE FOOTER ── */
     .tfoot {
@@ -473,16 +466,17 @@
       />
     </div>
 
-    <!-- TABLE -->
-    <div class="table-wrap">
-      <table id="data-table">
-        <thead id="table-head"></thead>
-        <tbody id="table-body">
-          <tr class="state-row">
-            <td colspan="10"><span class="spinner"></span> جاري تحميل البيانات...</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- TABLES (grouped by day) -->
+    <div id="table-container">
+      <div class="table-wrap">
+        <table>
+          <tbody>
+            <tr class="state-row">
+              <td colspan="10"><span class="spinner"></span> جاري تحميل البيانات...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <div class="tfoot" id="tfoot"></div>
 
@@ -612,12 +606,6 @@
       return `${AR_DAYS[d.getDay()]}، ${day} ${AR_MONTHS[m - 1]}`;
     }
 
-    function rowAgeClass(dateStr, todayStr, yestStr) {
-      if (dateStr === todayStr) return 'row-today';
-      if (dateStr === yestStr)  return 'row-yesterday';
-      return 'row-older';
-    }
-
     // ── STATS ────────────────────────────────────────────────────
     function updateStats(rows) {
       const today = new Date().toISOString().slice(0, 10);
@@ -631,57 +619,66 @@
       });
     }
 
-    // ── RENDER HEAD ───────────────────────────────────────────────
-    function renderHead(schema) {
-      document.getElementById('table-head').innerHTML =
-        '<tr>' + schema.cols.map(c => `<th>${c.label}</th>`).join('') + '</tr>';
+    // ── BUILD TABLE HTML ──────────────────────────────────────────
+    function buildTable(rows, schema) {
+      const thead = '<thead><tr>' + schema.cols.map(c => `<th>${c.label}</th>`).join('') + '</tr></thead>';
+      const tbody = '<tbody>' + rows.map(row =>
+        '<tr>' + schema.cols.map(col => {
+          const cls = col.cls ? ` class="${col.cls}"` : '';
+          return `<td${cls}>${cellVal(row, col)}</td>`;
+        }).join('') + '</tr>'
+      ).join('') + '</tbody>';
+      return `<div class="table-wrap"><table>${thead}${tbody}</table></div>`;
     }
 
     // ── RENDER BODY ───────────────────────────────────────────────
     function renderBody(rows, schema) {
-      const tbody   = document.getElementById('table-body');
-      const tfoot   = document.getElementById('tfoot');
-      const colLen  = schema.cols.length;
+      const container = document.getElementById('table-container');
+      const tfoot     = document.getElementById('tfoot');
 
       if (!rows.length) {
-        tbody.innerHTML = `<tr class="state-row"><td colspan="${colLen}">لا توجد طلبات بعد</td></tr>`;
+        container.innerHTML = `<div class="table-wrap"><table><tbody><tr class="state-row"><td colspan="${schema.cols.length}">لا توجد طلبات بعد</td></tr></tbody></table></div>`;
         tfoot.textContent = '';
         return;
       }
 
       const todayStr = todayRiyadh();
       const yestStr  = yesterdayRiyadh();
-      let   lastDate = null;
-      const html     = [];
 
+      // Group rows by Riyadh date
+      const groups = [];
+      const groupMap = {};
       rows.forEach(row => {
         const dateStr = toRiyadhDateStr(row.created_at);
-
-        // Inject group header when date changes
-        if (dateStr !== lastDate) {
-          lastDate = dateStr;
-          if (dateStr === todayStr) {
-            html.push(`<tr class="group-header group-today"><td colspan="${colLen}">اليوم</td></tr>`);
-          } else if (dateStr === yestStr) {
-            html.push(`<tr class="group-header group-yesterday"><td colspan="${colLen}">أمس</td></tr>`);
-          } else {
-            const label = dateStr ? fmtGroupLabel(dateStr) : '—';
-            html.push(`<tr class="group-header group-older"><td colspan="${colLen}">${label}</td></tr>`);
-          }
+        if (!groupMap[dateStr]) {
+          groupMap[dateStr] = [];
+          groups.push(dateStr);
         }
-
-        const ageCls = rowAgeClass(dateStr, todayStr, yestStr);
-        html.push(
-          `<tr class="${ageCls}">` +
-          schema.cols.map(col => {
-            const cls = col.cls ? ` class="${col.cls}"` : '';
-            return `<td${cls}>${cellVal(row, col)}</td>`;
-          }).join('') +
-          '</tr>'
-        );
+        groupMap[dateStr].push(row);
       });
 
-      tbody.innerHTML = html.join('');
+      // Build Arabic count string
+      function arCount(n) {
+        return n.toLocaleString('ar-SA') + ' طلب';
+      }
+
+      const html = groups.map(dateStr => {
+        const groupRows = groupMap[dateStr];
+        let label;
+        if (dateStr === todayStr)     label = 'اليوم';
+        else if (dateStr === yestStr) label = 'أمس';
+        else                          label = dateStr ? fmtGroupLabel(dateStr) : '—';
+
+        return `<div class="day-section">
+          <div class="day-label-row">
+            <span class="day-label">${label}</span>
+            <span class="day-badge">${arCount(groupRows.length)}</span>
+          </div>
+          ${buildTable(groupRows, schema)}
+        </div>`;
+      }).join('');
+
+      container.innerHTML = html;
       tfoot.textContent = `عرض ${rows.length} من ${allRows.length} طلب`;
     }
 
@@ -699,16 +696,15 @@
 
     // ── LOAD ─────────────────────────────────────────────────────
     async function loadTab(tab) {
-      const schema = SCHEMAS[tab];
-      const tbody  = document.getElementById('table-body');
-      const tfoot  = document.getElementById('tfoot');
+      const schema    = SCHEMAS[tab];
+      const container = document.getElementById('table-container');
+      const tfoot     = document.getElementById('tfoot');
 
       // Reset UI
       document.getElementById('search-input').value = '';
       tfoot.textContent = '';
       resetStats();
-      renderHead(schema);
-      tbody.innerHTML = `<tr class="state-row"><td colspan="${schema.cols.length}"><span class="spinner"></span> جاري التحميل...</td></tr>`;
+      container.innerHTML = `<div class="table-wrap"><table><tbody><tr class="state-row"><td colspan="${schema.cols.length}"><span class="spinner"></span> جاري التحميل...</td></tr></tbody></table></div>`;
 
       try {
         // NOTE: Go to Supabase → Authentication → Policies → orders table → Add policy
@@ -732,7 +728,7 @@
 
       } catch (err) {
         console.error('[Dashboard] Fetch error:', err);
-        tbody.innerHTML = `<tr class="state-row error"><td colspan="${schema.cols.length}">تعذّر تحميل البيانات — تحقق من المفتاح والاتصال</td></tr>`;
+        container.innerHTML = `<div class="table-wrap"><table><tbody><tr class="state-row error"><td colspan="${schema.cols.length}">تعذّر تحميل البيانات — تحقق من المفتاح والاتصال</td></tr></tbody></table></div>`;
         document.getElementById('conn-dot').className    = 'conn-dot err';
         document.getElementById('conn-label').textContent = 'خطأ في الاتصال';
       }
