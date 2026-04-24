@@ -4,7 +4,7 @@
 //  the module load if the CDN is slow or unavailable.
 // ============================================================
 
-const orderState = { color: null, collar: null, height: 170, weight: 80, shoeSize: 42, bodyShape: null, fitPreference: null, name: null, phone: null, city: null };
+const orderState = { fabric: null, color: null, collar: null, height: 170, weight: 80, shoeSize: 42, bodyShape: null, fitPreference: null, name: null, phone: null, city: null };
 let currentScreen = 1;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -124,9 +124,37 @@ function populate() {
 
 // ---- BUILD CARDS ----
 function buildCards() {
+  buildFabricCards();
   buildColorSwatches();
   buildCollarCards();
   buildShapeCards();
+}
+
+const FABRICS = [
+  { value: 'ياباني سميراميس', label: 'ياباني', sub: 'سميراميس',   img: 'images/Fabric2.png' },
+  { value: 'ياباني نصف وقفة', label: 'ياباني', sub: 'نصف وقفة', img: 'images/Fabric.png'  },
+];
+
+function buildFabricCards() {
+  const container = document.getElementById('fabric-cards');
+  if (!container) return;
+  FABRICS.forEach(fabric => {
+    const card = document.createElement('div');
+    card.className = 'fabric-card';
+    card.innerHTML = `
+      <img src="${fabric.img}" alt="${fabric.label}" />
+      <div class="fabric-card-info">
+        <div class="fabric-card-label">${fabric.label}</div>
+        <div class="fabric-card-sub">${fabric.sub}</div>
+      </div>`;
+    card.onclick = () => {
+      container.querySelectorAll('.fabric-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      orderState.fabric = fabric.value;
+      updateBtn(1);
+    };
+    container.appendChild(card);
+  });
 }
 
 const swatchBg = { white: '#FFFFFF', yellow: '#FAF3DC' };
@@ -428,6 +456,7 @@ function updateProgress(screenNumber) {
 function validateStep1() {
   clearErr();
   let ok = true;
+  if (!orderState.fabric) { showErr('error-fabric'); ok = false; }
   if (!orderState.color) { showErr('error-color'); ok = false; }
   if (!orderState.collar) { showErr('error-collar'); ok = false; }
   if (ok) { gtag('event', 'complete_step1', { event_category: 'funnel' }); showScreen(3); }
@@ -566,6 +595,7 @@ async function submit() {
       name: orderState.name,
       phone: orderState.phone,
       city: orderState.city,
+      fabric: orderState.fabric,
       color: orderState.color,
       collar: orderState.collar,
       height: String(orderState.height),
