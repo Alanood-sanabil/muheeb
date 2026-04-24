@@ -532,6 +532,8 @@ function openOrderModal() {
   const sumMeas = document.getElementById('modal-sum-meas');
   const sumPrice = document.getElementById('modal-sum-price');
   if (sumColor) sumColor.textContent = orderState.color || '—';
+  const sumFabric = document.getElementById('sum-fabric');
+  if (sumFabric) sumFabric.textContent = orderState.fabric || '—';
   if (sumCollar) sumCollar.textContent = orderState.collar || '—';
   if (sumMeas) sumMeas.textContent = toAr(orderState.height) + ' سم — ' + toAr(orderState.weight) + ' كيلو';
   if (sumPrice) sumPrice.textContent = toAr(S.basePrice) + ' ' + O.priceUnit;
