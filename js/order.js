@@ -4,7 +4,7 @@
 //  the module load if the CDN is slow or unavailable.
 // ============================================================
 
-const orderState = { fabric: null, color: null, collar: null, height: 170, weight: 80, shoeSize: 42, bodyShape: null, fitPreference: null, name: null, phone: null, city: null };
+const orderState = { fabric: null, color: null, collar: null, height: 170, weight: 80, shoeSize: 42, age: 25, bodyShape: null, fitPreference: null, name: null, phone: null, city: null };
 let currentScreen = 1;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -297,6 +297,7 @@ function initSliders() {
   setupSlider('slider-height', 's-height-val', O.heightUnit, 'height');
   setupSlider('slider-weight', 's-weight-val', O.weightUnit, 'weight');
   setupSlider('slider-shoe', 's-shoe-val', O.shoeSizeUnit, 'shoeSize');
+  setupSlider('slider-age', 's-age-val', 'سنة', 'age');
 }
 
 function setupSlider(sliderId, valId, unit, field) {
@@ -603,6 +604,7 @@ async function submit() {
       height: String(orderState.height),
       weight: String(orderState.weight),
       shoe_size: String(orderState.shoeSize),
+      age: String(orderState.age),
       body_type: orderState.bodyShape,
       fit_preference: orderState.fitPreference,
     };
