@@ -263,20 +263,18 @@
       white-space: nowrap;
       user-select: none;
     }
-    .status-dropdown {
-      position: absolute;
-      top: calc(100% + 4px);
-      right: 0;
+    #floating-dropdown {
+      position: fixed;
       background: #FFFFFF;
       border: 1px solid #E8E8E8;
       border-radius: 10px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-      z-index: 999;
-      min-width: 130px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      z-index: 9999;
+      min-width: 140px;
       padding: 4px 0;
       display: none;
     }
-    .status-dropdown.open { display: block; }
+    #floating-dropdown.open { display: block; }
     .status-option {
       padding: 8px 14px;
       font-family: 'Cairo', sans-serif;
@@ -638,15 +636,7 @@
     function buildStatusPill(row) {
       const statusVal = (row.status && row.status.trim()) ? row.status : 'طلب جديد';
       const style = getStatusStyle(statusVal);
-      const optionsHtml = STATUS_LIST.map(s =>
-        `<div class="status-option" data-order-id="${row.id}" data-status="${s.label}">
-          <span class="status-option-dot" style="background:${s.color}"></span>${s.label}
-        </div>`
-      ).join('');
-      return `<div class="status-pill" data-order-id="${row.id}" style="background:${style.bg};color:${style.color}">
-        ${statusVal}
-        <div class="status-dropdown">${optionsHtml}</div>
-      </div>`;
+      return `<div class="status-pill" data-order-id="${row.id}" style="background:${style.bg};color:${style.color}">${statusVal}</div>`;
     }
 
     // ── HELPERS ──────────────────────────────────────────────────
@@ -871,51 +861,69 @@
       }
     }
 
-    // ── EVENT DELEGATION FOR STATUS PILLS ─────────────────────────
-    document.getElementById('table-container').addEventListener('click', function(e) {
-      // Handle clicking a status option
-      const option = e.target.closest('.status-option');
-      if (option) {
-        e.stopPropagation();
-        const orderId   = option.dataset.orderId;
-        const newStatus = option.dataset.status;
-        const pill = document.querySelector(`.status-pill[data-order-id="${orderId}"]`);
-        if (pill) {
-          const style = getStatusStyle(newStatus);
-          pill.style.background = style.bg;
-          pill.style.color      = style.color;
-          // Update pill text (first non-empty text node)
-          const dropdown = pill.querySelector('.status-dropdown');
-          for (const node of pill.childNodes) {
-            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-              node.textContent = ' ' + newStatus + ' ';
-              break;
-            }
-          }
-          // Close dropdown
-          dropdown.classList.remove('open');
-        }
-        updateStatus(orderId, newStatus);
-        return;
-      }
+    // ── FLOATING DROPDOWN ─────────────────────────────────────────
+    const floatingDropdown = document.createElement('div');
+    floatingDropdown.id = 'floating-dropdown';
+    floatingDropdown.innerHTML = STATUS_LIST.map(s =>
+      `<div class="status-option" data-status="${s.label}">
+        <span class="status-option-dot" style="background:${s.color}"></span>${s.label}
+      </div>`
+    ).join('');
+    document.body.appendChild(floatingDropdown);
 
-      // Handle clicking a status pill (toggle dropdown)
+    let _activePill = null;
+
+    function closeFloatingDropdown() {
+      floatingDropdown.classList.remove('open');
+      _activePill = null;
+    }
+
+    function openFloatingDropdown(pill) {
+      _activePill = pill;
+      const rect = pill.getBoundingClientRect();
+      const dropH = 240; // approx height
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const top = spaceBelow >= dropH
+        ? rect.bottom + 4
+        : rect.top - dropH - 4;
+      floatingDropdown.style.top  = top + 'px';
+      floatingDropdown.style.right = (window.innerWidth - rect.right) + 'px';
+      floatingDropdown.style.left  = 'auto';
+      floatingDropdown.classList.add('open');
+    }
+
+    // Pill clicks (event delegation on table container)
+    document.getElementById('table-container').addEventListener('click', function(e) {
       const pill = e.target.closest('.status-pill');
       if (pill) {
         e.stopPropagation();
-        const dropdown = pill.querySelector('.status-dropdown');
-        const isOpen   = dropdown.classList.contains('open');
-        // Close all open dropdowns
-        document.querySelectorAll('.status-dropdown.open').forEach(d => d.classList.remove('open'));
-        if (!isOpen) dropdown.classList.add('open');
+        if (_activePill === pill) {
+          closeFloatingDropdown();
+        } else {
+          openFloatingDropdown(pill);
+        }
         return;
       }
     });
 
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function() {
-      document.querySelectorAll('.status-dropdown.open').forEach(d => d.classList.remove('open'));
+    // Option clicks on floating dropdown
+    floatingDropdown.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const option = e.target.closest('.status-option');
+      if (!option || !_activePill) return;
+      const newStatus = option.dataset.status;
+      const orderId   = _activePill.dataset.orderId;
+      const style     = getStatusStyle(newStatus);
+      _activePill.style.background = style.bg;
+      _activePill.style.color      = style.color;
+      _activePill.textContent      = newStatus;
+      closeFloatingDropdown();
+      updateStatus(orderId, newStatus);
     });
+
+    // Close on outside click or scroll
+    document.addEventListener('click', closeFloatingDropdown);
+    document.addEventListener('scroll', closeFloatingDropdown, true);
 
     // ── INIT ─────────────────────────────────────────────────────
     // Only load data if already authenticated (login calls loadTab itself)
