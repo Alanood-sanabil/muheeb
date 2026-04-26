@@ -218,36 +218,81 @@
       color: var(--white);
     }
 
-    /* ── STATS ── */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
+    /* ── STATUS STATS ── */
+    .status-stats-row {
+      display: flex;
       gap: 12px;
+      overflow-x: auto;
       margin-bottom: 20px;
+      scrollbar-width: none;
+      padding-bottom: 4px;
     }
-
-    @media (max-width: 700px) {
-      .stats { grid-template-columns: 1fr 1fr; }
-    }
-
-    .stat-card {
-      background: var(--light);
+    .status-stats-row::-webkit-scrollbar { display: none; }
+    .status-stat-card {
+      min-width: 130px;
       border-radius: 12px;
-      padding: 20px;
+      padding: 16px 20px;
+      flex-shrink: 0;
     }
-
-    .stat-num {
-      font-size: 2.2rem;
+    .status-stat-num {
+      font-family: 'Cairo', sans-serif;
+      font-size: 2rem;
       font-weight: 800;
-      color: var(--black);
+      color: #0A0A0A;
       line-height: 1;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
+    }
+    .status-stat-label {
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: #767676;
     }
 
-    .stat-label {
-      font-size: 0.75rem;
-      font-weight: 400;
-      color: var(--gray);
+    /* ── STATUS PILL & DROPDOWN ── */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.78rem;
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+      user-select: none;
+    }
+    .status-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      background: #FFFFFF;
+      border: 1px solid #E8E8E8;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+      z-index: 999;
+      min-width: 130px;
+      padding: 4px 0;
+      display: none;
+    }
+    .status-dropdown.open { display: block; }
+    .status-option {
+      padding: 8px 14px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-option:hover { background: #F5F5F5; }
+    .status-option-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
     }
 
     /* ── SEARCH ── */
@@ -449,10 +494,9 @@
       <button class="tab-btn"        id="tab-tailoring" onclick="switchTab('tailoring')">طلبات التفصيل</button>
     </div>
 
-    <!-- STATS -->
-    <div class="stats">
-      <div class="stat-card"><div class="stat-num" id="s-total">—</div><div class="stat-label">إجمالي الطلبات</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-today">—</div><div class="stat-label">طلبات اليوم</div></div>
+    <!-- STATUS STATS -->
+    <div class="status-stats-row" id="status-stats-row">
+      <!-- cards rendered by JS -->
     </div>
 
     <!-- SEARCH -->
@@ -530,6 +574,7 @@
         table: 'orders',
         cols: [
           { label: 'رقم الطلب',   key: 'order_number', cls: 'num-cell'   },
+          { label: 'الحالة',      key: 'status',        fmt: 'status'     },
           { label: 'الاسم',       key: 'name'                             },
           { label: 'الهاتف',      key: 'phone',         cls: 'phone-cell' },
           { label: 'المدينة',     key: 'city'                             },
@@ -565,6 +610,45 @@
     let allRows      = [];
     let filteredRows = [];
 
+    // ── STATUS CONFIG ─────────────────────────────────────────────
+    const STATUS_LIST = [
+      { label: 'طلب جديد',   bg: '#F0F0F0', color: '#0A0A0A' },
+      { label: 'تم التواصل', bg: '#E8F4FD', color: '#1A6B9A' },
+      { label: 'دفع',        bg: '#FFF3CD', color: '#856404' },
+      { label: 'تم الشحن',  bg: '#D1F2EB', color: '#0E6655' },
+      { label: 'تعديل',      bg: '#FDE8D8', color: '#9C4A1A' },
+      { label: 'ملغي',       bg: '#FADBD8', color: '#922B21' },
+    ];
+
+    const STATUS_CARDS = [
+      { label: 'إجمالي الطلبات', key: null,         bg: '#F5F5F5' },
+      { label: 'طلب جديد',       key: 'طلب جديد',   bg: '#F0F0F0' },
+      { label: 'تم التواصل',     key: 'تم التواصل',  bg: '#E8F4FD' },
+      { label: 'دفع',            key: 'دفع',         bg: '#FFF3CD' },
+      { label: 'تم الشحن',       key: 'تم الشحن',   bg: '#D1F2EB' },
+      { label: 'تعديل',          key: 'تعديل',       bg: '#FDE8D8' },
+      { label: 'ملغي',           key: 'ملغي',        bg: '#FADBD8' },
+    ];
+
+    function getStatusStyle(statusVal) {
+      const s = STATUS_LIST.find(x => x.label === statusVal);
+      return s || STATUS_LIST[0]; // default to 'طلب جديد' style
+    }
+
+    function buildStatusPill(row) {
+      const statusVal = (row.status && row.status.trim()) ? row.status : 'طلب جديد';
+      const style = getStatusStyle(statusVal);
+      const optionsHtml = STATUS_LIST.map(s =>
+        `<div class="status-option" data-order-id="${row.id}" data-status="${s.label}">
+          <span class="status-option-dot" style="background:${s.color}"></span>${s.label}
+        </div>`
+      ).join('');
+      return `<div class="status-pill" data-order-id="${row.id}" style="background:${style.bg};color:${style.color}">
+        ${statusVal}
+        <div class="status-dropdown">${optionsHtml}</div>
+      </div>`;
+    }
+
     // ── HELPERS ──────────────────────────────────────────────────
     function fmtDate(iso) {
       if (!iso) return '—';
@@ -575,6 +659,7 @@
 
     function cellVal(row, col) {
       const v = row[col.key];
+      if (col.fmt === 'status') return buildStatusPill(row);
       if (v === null || v === undefined || v === '') return '—';
       if (col.fmt === 'date') return fmtDate(v);
       return v;
@@ -610,15 +695,42 @@
 
     // ── STATS ────────────────────────────────────────────────────
     function updateStats(rows) {
-      const today = new Date().toISOString().slice(0, 10);
-      document.getElementById('s-total').textContent  = rows.length;
-      document.getElementById('s-today').textContent  = rows.filter(r => (r.created_at||'').startsWith(today)).length;
+      const container = document.getElementById('status-stats-row');
+      if (!container) return;
+      // Only show status stats for orders tab
+      if (activeTab !== 'orders') {
+        container.innerHTML = '';
+        return;
+      }
+      container.innerHTML = STATUS_CARDS.map((card, i) => {
+        let count;
+        if (card.key === null) {
+          count = rows.length;
+        } else if (card.key === 'طلب جديد') {
+          count = rows.filter(r => !r.status || r.status === 'طلب جديد').length;
+        } else {
+          count = rows.filter(r => r.status === card.key).length;
+        }
+        return `<div class="status-stat-card" style="background:${card.bg}">
+          <div class="status-stat-num">${count}</div>
+          <div class="status-stat-label">${card.label}</div>
+        </div>`;
+      }).join('');
     }
 
     function resetStats() {
-      ['s-total','s-today'].forEach(id => {
-        document.getElementById(id).textContent = '—';
-      });
+      const container = document.getElementById('status-stats-row');
+      if (!container) return;
+      if (activeTab !== 'orders') {
+        container.innerHTML = '';
+        return;
+      }
+      container.innerHTML = STATUS_CARDS.map(card =>
+        `<div class="status-stat-card" style="background:${card.bg}">
+          <div class="status-stat-num">—</div>
+          <div class="status-stat-label">${card.label}</div>
+        </div>`
+      ).join('');
     }
 
     // ── BUILD TABLE HTML ──────────────────────────────────────────
@@ -744,6 +856,66 @@
       document.getElementById('tab-' + tab).classList.add('active');
       loadTab(tab);
     }
+
+    // ── STATUS UPDATE ─────────────────────────────────────────────
+    async function updateStatus(orderId, newStatus) {
+      try {
+        const { error } = await db.from('orders').update({ status: newStatus }).eq('id', orderId);
+        if (error) throw error;
+        // Update allRows in memory
+        allRows = allRows.map(r => r.id === orderId ? { ...r, status: newStatus } : r);
+        filteredRows = filteredRows.map(r => r.id === orderId ? { ...r, status: newStatus } : r);
+        updateStats(allRows);
+      } catch (err) {
+        console.error('[Dashboard] Status update error:', err);
+      }
+    }
+
+    // ── EVENT DELEGATION FOR STATUS PILLS ─────────────────────────
+    document.getElementById('table-container').addEventListener('click', function(e) {
+      // Handle clicking a status option
+      const option = e.target.closest('.status-option');
+      if (option) {
+        e.stopPropagation();
+        const orderId   = option.dataset.orderId;
+        const newStatus = option.dataset.status;
+        const pill = document.querySelector(`.status-pill[data-order-id="${orderId}"]`);
+        if (pill) {
+          const style = getStatusStyle(newStatus);
+          pill.style.background = style.bg;
+          pill.style.color      = style.color;
+          // Update pill text (first non-empty text node)
+          const dropdown = pill.querySelector('.status-dropdown');
+          for (const node of pill.childNodes) {
+            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+              node.textContent = ' ' + newStatus + ' ';
+              break;
+            }
+          }
+          // Close dropdown
+          dropdown.classList.remove('open');
+        }
+        updateStatus(orderId, newStatus);
+        return;
+      }
+
+      // Handle clicking a status pill (toggle dropdown)
+      const pill = e.target.closest('.status-pill');
+      if (pill) {
+        e.stopPropagation();
+        const dropdown = pill.querySelector('.status-dropdown');
+        const isOpen   = dropdown.classList.contains('open');
+        // Close all open dropdowns
+        document.querySelectorAll('.status-dropdown.open').forEach(d => d.classList.remove('open'));
+        if (!isOpen) dropdown.classList.add('open');
+        return;
+      }
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function() {
+      document.querySelectorAll('.status-dropdown.open').forEach(d => d.classList.remove('open'));
+    });
 
     // ── INIT ─────────────────────────────────────────────────────
     // Only load data if already authenticated (login calls loadTab itself)
