@@ -218,6 +218,30 @@
       color: var(--white);
     }
 
+    .export-btn {
+      height: 40px;
+      padding: 0 16px;
+      margin-inline-start: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1.5px solid var(--black);
+      background: var(--white);
+      color: var(--black);
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+
+    .export-btn:hover { background: #F5F5F5; }
+    .export-btn:active { background: #EEEEEE; }
+    .export-btn:disabled { opacity: 0.45; cursor: not-allowed; background: var(--white); }
+    .export-btn svg { flex-shrink: 0; }
+
     /* ── STATUS STATS ── */
     .status-stats-row {
       display: flex;
@@ -490,6 +514,14 @@
     <div class="tabs">
       <button class="tab-btn active" id="tab-orders"    onclick="switchTab('orders')">طلبات الثوب الجاهز</button>
       <button class="tab-btn"        id="tab-tailoring" onclick="switchTab('tailoring')">طلبات التفصيل</button>
+      <button class="export-btn" id="btn-export-csv" type="button" onclick="exportCSV()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        <span>تصدير CSV</span>
+      </button>
     </div>
 
     <!-- STATUS STATS -->
@@ -797,6 +829,101 @@
           )
         : [...allRows];
       renderBody(filteredRows, SCHEMAS[activeTab]);
+    }
+
+    // ── CSV EXPORT ───────────────────────────────────────────────
+    function fmtDateCSV(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      const p = n => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+    }
+
+    function csvField(v) {
+      if (v === null || v === undefined) return '';
+      const s = String(v);
+      if (s === '') return '';
+      if (/[",\r\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+      return s;
+    }
+
+    function buildOrdersCSV(rows) {
+      const headers = [
+        'رقم الطلب','التاريخ','الحالة','الاسم','الهاتف','المدينة',
+        'اللون','القماش','الياقة','نوع الجسم','المقاس المفضل',
+        'الطول','الوزن','العمر','مقاس الحذاء',
+        'استخدم القياس بالذكاء الاصطناعي','المقاسات المحسوبة',
+        'السعر','ملاحظات'
+      ];
+      const lines = [headers.map(csvField).join(',')];
+      rows.forEach(r => {
+        const aiVals = [r.ai_chest, r.ai_waist, r.ai_sleeve, r.ai_size];
+        const usedAI = aiVals.some(v => v !== null && v !== undefined && v !== '');
+        let aiCalc = '';
+        if (usedAI) {
+          const parts = [];
+          if (r.ai_chest)  parts.push(`صدر ${r.ai_chest}`);
+          if (r.ai_waist)  parts.push(`خصر ${r.ai_waist}`);
+          if (r.ai_sleeve) parts.push(`كم ${r.ai_sleeve}`);
+          if (r.ai_size)   parts.push(`مقاس ${r.ai_size}`);
+          aiCalc = parts.join(' / ');
+        }
+        const row = [
+          r.order_number, fmtDateCSV(r.created_at),
+          r.status || 'طلب جديد',
+          r.name, r.phone, r.city,
+          r.color, r.fabric, r.collar, r.body_type, r.fit_preference,
+          r.height, r.weight, r.age, r.shoe_size,
+          usedAI ? 'نعم' : 'لا', aiCalc,
+          r.price, r.notes
+        ];
+        lines.push(row.map(csvField).join(','));
+      });
+      return lines.join('\r\n');
+    }
+
+    function buildTailoringCSV(rows) {
+      const headers = [
+        'رقم الطلب','التاريخ','الاسم','الهاتف','المدينة',
+        'الباقة','السعر','يوم الزيارة','وقت الزيارة','ملاحظات'
+      ];
+      const lines = [headers.map(csvField).join(',')];
+      rows.forEach(r => {
+        const row = [
+          r.order_number, fmtDateCSV(r.created_at),
+          r.name, r.phone, r.city,
+          r.package, r.price, r.visit_day, r.visit_time, r.notes
+        ];
+        lines.push(row.map(csvField).join(','));
+      });
+      return lines.join('\r\n');
+    }
+
+    function exportCSV() {
+      const rows = filteredRows;
+      if (!rows || !rows.length) {
+        alert('لا توجد طلبات للتصدير');
+        return;
+      }
+      const csv = activeTab === 'orders'
+        ? buildOrdersCSV(rows)
+        : buildTailoringCSV(rows);
+
+      // UTF-8 BOM (﻿) so Excel opens Arabic correctly
+      const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+      const url  = URL.createObjectURL(blob);
+
+      const today = todayRiyadh();
+      const tabSlug = activeTab === 'orders' ? 'ready-to-wear' : 'tailoring';
+      const filename = `muheeb-orders-${tabSlug}-${today}.csv`;
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 100);
     }
 
     // ── LOAD ─────────────────────────────────────────────────────
