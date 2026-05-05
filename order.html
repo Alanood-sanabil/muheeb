@@ -629,6 +629,81 @@
       color: #767676;
       margin-top: 2px;
     }
+
+    /* ─── COMBINED AI ENTRY (sub-1): compact tips card ──────────────── */
+    .aimeasure-divider {
+      width: 60%;
+      height: 1px;
+      background: #E5E5E5;
+      border: none;
+      margin: 14px auto 12px;
+    }
+    .aimeasure-mini-section {
+      width: 100%;
+      direction: rtl;
+      text-align: right;
+    }
+    .aimeasure-mini-section-label {
+      font-family: 'YearOfTheCamel','Cairo',sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #888;
+      letter-spacing: 0.04em;
+      display: block;
+      margin: 0 8px 6px;
+    }
+    .aimeasure-tips-compact { padding: 4px 16px; }
+    .aimeasure-tips-compact .aimeasure-tip {
+      padding: 9px 0;
+      gap: 12px;
+      font-size: 0.92rem;
+      font-weight: 500;
+    }
+    .aimeasure-tips-compact .aimeasure-tip-icon { width: 20px; height: 20px; }
+
+    /* ─── COMBINED PHOTO CAPTURE (sub-3): two tiles side-by-side ────── */
+    .ai-dual-photos {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      width: 100%;
+      direction: rtl;
+    }
+    .ai-dual-tile {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .ai-dual-tile-label {
+      font-family: 'YearOfTheCamel','Cairo',sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #555;
+      text-align: center;
+    }
+    .ai-dual-guide {
+      width: 100% !important;
+      max-width: none !important;
+      max-height: 44vh !important;
+      aspect-ratio: 3 / 5;
+      padding: 0 0 8px !important;
+    }
+    .ai-dual-upload {
+      font-size: 0.74rem !important;
+      padding: 7px 12px !important;
+      gap: 5px !important;
+    }
+    .ai-dual-note {
+      font-family: 'YearOfTheCamel','Cairo',sans-serif;
+      font-size: 0.78rem;
+      color: #888;
+      text-align: center;
+      margin-top: 12px;
+      width: 100%;
+    }
   </style>
   <style>
     /* === BODY SCAN SUB-SCREENS === */
@@ -1484,11 +1559,12 @@
   <div id="screen-aimeasure" class="screen">
 
     <!-- SUB 1: Entry -->
+    <!-- SUB 1: Combined Entry + Instructions -->
     <div class="aimeasure-sub active" id="aimeasure-sub-1">
       <div class="step-body step-body-center">
         <div class="step-top" style="align-items:center;text-align:center;">
           <div class="aimeasure-icon-wrap">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="44" height="44" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect x="6" y="14" width="36" height="26" rx="4" stroke="#0A0A0A" stroke-width="2.2" fill="none"/>
               <circle cx="24" cy="27" r="7" stroke="#0A0A0A" stroke-width="2.2" fill="none"/>
               <path d="M18 14v-2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2" stroke="#0A0A0A" stroke-width="2.2" stroke-linecap="round"/>
@@ -1496,8 +1572,8 @@
               <circle cx="35" cy="8" r="1.2" fill="#0A0A0A"/>
             </svg>
           </div>
-          <h2 class="aimeasure-headline">ثوبك والم مع قياسات مُهيب بالذكاء الاصطناعي</h2>
-          <p class="aimeasure-subtext">هذه الخاصية تساعدنا نفصّل ثوبك على مقاسك بدقة أفضل. فقط نحتاج منك صورتين - من الأمام والجانب.</p>
+          <h2 class="aimeasure-headline">ثوبك يلم مع قياسات مُهيب بالذكاء الاصطناعي</h2>
+          <p class="aimeasure-subtext">هذه الخاصية تساعدنا نفصّل ثوبك على مقاسك بدقة أفضل. فقط نحتاج منك صورتين — من الأمام والجانب.</p>
           <div class="aimeasure-trust-row">
             <div class="aimeasure-trust-item">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 4.5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1514,115 +1590,85 @@
               <span>الصور لا تُحفظ</span>
             </div>
           </div>
+          <hr class="aimeasure-divider" />
+          <div class="aimeasure-mini-section">
+            <span class="aimeasure-mini-section-label">قبل ما تبدأ</span>
+            <div class="aimeasure-tips-list aimeasure-tips-compact">
+              <div class="aimeasure-tip">
+                <span class="aimeasure-tip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg></span>
+                <span>البس ثوب</span>
+              </div>
+              <div class="aimeasure-tip">
+                <span class="aimeasure-tip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
+                <span>خلفية بيضاء وإضاءة جيدة</span>
+              </div>
+              <div class="aimeasure-tip">
+                <span class="aimeasure-tip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg></span>
+                <span>الجوال على بُعد ٢ متر تقريباً</span>
+              </div>
+              <div class="aimeasure-tip">
+                <span class="aimeasure-tip-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a8.38 8.38 0 0 1 13 0"/></svg></span>
+                <span>وقوف مستقيم وذراعين على الجانب</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="step-bottom" style="gap:18px;">
+        <div class="step-bottom" style="gap:14px;">
           <label class="aimeasure-consent" for="aimeasure-consent-cb">
             <input type="checkbox" id="aimeasure-consent-cb"
                    onchange="document.getElementById('aimeasure-start-btn').disabled = !this.checked;">
             <span class="aimeasure-consent-text">أوافق على استخدام الصور لأغراض القياس فقط، ولا يتم حفظها أو مشاركتها.</span>
           </label>
           <button class="btn-next" id="aimeasure-start-btn" disabled onclick="aiMeasureStart()">ابدأ القياس</button>
+          <button class="aimeasure-skip-btn" onclick="aiMeasureSkip()">تخطي والذهاب للدفع</button>
         </div>
       </div>
     </div>
 
-    <!-- SUB 2: Instructions -->
-    <div class="aimeasure-sub" id="aimeasure-sub-2">
-      <div class="step-body step-body-center">
-        <div class="step-top">
-          <h2 class="screen-title serif" style="text-align:center;">قبل ما ناخذ مقاساتك</h2>
-          <div class="aimeasure-tips-list">
-            <div class="aimeasure-tip">
-              <span class="aimeasure-tip-icon">
-                <!-- shirt / thobe outline — Lucide "shirt" -->
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/>
-                </svg>
-              </span>
-              <span>البس ثوب</span>
-            </div>
-            <div class="aimeasure-tip">
-              <span class="aimeasure-tip-icon">
-                <!-- lightbulb outline — Lucide "lightbulb" -->
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
-                  <path d="M9 18h6"/><path d="M10 22h4"/>
-                </svg>
-              </span>
-              <span>خلفية بيضاء وإضاءة جيدة</span>
-            </div>
-            <div class="aimeasure-tip">
-              <span class="aimeasure-tip-icon">
-                <!-- smartphone outline — Lucide "smartphone" -->
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                  <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/>
-                  <path d="M12 18h.01"/>
-                </svg>
-              </span>
-              <span>الجوال على بُعد ٢ متر تقريباً</span>
-            </div>
-            <div class="aimeasure-tip">
-              <span class="aimeasure-tip-icon">
-                <!-- standing person outline — Lucide "user" -->
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="7" r="4"/>
-                  <path d="M5.5 21a8.38 8.38 0 0 1 13 0"/>
-                </svg>
-              </span>
-              <span>وقوف مستقيم وذراعين على الجانب</span>
-            </div>
-          </div>
-        </div>
-        <div class="step-bottom">
-          <button class="btn-next ready" onclick="showAiSub(3)">ابدأ</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- SUB 3: Front photo -->
+    <!-- SUB 3: Combined front + side photo capture -->
     <div class="aimeasure-sub" id="aimeasure-sub-3">
       <div class="step-body step-body-center">
         <div class="step-top" style="align-items:center;">
-          <h2 class="screen-title serif" style="text-align:center;">صورة من الأمام</h2>
-          <p class="aimeasure-subtext">وأنت لابس الثوب، صورة كاملة من الأمام</p>
-          <p class="aimeasure-ref-label">مثال للوقفة الصحيحة</p>
-          <div class="aimeasure-photo-guide" id="ai-front-guide">
-            <img src="images/front-photo.png" class="aimeasure-ref-img" alt="مثال الوقفة الأمامية">
-            <div class="aimeasure-photo-preview" id="ai-front-preview"></div>
-            <button type="button" class="aimeasure-upload-label" id="ai-front-label" onclick="openPhotoSheet('front')">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-              <span id="ai-front-label-text">التقط صورة أو ارفع</span>
-            </button>
-            <input type="file" id="ai-front-input-camera"  accept="image/*" capture="environment" style="display:none;" onchange="aiPhotoSelected('front', this)">
-            <input type="file" id="ai-front-input-gallery" accept="image/*"                       style="display:none;" onchange="aiPhotoSelected('front', this)">
-          </div>
-        </div>
-        <div class="step-bottom">
-          <button class="btn-next" id="btn-ai-front-next" disabled onclick="showAiSub(4)">التالي</button>
-        </div>
-      </div>
-    </div>
+          <h2 class="screen-title serif" style="text-align:center;font-size:1.5rem;margin-top:0;margin-bottom:6px;">صور نفسك بالثوب</h2>
+          <p class="aimeasure-subtext" style="margin-bottom:14px;">صورة من الأمام وصورة من الجانب — وأنت لابس الثوب</p>
 
-    <!-- SUB 4: Side photo -->
-    <div class="aimeasure-sub" id="aimeasure-sub-4">
-      <div class="step-body step-body-center">
-        <div class="step-top" style="align-items:center;">
-          <h2 class="screen-title serif" style="text-align:center;">صورة من الجانب</h2>
-          <p class="aimeasure-subtext">نفس الثوب، التف على الجانب</p>
-          <p class="aimeasure-ref-label">مثال للوقفة الصحيحة</p>
-          <div class="aimeasure-photo-guide" id="ai-side-guide">
-            <img src="images/side-photo.png" class="aimeasure-ref-img" alt="مثال الوقفة الجانبية">
-            <div class="aimeasure-photo-preview" id="ai-side-preview"></div>
-            <button type="button" class="aimeasure-upload-label" id="ai-side-label" onclick="openPhotoSheet('side')">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-              <span id="ai-side-label-text">التقط صورة أو ارفع</span>
-            </button>
-            <input type="file" id="ai-side-input-camera"  accept="image/*" capture="environment" style="display:none;" onchange="aiPhotoSelected('side', this)">
-            <input type="file" id="ai-side-input-gallery" accept="image/*"                       style="display:none;" onchange="aiPhotoSelected('side', this)">
+          <div class="ai-dual-photos">
+            <!-- FRONT tile -->
+            <div class="ai-dual-tile">
+              <span class="ai-dual-tile-label">صورة من الأمام</span>
+              <div class="aimeasure-photo-guide ai-dual-guide" id="ai-front-guide">
+                <img src="images/front-photo.png" class="aimeasure-ref-img" alt="مثال الوقفة الأمامية">
+                <div class="aimeasure-photo-preview" id="ai-front-preview"></div>
+                <button type="button" class="aimeasure-upload-label ai-dual-upload" id="ai-front-label" onclick="openPhotoSheet('front')">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  <span id="ai-front-label-text">التقط صورة</span>
+                </button>
+                <input type="file" id="ai-front-input-camera"  accept="image/*" capture="environment" style="display:none;" onchange="aiPhotoSelected('front', this)">
+                <input type="file" id="ai-front-input-gallery" accept="image/*"                       style="display:none;" onchange="aiPhotoSelected('front', this)">
+              </div>
+            </div>
+
+            <!-- SIDE tile -->
+            <div class="ai-dual-tile">
+              <span class="ai-dual-tile-label">صورة من الجانب</span>
+              <div class="aimeasure-photo-guide ai-dual-guide" id="ai-side-guide">
+                <img src="images/side-photo.png" class="aimeasure-ref-img" alt="مثال الوقفة الجانبية">
+                <div class="aimeasure-photo-preview" id="ai-side-preview"></div>
+                <button type="button" class="aimeasure-upload-label ai-dual-upload" id="ai-side-label" onclick="openPhotoSheet('side')">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  <span id="ai-side-label-text">التقط صورة</span>
+                </button>
+                <input type="file" id="ai-side-input-camera"  accept="image/*" capture="environment" style="display:none;" onchange="aiPhotoSelected('side', this)">
+                <input type="file" id="ai-side-input-gallery" accept="image/*"                       style="display:none;" onchange="aiPhotoSelected('side', this)">
+              </div>
+            </div>
           </div>
+
+          <p class="ai-dual-note">نفس الثوب في الصورتين</p>
         </div>
-        <div class="step-bottom">
-          <button class="btn-next" id="btn-ai-side-next" disabled onclick="aiMeasureAnalyze()">تحليل الصور</button>
+        <div class="step-bottom" style="gap:12px;">
+          <button class="btn-next" id="btn-ai-analyze" disabled onclick="aiMeasureAnalyze()">تحليل الصور</button>
+          <button class="aimeasure-skip-btn" onclick="aiMeasureExitMidflow('photos')">تخطي والذهاب للدفع</button>
         </div>
       </div>
     </div>

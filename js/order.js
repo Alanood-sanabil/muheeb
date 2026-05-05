@@ -1091,12 +1091,11 @@ function resetAiMeasureFlow() {
     const lbl = document.getElementById('ai-' + side + '-label');
     if (lbl) { lbl.style.opacity = '1'; lbl.style.display = ''; }
     const lblText = document.getElementById('ai-' + side + '-label-text');
-    if (lblText) lblText.textContent = 'التقط صورة أو ارفع';
+    if (lblText) lblText.textContent = 'التقط صورة';
   });
-  const btnFront = document.getElementById('btn-ai-front-next');
-  const btnSide  = document.getElementById('btn-ai-side-next');
-  if (btnFront) { btnFront.classList.remove('ready'); btnFront.disabled = true; }
-  if (btnSide)  { btnSide.classList.remove('ready');  btnSide.disabled  = true; }
+  // Combined photo screen has a single analyze button now
+  const analyzeBtn = document.getElementById('btn-ai-analyze');
+  if (analyzeBtn) { analyzeBtn.classList.remove('ready'); analyzeBtn.disabled = true; }
   if (_aiLoadingTimer) { clearTimeout(_aiLoadingTimer); _aiLoadingTimer = null; }
 }
 
@@ -1122,10 +1121,10 @@ function aiMeasureExitMidflow(step) {
     const lbl = document.getElementById('ai-' + side + '-label');
     if (lbl) { lbl.style.opacity = '1'; lbl.style.display = ''; }
     const lblText = document.getElementById('ai-' + side + '-label-text');
-    if (lblText) lblText.textContent = 'التقط صورة أو ارفع';
-    const btn = document.getElementById('btn-ai-' + side + '-next');
-    if (btn) { btn.disabled = true; btn.classList.remove('ready'); }
+    if (lblText) lblText.textContent = 'التقط صورة';
   });
+  const analyzeBtn = document.getElementById('btn-ai-analyze');
+  if (analyzeBtn) { analyzeBtn.disabled = true; analyzeBtn.classList.remove('ready'); }
   orderState.ai_chest = null;
   orderState.ai_waist = null;
   orderState.ai_sleeve = null;
@@ -1137,7 +1136,8 @@ window.aiMeasureExitMidflow = aiMeasureExitMidflow;
 
 function aiMeasureStart() {
   gtag('event', 'ai_measure_start', { event_category: 'ai_measure' });
-  showAiSub(2);
+  // Combined entry+instructions in sub-1 → straight to combined photo capture (sub-3)
+  showAiSub(3);
 }
 window.aiMeasureStart = aiMeasureStart;
 
@@ -1280,8 +1280,14 @@ async function aiPhotoSelected(side, input) {
   // Switch label to "retake" state so user can replace the photo
   const lblText = document.getElementById('ai-' + side + '-label-text');
   if (lblText) lblText.textContent = 'تغيير الصورة';
-  const btn = document.getElementById('btn-ai-' + side + '-next');
-  if (btn) { btn.disabled = false; btn.classList.add('ready'); }
+  // Combined photo screen has a single analyze button — enable only when
+  // BOTH photos are present.
+  const analyzeBtn = document.getElementById('btn-ai-analyze');
+  if (analyzeBtn) {
+    const bothReady = !!(_aiPhotoBlobs.front && _aiPhotoBlobs.side);
+    analyzeBtn.disabled = !bothReady;
+    if (bothReady) analyzeBtn.classList.add('ready');
+  }
   if (side === 'front') gtag('event', 'ai_measure_photo_front', { event_category: 'ai_measure' });
   if (side === 'side')  gtag('event', 'ai_measure_photo_side',  { event_category: 'ai_measure' });
 }
