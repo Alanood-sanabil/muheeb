@@ -1372,21 +1372,19 @@ input[type=range]::-moz-range-track {
 }
 #screen-2 .step1-hero-image {
   flex: 0 0 auto;
-  height: 26vh !important;
-  max-height: 200px !important;
-  min-height: 150px !important;
+  height: 18vh !important;        /* ~25% of available content area */
+  max-height: 150px !important;
+  min-height: 120px !important;
 }
-#screen-2 .carousel-dots {
-  flex: 0 0 auto;
-  margin: 4px 0;
-}
+/* Carousel dots removed per spec — they ate vertical space without value */
+#screen-2 .carousel-dots { display: none !important; }
 #screen-2 .step1-body {
   flex: 1 1 0 !important;
   min-height: 0 !important;
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
-  padding: 6px 24px var(--step-bar-clearance) !important;
+  padding: 8px 20px var(--step-bar-clearance) !important;
   margin: 0 !important;
 }
 #screen-2 .step-top {
@@ -1396,34 +1394,40 @@ input[type=range]::-moz-range-track {
   display: flex !important;
   flex-direction: column !important;
   justify-content: space-between;
-  gap: 6px;
+  gap: 4px;
   padding-bottom: 0 !important;
 }
 #screen-2 .section-block {
   flex: 0 0 auto;
   margin-bottom: 0 !important;
 }
-/* Aggressive compaction so all 3 sections fit */
+/* Aggressive compaction so all 3 sections fit on iPhone 14 Pro */
 #screen-2 .section-micro-label {
-  font-size: 0.68rem !important;
-  margin-bottom: 3px !important;
+  font-size: 11px !important;
+  font-weight: 600;
+  margin-bottom: 4px !important;
   display: block;
+  color: #888;
+  letter-spacing: 0.04em;
 }
 #screen-2 .step1-fabric-row { gap: 8px; }
 #screen-2 .step1-fabric-row .fabric-card img {
-  height: 52px !important;
+  height: 48px !important;
   background: #F5F5F5;
 }
 #screen-2 .step1-fabric-row .fabric-card-info {
   padding: 4px 8px 6px !important;
 }
-#screen-2 .step1-fabric-row .fabric-card-label { font-size: 0.78rem !important; }
-#screen-2 .step1-fabric-row .fabric-card-sub   { font-size: 0.66rem !important; }
-#screen-2 .color-swatch { width: 36px !important; height: 36px !important; }
-#screen-2 .color-swatches { gap: 8px !important; }
-#screen-2 .selected-color-name { font-size: 0.72rem !important; margin-top: 2px !important; }
-#screen-2 .card { height: 52px !important; padding: 0 10px !important; gap: 8px !important; }
+#screen-2 .step1-fabric-row .fabric-card-label { font-size: 0.78rem !important; line-height: 1.1; }
+#screen-2 .step1-fabric-row .fabric-card-sub   { font-size: 0.66rem !important; line-height: 1.1; margin-top: 0 !important; }
+#screen-2 .color-swatch { width: 40px !important; height: 40px !important; }
+#screen-2 .color-swatches { gap: 10px !important; }
+#screen-2 .selected-color-name { font-size: 11px !important; margin-top: 2px !important; }
+#screen-2 .card { height: 56px !important; padding: 0 10px !important; gap: 8px !important; }
 #screen-2 .card-row { gap: 8px !important; }
+/* Hide error messages until shown — they reserve no space */
+#screen-2 .error-msg { min-height: 0 !important; padding: 0 !important; margin: 0 !important; }
+#screen-2 .error-msg.show { padding: 2px 0 !important; font-size: 0.7rem !important; }
 
 /* ── SCREEN-5 CHECKOUT: lock instead of opt-out scroll. */
 #screen-5 {
