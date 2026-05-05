@@ -558,86 +558,179 @@ function updateSummary() {
 }
 
 // ---- SUBMIT ----
-async function submit() {
-  const ref = Math.floor(100000 + Math.random() * 900000);
+// Persists across retries so a failed insert + retry reuses the same
+// order_number and photo paths (avoids orphaning storage objects).
+// Cleared on successful insert.
+let _lastSubmitRef = null;
 
-  // Lazy-load Supabase so a CDN failure never blocks page load
+async function submit() {
+  // Reuse ref on retry; generate fresh on first attempt of a new order
+  const ref = _lastSubmitRef || Math.floor(100000 + Math.random() * 900000);
+  _lastSubmitRef = ref;
+
+  // ── 1. INIT SUPABASE + UPLOAD PHOTOS (best-effort) ──────────────
+  // TESTING MODE: Photos are being saved despite UI claiming
+  // "الصور لا تُحفظ". Before going live with real customers, either:
+  //   1. Update the consent text to reflect actual behavior, OR
+  //   2. Stop saving photos
+  // This is a privacy/legal issue that must be resolved before public launch.
+  let supabase = null;
+  let frontUrl = null, sideUrl = null;
+  let initError = null;
   try {
     const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
-    const supabase = createClient(
+    supabase = createClient(
       'https://mwcmfzzukqiutztkgagg.supabase.co',
       'sb_publishable_8zuxMDAcYGIozcmi8CS8sg_ZnjLmb6V'
     );
-
-    // ── AI PHOTO UPLOAD ──────────────────────────────────────────────
-    // TESTING MODE: Photos are being saved despite UI claiming
-    // "الصور لا تُحفظ". Before going live with real customers, either:
-    //   1. Update the consent text to reflect actual behavior, OR
-    //   2. Stop saving photos
-    // This is a privacy/legal issue that must be resolved before public launch.
-    let frontUrl = null, sideUrl = null;
     try {
       [frontUrl, sideUrl] = await Promise.all([
         uploadPhotoToStorage(supabase, String(ref), 'front', _aiPhotoBlobs.front),
         uploadPhotoToStorage(supabase, String(ref), 'side',  _aiPhotoBlobs.side),
       ]);
+      console.log('[Muheeb] Photo URLs after upload — front:', frontUrl, 'side:', sideUrl);
     } catch (e) {
       console.error('[Muheeb] Photo upload step failed (non-fatal, continuing):', e);
     }
-
-    const payload = {
-      order_number: String(ref),
-      name: orderState.name,
-      phone: orderState.phone,
-      city: orderState.city,
-      color: orderState.color,
-      collar: orderState.collar,
-      height: String(orderState.height),
-      weight: String(orderState.weight),
-      shoe_size: String(orderState.shoeSize),
-      age: String(orderState.age),
-      shirt_size: orderState.shirtSize || null,
-      ai_chest:  orderState.ai_chest  ? String(orderState.ai_chest)  : null,
-      ai_waist:  orderState.ai_waist  ? String(orderState.ai_waist)  : null,
-      ai_sleeve: orderState.ai_sleeve ? String(orderState.ai_sleeve) : null,
-      ai_size:   orderState.ai_size   || null,
-      ai_photo_front_url: frontUrl,
-      ai_photo_side_url:  sideUrl,
-      body_type: orderState.bodyShape,
-      fit_preference: orderState.fitPreference,
-    };
-    console.log('[Muheeb] Supabase insert payload:', JSON.stringify(payload, null, 2));
-    const { error } = await supabase
-      .from('orders')
-      .insert([payload]);
-    if (error) console.error('Error saving order:', error);
-    else { console.log('Order saved successfully'); gtag('event', 'order_submitted', { event_category: 'conversion' }); }
   } catch (e) {
-    console.error('Supabase unavailable:', e);
+    console.error('[Muheeb] Supabase init failed:', e);
+    initError = e;
   }
+
+  // ── 2. BUILD + LOG PAYLOAD ──────────────────────────────────────
+  const payload = {
+    order_number: String(ref),
+    name: orderState.name,
+    phone: orderState.phone,
+    city: orderState.city,
+    color: orderState.color,
+    collar: orderState.collar,
+    height: String(orderState.height),
+    weight: String(orderState.weight),
+    shoe_size: String(orderState.shoeSize),
+    age: String(orderState.age),
+    shirt_size: orderState.shirtSize || null,
+    ai_chest:  orderState.ai_chest  ? String(orderState.ai_chest)  : null,
+    ai_waist:  orderState.ai_waist  ? String(orderState.ai_waist)  : null,
+    ai_sleeve: orderState.ai_sleeve ? String(orderState.ai_sleeve) : null,
+    ai_size:   orderState.ai_size   || null,
+    ai_photo_front_url: frontUrl,
+    ai_photo_side_url:  sideUrl,
+    body_type: orderState.bodyShape,
+    fit_preference: orderState.fitPreference,
+  };
+  console.log('[Muheeb] Final payload:', payload);
+  console.log('[Muheeb] Submitting order payload:', payload);
+
+  // Bail if Supabase couldn't init at all
+  if (initError || !supabase) {
+    const err = initError || new Error('Supabase client unavailable');
+    console.log('[Muheeb] Supabase insert response:', { data: null, error: err });
+    showSubmitError(err);
+    return;
+  }
+
+  // ── 3. INSERT ORDER ROW ─────────────────────────────────────────
+  let insertData = null, insertError = null;
+  try {
+    const result = await supabase.from('orders').insert([payload]).select();
+    insertData  = result.data;
+    insertError = result.error;
+  } catch (e) {
+    insertError = e;
+  }
+  console.log('[Muheeb] Supabase insert response:', { data: insertData, error: insertError });
+
+  // ── 4. GUARD: if insert failed OR no row came back, show error UI ──
+  if (insertError || !insertData || insertData.length === 0) {
+    showSubmitError(insertError || new Error('No row returned from insert'));
+    return;
+  }
+
+  // ── 5. SUCCESS — only reached when a row actually persisted ────
+  _lastSubmitRef = null;
+  gtag('event', 'order_submitted', { event_category: 'conversion' });
+  console.log('[Muheeb] Showing success screen with order #' + ref);
 
   showScreen(6);
 
   // Animate ref counter
   const refEl = document.getElementById('order-ref');
-  let cur = 0;
-  const step = Math.ceil(ref / 50);
-  const timer = setInterval(() => {
-    cur += step;
-    if (cur >= ref) { cur = ref; clearInterval(timer); }
-    refEl.textContent = '#' + String(cur).padStart(6, '0');
-  }, 16);
+  if (refEl) {
+    let cur = 0;
+    const step = Math.ceil(ref / 50);
+    const timer = setInterval(() => {
+      cur += step;
+      if (cur >= ref) { cur = ref; clearInterval(timer); }
+      refEl.textContent = '#' + String(cur).padStart(6, '0');
+    }, 16);
+  }
 
-  // WhatsApp
+  // WhatsApp wiring
   const S = CONTENT.site;
   const msg = `ياهلا، رقم طلبي #${ref}`;
-  document.getElementById('confirm-wa-btn').href = `https://wa.me/${S.whatsapp}?text=${encodeURIComponent(msg)}`;
-  document.getElementById('confirm-wa-btn').addEventListener('click', () => {
-    gtag('event', 'whatsapp_click', { event_category: 'engagement' });
-  });
-
-  setTimeout(() => { document.getElementById('confirm-wa-btn').classList.add('pulse'); }, 1200);
+  const waBtn = document.getElementById('confirm-wa-btn');
+  if (waBtn) {
+    waBtn.href = `https://wa.me/${S.whatsapp}?text=${encodeURIComponent(msg)}`;
+    waBtn.addEventListener('click', () => {
+      gtag('event', 'whatsapp_click', { event_category: 'engagement' });
+    });
+    setTimeout(() => { waBtn.classList.add('pulse'); }, 1200);
+  }
 }
+
+// ── ERROR UI for failed submits ─────────────────────────────────
+// Replaces the processing screen content with an Arabic error message,
+// a Retry button, and a WhatsApp fallback button.
+function showSubmitError(err) {
+  const wrap = document.querySelector('#screen-processing .processing-wrap');
+  if (!wrap) return;
+  const errMsg = err && err.message ? err.message : String(err || 'unknown');
+  console.error('[Muheeb] Order insert failed — showing error state:', err);
+  const waNum = (CONTENT && CONTENT.site && CONTENT.site.whatsapp) || '966552177857';
+  const waText = encodeURIComponent('السلام عليكم، حصل خطأ في إرسال طلبي من الموقع. ممكن مساعدة؟');
+  wrap.innerHTML = `
+    <div style="max-width:380px;text-align:center;padding:0 20px;direction:rtl;">
+      <div style="width:56px;height:56px;border-radius:50%;background:#FDEEED;color:#922B21;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.6rem;font-weight:700;">!</div>
+      <div style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-weight:700;font-size:1.1rem;color:#0A0A0A;margin-bottom:8px;">حدث خطأ في حفظ طلبك</div>
+      <div style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-size:0.9rem;color:#666;line-height:1.6;margin-bottom:8px;">الرجاء المحاولة مرة أخرى أو التواصل معنا على واتساب وسنكمل طلبك يدوياً.</div>
+      <div style="font-family:'JetBrains Mono','Cairo',monospace;font-size:0.7rem;color:#999;margin-bottom:24px;direction:ltr;text-align:left;background:#F5F5F5;padding:8px 10px;border-radius:6px;word-break:break-word;">${escapeHtmlSubmit(errMsg)}</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button onclick="retrySubmit()" style="background:#0A0A0A;color:#FFFFFF;border:none;border-radius:8px;height:48px;font-family:'YearOfTheCamel','Cairo',sans-serif;font-weight:600;font-size:0.95rem;cursor:pointer;">إعادة المحاولة</button>
+        <a href="https://wa.me/${waNum}?text=${waText}" target="_blank" rel="noopener" style="background:#25D366;color:#FFFFFF;border-radius:8px;height:48px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-family:'YearOfTheCamel','Cairo',sans-serif;font-weight:600;font-size:0.95rem;">تواصل على واتساب</a>
+      </div>
+    </div>
+  `;
+}
+function escapeHtmlSubmit(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// Retry — reset the processing screen UI to its loader state, then re-run
+// submit(). Reuses the same _lastSubmitRef so the order_number stays
+// consistent and photo storage paths get overwritten in place.
+async function retrySubmit() {
+  const wrap = document.querySelector('#screen-processing .processing-wrap');
+  if (wrap) {
+    wrap.innerHTML = `
+      <div class="sadu-loader-diamond" aria-label="جاري التحميل">
+        <svg width="120" height="120" viewBox="0 0 100 100" aria-hidden="true">
+          <polygon class="sat" style="animation-delay:0s"   points="50,6 55,16 45,16" fill="#0A0A0A"/>
+          <polygon class="sat" style="animation-delay:0.4s" points="94,50 84,55 84,45" fill="#0A0A0A"/>
+          <polygon class="sat" style="animation-delay:0.8s" points="50,94 45,84 55,84" fill="#0A0A0A"/>
+          <polygon class="sat" style="animation-delay:1.2s" points="6,50 16,45 16,55" fill="#0A0A0A"/>
+          <g class="center">
+            <polygon points="50,28 72,50 50,72 28,50" fill="none" stroke="#0A0A0A" stroke-width="1.2"/>
+            <polygon points="50,38 62,50 50,62 38,50" fill="#0A0A0A"/>
+          </g>
+        </svg>
+      </div>
+      <p class="processing-text" id="processing-text">جاري إرسال طلبك...</p>
+    `;
+  }
+  await submit();
+}
+window.retrySubmit = retrySubmit;
 
 // ---- HELPERS ----
 function toAr(n) { return String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]); }
@@ -1096,7 +1189,10 @@ async function compressImage(file, maxDim = 1080, quality = 0.78) {
 
 // Upload one Blob to Supabase Storage and return its public URL.
 async function uploadPhotoToStorage(supabaseClient, orderRef, side, blob) {
-  if (!blob) return null;
+  if (!blob) {
+    console.log('[Muheeb] No blob to upload for side=' + side + ' — skipping');
+    return null;
+  }
   const path = `${orderRef}/${side}.jpg`;
   const { error } = await supabaseClient.storage
     .from('ai-photos')
@@ -1105,8 +1201,30 @@ async function uploadPhotoToStorage(supabaseClient, orderRef, side, blob) {
     console.error('[Muheeb] Photo upload failed (' + side + '):', error);
     return null;
   }
-  const { data } = supabaseClient.storage.from('ai-photos').getPublicUrl(path);
-  return data && data.publicUrl ? data.publicUrl : null;
+
+  // getPublicUrl response shape varies by SDK version:
+  //   v2:  { data: { publicUrl: '...' } }
+  //   v1:  { publicURL: '...' }   (capital URL, no data wrapper)
+  // The CDN ESM import isn't version-pinned, so handle both shapes —
+  // and fall back to manual URL construction (always works for public
+  // buckets) so we NEVER silently drop the URL after a successful upload.
+  let publicUrl = null;
+  try {
+    const result = supabaseClient.storage.from('ai-photos').getPublicUrl(path);
+    publicUrl = (result && result.data && result.data.publicUrl)
+             || (result && result.data && result.data.publicURL)
+             || (result && result.publicURL)
+             || (result && result.publicUrl)
+             || null;
+    if (!publicUrl) console.warn('[Muheeb] getPublicUrl returned no URL — falling back to manual construction. Raw response:', result);
+  } catch (e) {
+    console.error('[Muheeb] getPublicUrl threw (' + side + '):', e);
+  }
+  if (!publicUrl) {
+    publicUrl = `https://mwcmfzzukqiutztkgagg.supabase.co/storage/v1/object/public/ai-photos/${path}`;
+  }
+  console.log('[Muheeb] ' + (side === 'front' ? 'Front' : 'Side') + ' photo uploaded, URL:', publicUrl);
+  return publicUrl;
 }
 
 // ── PHOTO SOURCE BOTTOM SHEET ─────────────────────────────
