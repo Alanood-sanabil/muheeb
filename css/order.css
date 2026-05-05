@@ -1282,16 +1282,36 @@ input[type=range]::-moz-range-track {
    stay above the fold on common devices. The screen-2 layout already opts
    into its own padding-top for the fixed header — preserve that. */
 .step1-hero-image {
-  height: 36vh !important;
-  max-height: 300px !important;
-  min-height: 200px !important;
+  height: 28vh !important;
+  max-height: 240px !important;
+  min-height: 180px !important;
 }
 
-/* Tighten the section blocks below the carousel on screen-2 so colors +
-   collar + dots all sit between the carousel and the fixed bar. */
-#screen-2 .step1-body { padding-top: 8px; padding-bottom: var(--step-bar-clearance); }
-#screen-2 .section-block { margin-bottom: 14px; }
+/* Tighten the section blocks below the carousel on screen-2. With fabric
+   merged in, three sections (fabric + color + collar) must fit between
+   the carousel and the fixed bar on iPhone 14 Pro. */
+#screen-2 .step1-body { padding-top: 6px; padding-bottom: var(--step-bar-clearance); }
+#screen-2 .section-block { margin-bottom: 10px; }
 #screen-2 .section-block:last-child { margin-bottom: 0; }
+#screen-2 .section-micro-label { font-size: 0.72rem; margin-bottom: 4px; display: block; }
+
+/* Fabric cards on the combined step1 — much smaller than the standalone
+   variant so they share vertical space with color swatches + collar cards. */
+#screen-2 .step1-fabric-row { gap: 8px; }
+#screen-2 .step1-fabric-row .fabric-card img {
+  height: 64px;
+  background: #F5F5F5;
+}
+#screen-2 .step1-fabric-row .fabric-card-info {
+  padding: 6px 10px 8px;
+}
+#screen-2 .step1-fabric-row .fabric-card-label { font-size: 0.82rem; }
+#screen-2 .step1-fabric-row .fabric-card-sub   { font-size: 0.7rem; }
+
+/* Slightly smaller color swatches + collar cards on the combined step1 */
+#screen-2 .color-swatch { width: 40px; height: 40px; }
+#screen-2 .selected-color-name { font-size: 0.78rem; margin-top: 4px; }
+#screen-2 .card { height: 64px; padding: 0 12px; gap: 10px; }
 
 /* AI flow photo capture (sub-3 / sub-4): the dashed photo container had
    a rigid 3:5 aspect at max-width 240px → ~400px tall. On a 700px viewport

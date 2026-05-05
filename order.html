@@ -1170,35 +1170,35 @@
           <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
             <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
           </svg>
-          <span class="sadu-step-label step-label">اللون والياقة</span>
+          <span class="sadu-step-label step-label">الثوب</span>
         </div>
         <div class="sadu-step-line progress-line" id="line-1-2"></div>
         <div class="sadu-step progress-step" id="step-dot-2">
           <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
             <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
           </svg>
-          <span class="sadu-step-label step-label">القماش</span>
+          <span class="sadu-step-label step-label">المقاسات</span>
         </div>
         <div class="sadu-step-line progress-line" id="line-2-3"></div>
         <div class="sadu-step progress-step" id="step-dot-3">
           <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
             <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
           </svg>
-          <span class="sadu-step-label step-label">المقاسات</span>
+          <span class="sadu-step-label step-label">شكل الجسم</span>
         </div>
         <div class="sadu-step-line progress-line" id="line-3-4"></div>
         <div class="sadu-step progress-step" id="step-dot-4">
           <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
             <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
           </svg>
-          <span class="sadu-step-label step-label">شكل الجسم</span>
+          <span class="sadu-step-label step-label">المقاس المفضل</span>
         </div>
         <div class="sadu-step-line progress-line" id="line-4-5"></div>
         <div class="sadu-step progress-step" id="step-dot-5">
           <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
             <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
           </svg>
-          <span class="sadu-step-label step-label">المقاس المفضل</span>
+          <span class="sadu-step-label step-label">قياسات AI</span>
         </div>
       </div>
     </div>
@@ -1277,7 +1277,7 @@
     </div>
   </div>
 
-  <!-- SCREEN 2: Step 1 — Color + Collar -->
+  <!-- SCREEN 2: Step 1 — Color + Fabric + Collar -->
   <div id="screen-2" class="screen">
     <div class="step1-hero-image">
       <div class="hero-carousel" id="hero-carousel">
@@ -1287,6 +1287,11 @@
     <div class="carousel-dots" id="carousel-dots"></div>
     <div class="step1-body">
       <div class="step-top">
+        <div class="section-block">
+          <span class="section-micro-label">القماش</span>
+          <div class="fabric-cards-row step1-fabric-row" id="fabric-cards"></div>
+          <div class="error-msg" id="error-fabric">الرجاء اختيار القماش</div>
+        </div>
         <div class="section-block">
           <span class="section-micro-label">اللون</span>
           <div class="color-swatches" id="color-swatches"></div>
@@ -1496,21 +1501,7 @@
 
   </div>
 
-  <!-- SCREEN FABRIC: Step 2 — Fabric selection -->
-  <div id="screen-fabric" class="screen">
-    <div class="step-body step-body-center">
-      <div class="step-top">
-        <h2 class="screen-title serif">اختر القماش</h2>
-        <div class="fabric-cards-row" id="fabric-cards"></div>
-        <div class="error-msg" id="error-fabric">الرجاء اختيار القماش</div>
-      </div>
-      <div class="step-bottom">
-        <button class="btn-next" id="btn-next-fabric" onclick="validateStepFabric()">اختر القماش</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- SCREEN 3: Step 3 — Measurements (sliders) -->
+  <!-- SCREEN 3: Step 2 — Measurements (sliders) -->
   <div id="screen-3" class="screen">
     <div class="step-body step-body-center">
       <div class="step-top">

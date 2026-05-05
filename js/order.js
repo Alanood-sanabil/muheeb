@@ -149,8 +149,7 @@ function buildFabricCards() {
       container.querySelectorAll('.fabric-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
       orderState.fabric = fabric.value;
-      const btn = document.getElementById('btn-next-fabric');
-      if (btn) { btn.classList.add('ready'); btn.textContent = 'التالي'; }
+      updateBtn(1);
     };
     container.appendChild(card);
   });
@@ -339,7 +338,7 @@ function updateBtn(step) {
   let btn, ready = false, readyText = '';
   if (step === 1) {
     btn = document.getElementById('btn-next-1');
-    ready = orderState.color && orderState.collar;
+    ready = orderState.fabric && orderState.color && orderState.collar;
     readyText = 'التالي';
   } else if (step === 3) {
     btn = document.getElementById('btn-next-3');
@@ -418,12 +417,14 @@ function updateProgress(screenNumber) {
   container.style.opacity = '1';
   container.style.pointerEvents = '';
 
-  // Map screen → activeStep (1–5)
-  // screen 2=step1 (color/collar), 'fabric'=step2, 3=step3 (measurements),
-  // 4=step4 (body), '4b'=step5 (fit), 'aimeasure'=5 (treat as final form step
-  // — all dots filled; AI is a bonus pre-checkout phase).
-  const stepMap = { 2: 1, 'fabric': 2, 3: 3, 4: 4, '4b': 5, 'aimeasure': 5 };
-  const screenTargets = [null, 2, 'fabric', 3, 4, '4b']; // index = step number for back-click navigation
+  // Map screen → activeStep (1–5). Five-dot indicator:
+  //   1 = الثوب (color + fabric + collar combined on screen-2)
+  //   2 = المقاسات (screen-3)
+  //   3 = شكل الجسم (screen-4)
+  //   4 = المقاس المفضل (screen-4b)
+  //   5 = قياسات AI (screen-aimeasure)
+  const stepMap = { 2: 1, 3: 2, 4: 3, '4b': 4, 'aimeasure': 5 };
+  const screenTargets = [null, 2, 3, 4, '4b', 'aimeasure']; // index = step number for back-click navigation
   const activeStep = stepMap[screenNumber] || 1;
 
   for (let i = 1; i <= 5; i++) {
@@ -460,18 +461,11 @@ function updateProgress(screenNumber) {
 function validateStep1() {
   clearErr();
   let ok = true;
-  if (!orderState.color) { showErr('error-color'); ok = false; }
+  if (!orderState.fabric) { showErr('error-fabric'); ok = false; }
+  if (!orderState.color)  { showErr('error-color');  ok = false; }
   if (!orderState.collar) { showErr('error-collar'); ok = false; }
-  if (ok) { gtag('event', 'complete_step1', { event_category: 'funnel' }); showScreen('fabric'); }
+  if (ok) { gtag('event', 'complete_step1', { event_category: 'funnel' }); showScreen(3); }
 }
-
-function validateStepFabric() {
-  clearErr();
-  if (!orderState.fabric) { showErr('error-fabric'); return; }
-  gtag('event', 'complete_fabric', { event_category: 'funnel' });
-  showScreen(3);
-}
-window.validateStepFabric = validateStepFabric;
 
 function validateStep2() {
   // Sliders always have values, so always valid
