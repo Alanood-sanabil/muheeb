@@ -44,7 +44,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: auto; overflow-x: hidden; overflow-y: auto; font-size: 16px; }
+html, body { height: 100dvh; overflow: hidden; font-size: 16px; }
 body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--white); color: var(--black); direction: rtl; }
 a { text-decoration: none; color: inherit; }
 .serif { font-family: 'DM Serif Display', serif; }
@@ -1347,4 +1347,152 @@ input[type=range]::-moz-range-track {
   #screen-4 .step-body,
   #screen-aimeasure .step-body { max-width: 480px; }
 }
+
+/* =========================================================================
+   STRICT FIT-TO-VIEWPORT — every screen locked to 100dvh, no scroll.
+   This block is APPENDED so it overrides everything above.
+   ========================================================================= */
+
+/* ── SCREEN-2 الثوب: hero + 3 sections + button bar — proper flex chain. */
+#screen-2.active {
+  height: 100dvh !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding-top: var(--step-header-h) !important; /* clear fixed header */
+}
+#screen-2 .step1-hero-image {
+  flex: 0 0 auto;
+  height: 26vh !important;
+  max-height: 200px !important;
+  min-height: 150px !important;
+}
+#screen-2 .carousel-dots {
+  flex: 0 0 auto;
+  margin: 4px 0;
+}
+#screen-2 .step1-body {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding: 6px 24px var(--step-bar-clearance) !important;
+  margin: 0 !important;
+}
+#screen-2 .step-top {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between;
+  gap: 6px;
+  padding-bottom: 0 !important;
+}
+#screen-2 .section-block {
+  flex: 0 0 auto;
+  margin-bottom: 0 !important;
+}
+/* Aggressive compaction so all 3 sections fit */
+#screen-2 .section-micro-label {
+  font-size: 0.68rem !important;
+  margin-bottom: 3px !important;
+  display: block;
+}
+#screen-2 .step1-fabric-row { gap: 8px; }
+#screen-2 .step1-fabric-row .fabric-card img {
+  height: 52px !important;
+  background: #F5F5F5;
+}
+#screen-2 .step1-fabric-row .fabric-card-info {
+  padding: 4px 8px 6px !important;
+}
+#screen-2 .step1-fabric-row .fabric-card-label { font-size: 0.78rem !important; }
+#screen-2 .step1-fabric-row .fabric-card-sub   { font-size: 0.66rem !important; }
+#screen-2 .color-swatch { width: 36px !important; height: 36px !important; }
+#screen-2 .color-swatches { gap: 8px !important; }
+#screen-2 .selected-color-name { font-size: 0.72rem !important; margin-top: 2px !important; }
+#screen-2 .card { height: 52px !important; padding: 0 10px !important; gap: 8px !important; }
+#screen-2 .card-row { gap: 8px !important; }
+
+/* ── SCREEN-5 CHECKOUT: lock instead of opt-out scroll. */
+#screen-5 {
+  height: 100dvh !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding-top: var(--step-header-h) !important;
+}
+#screen-5 .step-body {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 12px 24px var(--step-bar-clearance) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+#screen-5 .step-top {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* ── ORDER MODAL (the actual checkout the user submits): cap + no internal
+   scroll. Compress field rhythm. */
+#order-modal {
+  max-height: 88dvh !important;
+  overflow: hidden !important;
+  padding: 22px 22px 28px !important;
+}
+#order-modal .input-row { margin-bottom: 8px !important; }
+#order-modal label,
+#order-modal #name-label,
+#order-modal #phone-label { font-size: 0.74rem !important; margin-bottom: 4px !important; }
+#order-modal input[type="text"],
+#order-modal input[type="tel"] {
+  height: 38px !important;
+  font-size: 0.92rem !important;
+}
+#order-modal .error-msg { font-size: 0.68rem !important; min-height: 0 !important; }
+#order-modal p { font-size: 0.78rem !important; }
+#order-modal .section-block { margin-bottom: 8px !important; }
+
+/* ── SCREEN-6 CONFIRMATION: also lock. */
+#screen-6.active {
+  height: 100dvh !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+#screen-6 .confirm-wrap {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: 16px 24px;
+}
+
+/* ── AI SUB-1: tighten further beyond what the inline overrides did so the
+   compacted layout survives on iPhone SE. */
+#aimeasure-sub-1 .step-body { padding: 8px 24px var(--step-bar-clearance) !important; }
+#aimeasure-sub-1 .aimeasure-icon-wrap { width: 48px !important; height: 48px !important; margin-bottom: 8px !important; }
+#aimeasure-sub-1 .aimeasure-icon-wrap svg { width: 28px !important; height: 28px !important; }
+#aimeasure-sub-1 .aimeasure-headline { font-size: 1rem !important; margin-bottom: 4px !important; }
+#aimeasure-sub-1 .aimeasure-subtext { font-size: 0.78rem !important; }
+#aimeasure-sub-1 .aimeasure-trust-row { margin-top: 8px !important; }
+#aimeasure-sub-1 .aimeasure-divider { margin: 8px auto 6px !important; }
+#aimeasure-sub-1 .aimeasure-tips-compact .aimeasure-tip { padding: 5px 0 !important; font-size: 0.78rem !important; }
+
+/* ── Universal safety: never allow nested scroll inside any active screen. */
+.screen.active,
+.screen.active * {
+  scrollbar-width: none;
+}
+.screen.active::-webkit-scrollbar,
+.screen.active *::-webkit-scrollbar { display: none; }
 
