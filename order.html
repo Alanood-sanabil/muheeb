@@ -704,6 +704,41 @@
       margin-top: 12px;
       width: 100%;
     }
+
+    /* ─── BACK BUTTON (AI flow only) ────────────────────────────────── */
+    /* In RTL, the chevron-right glyph (›) means "back" — going against
+       the right-to-left reading direction. Visually sits on the right
+       (start) of the action row; primary CTA fills the rest. */
+    .step-actions-row {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      width: 100%;
+      direction: rtl;
+      align-items: stretch;
+    }
+    .step-actions-row .btn-next {
+      flex: 1;
+      width: auto;
+    }
+    .btn-back {
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      background: #FFFFFF;
+      border: 1.5px solid #0A0A0A;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #0A0A0A;
+      transition: background 0.15s ease;
+      padding: 0;
+    }
+    .btn-back:hover  { background: #F5F5F5; }
+    .btn-back:active { background: #EEEEEE; }
+    .btn-back svg    { width: 22px; height: 22px; }
   </style>
   <style>
     /* === BODY SCAN SUB-SCREENS === */
@@ -1613,13 +1648,18 @@
             </div>
           </div>
         </div>
-        <div class="step-bottom" style="gap:14px;">
+        <div class="step-bottom" style="gap:12px;">
           <label class="aimeasure-consent" for="aimeasure-consent-cb">
             <input type="checkbox" id="aimeasure-consent-cb"
                    onchange="document.getElementById('aimeasure-start-btn').disabled = !this.checked;">
             <span class="aimeasure-consent-text">أوافق على استخدام الصور لأغراض القياس فقط، ولا يتم حفظها أو مشاركتها.</span>
           </label>
-          <button class="btn-next" id="aimeasure-start-btn" disabled onclick="aiMeasureStart()">ابدأ القياس</button>
+          <div class="step-actions-row">
+            <button type="button" class="btn-back" onclick="aiBackToFit()" aria-label="السابق">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+            </button>
+            <button class="btn-next" id="aimeasure-start-btn" disabled onclick="aiMeasureStart()">ابدأ القياس</button>
+          </div>
           <button class="aimeasure-skip-btn" onclick="aiMeasureSkip()">تخطي والذهاب للدفع</button>
         </div>
       </div>
@@ -1667,7 +1707,12 @@
           <p class="ai-dual-note">نفس الثوب في الصورتين</p>
         </div>
         <div class="step-bottom" style="gap:12px;">
-          <button class="btn-next" id="btn-ai-analyze" disabled onclick="aiMeasureAnalyze()">تحليل الصور</button>
+          <div class="step-actions-row">
+            <button type="button" class="btn-back" onclick="aiBackToEntry()" aria-label="السابق">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+            </button>
+            <button class="btn-next" id="btn-ai-analyze" disabled onclick="aiMeasureAnalyze()">تحليل الصور</button>
+          </div>
           <button class="aimeasure-skip-btn" onclick="aiMeasureExitMidflow('photos')">تخطي والذهاب للدفع</button>
         </div>
       </div>

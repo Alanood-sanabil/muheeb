@@ -1141,6 +1141,25 @@ function aiMeasureStart() {
 }
 window.aiMeasureStart = aiMeasureStart;
 
+// ── AI FLOW BACK NAVIGATION ─────────────────────────────────────
+// sub-1 (entry+instructions) → screen-4b (preferred fit) — exits AI flow
+// sub-3 (combined photos)    → sub-1                      — within AI flow
+// Within-flow back preserves user data (photos in _aiPhotoBlobs and consent
+// checkbox state stay intact). Exiting back to 4b does NOT reset the AI
+// state — but if the user re-enters AI via validateStep4b, showScreen
+// triggers resetAiMeasureFlow which clears everything (existing behavior).
+function aiBackToFit() {
+  gtag('event', 'ai_measure_back_to_fit', { event_category: 'ai_measure' });
+  showScreen('4b');
+}
+window.aiBackToFit = aiBackToFit;
+
+function aiBackToEntry() {
+  gtag('event', 'ai_measure_back_to_entry', { event_category: 'ai_measure' });
+  showAiSub(1);
+}
+window.aiBackToEntry = aiBackToEntry;
+
 // ─────────────────────────────────────────────────────────────────────────
 // AI PHOTO STORAGE (compression + Supabase Storage upload)
 // ─────────────────────────────────────────────────────────────────────────
