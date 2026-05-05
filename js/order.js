@@ -958,6 +958,12 @@ function handleSubmit() {
     orderState.phone = phoneEl.value.trim();
     orderState.city  = cityEl.value.trim();
     closeOrderModal();
+    // Immediately switch the underlying screen to the processing loader so
+    // the AI results screen (which sat behind the modal) doesn't flash
+    // during the async photo upload + Supabase insert.
+    const txt = document.getElementById('processing-text');
+    if (txt) txt.textContent = 'جاري إرسال طلبك...';
+    showScreen('processing');
     submit();
   }
 }
