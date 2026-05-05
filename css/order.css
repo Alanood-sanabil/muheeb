@@ -1220,3 +1220,107 @@ input[type=range]::-moz-range-track {
   color: #FFFFFF;
 }
 
+/* =========================================================================
+   FIT-TO-VIEWPORT (form steps render in one screen — no internal scroll)
+   Targets common mobile viewports (390–430 wide × 700–900 tall).
+   On very small Androids (<700 tall) some steps may still clip — accepted.
+   ========================================================================= */
+
+:root {
+  --step-header-h: 128px;
+  --step-bar-clearance: 110px; /* approximate sticky-bar height + safe-area */
+}
+
+/* Lock these screens to one-viewport height with no scroll. Landing,
+   checkout, processing, confirmation are intentionally excluded. */
+#screen-2.active,
+#screen-3.active,
+#screen-4.active,
+#screen-aimeasure.active {
+  height: 100vh;          /* fallback */
+  height: 100dvh;         /* compensates for mobile URL bar */
+  overflow: hidden;
+}
+
+#screen-3 .step-body,
+#screen-4 .step-body,
+#screen-aimeasure .step-body {
+  margin-top: var(--step-header-h);
+  height: calc(100dvh - var(--step-header-h));
+  min-height: 0;
+  padding: 12px 24px var(--step-bar-clearance);
+  overflow: hidden;
+}
+
+#screen-3 .step-top,
+#screen-4 .step-top,
+#screen-aimeasure .step-top {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding-bottom: 0;          /* clearance is on .step-body now */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Measurements step: 5 inputs (height, weight, shoe, age, T-shirt pills)
+   — drop the inter-row spacing from 48px → 18px so all 5 fit. Title also
+   compacted. */
+#screen-3 .slider-wrapper { margin-bottom: 18px; }
+#screen-3 .slider-wrapper:last-child { margin-bottom: 0; }
+#screen-3 .screen-title { font-size: 1.7rem; margin-top: 0; margin-bottom: 18px; }
+#screen-3 .step-top { gap: 0; justify-content: flex-start; }
+
+/* Body-shape step: keep cards compact and centered without scroll. */
+#screen-4 .screen-title { margin-top: 0; margin-bottom: 24px; }
+
+/* Color + collar step: hero carousel was a fixed 380px which dominated the
+   viewport. Convert to viewport-relative height so the section blocks below
+   stay above the fold on common devices. The screen-2 layout already opts
+   into its own padding-top for the fixed header — preserve that. */
+.step1-hero-image {
+  height: 36vh !important;
+  max-height: 300px !important;
+  min-height: 200px !important;
+}
+
+/* Tighten the section blocks below the carousel on screen-2 so colors +
+   collar + dots all sit between the carousel and the fixed bar. */
+#screen-2 .step1-body { padding-top: 8px; padding-bottom: var(--step-bar-clearance); }
+#screen-2 .section-block { margin-bottom: 14px; }
+#screen-2 .section-block:last-child { margin-bottom: 0; }
+
+/* AI flow photo capture (sub-3 / sub-4): the dashed photo container had
+   a rigid 3:5 aspect at max-width 240px → ~400px tall. On a 700px viewport
+   minus header (128) minus headline (~80) minus bar (110) that overflows.
+   Switch to viewport-height-based sizing — the container shrinks with the
+   screen while keeping its portrait shape via aspect-ratio. */
+#aimeasure-sub-3 .aimeasure-photo-guide,
+#aimeasure-sub-4 .aimeasure-photo-guide {
+  max-height: 50vh;
+  max-width: none;
+  width: auto;
+  aspect-ratio: 3 / 5;
+}
+
+/* AI sub-3/4 step-top: tighten the headline + subtext + label so the photo
+   container has room. */
+#aimeasure-sub-3 .screen-title,
+#aimeasure-sub-4 .screen-title {
+  font-size: 1.4rem;
+  margin-bottom: 4px;
+  margin-top: 0;
+}
+#aimeasure-sub-3 .aimeasure-subtext,
+#aimeasure-sub-4 .aimeasure-subtext { margin-bottom: 6px; }
+#aimeasure-sub-3 .aimeasure-ref-label,
+#aimeasure-sub-4 .aimeasure-ref-label { margin-bottom: 4px; }
+
+/* Cap content width on tablets/large phones so layouts don't stretch. */
+@media (min-width: 600px) {
+  #screen-2 .step-body,
+  #screen-3 .step-body,
+  #screen-4 .step-body,
+  #screen-aimeasure .step-body { max-width: 480px; }
+}
+
