@@ -44,7 +44,10 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100dvh; overflow: hidden; font-size: 16px; }
+html, body { height: 100vh; overflow: hidden; font-size: 16px; }
+@supports (height: 100dvh) {
+  html, body { height: 100dvh; }
+}
 body { font-family: 'IBM Plex Sans Arabic', sans-serif; background: var(--white); color: var(--black); direction: rtl; }
 a { text-decoration: none; color: inherit; }
 .serif { font-family: 'DM Serif Display', serif; }
@@ -1150,12 +1153,15 @@ input[type=range]::-moz-range-track {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  /* center content max 560px wide; reserve 14px at the bottom for the Sadu
-     strip + safe-area for iPhone home indicator */
+  /* center content max 560px wide; bottom padding handles BOTH the iPhone
+     home indicator (env safe-area) AND iOS Safari's floating tab bar
+     (which overlays ~50–60px and is NOT covered by any env() value).
+     max() takes the larger of two: a fixed 32px floor, OR safe-area+22.
+     This pushes the actual buttons well above any browser chrome. */
   padding:
     14px
     max(24px, calc((100vw - 560px) / 2))
-    calc(20px + env(safe-area-inset-bottom));
+    max(32px, calc(env(safe-area-inset-bottom) + 22px));
   animation: stepBarIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -1228,7 +1234,10 @@ input[type=range]::-moz-range-track {
 
 :root {
   --step-header-h: 128px;
-  --step-bar-clearance: 110px; /* approximate sticky-bar height + safe-area */
+  --step-bar-clearance: max(130px, calc(110px + env(safe-area-inset-bottom)));
+  /* Bar internal padding pushes buttons up by ~52px (button) + ~32px
+     (max-bottom-pad) = ~84px from layout viewport bottom, plus border + top
+     padding. Add another ~20px breathing room before content. */
 }
 
 /* Lock these screens to one-viewport height with no scroll. Landing,
