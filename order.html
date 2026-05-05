@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KP4MV75XLM"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KP4MV75XLM');
+  </script>
+
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -33,30 +42,10 @@
   <title>مُهيب — اطلب ثوبك</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="fonts/fonts.css" />
   <link rel="stylesheet" href="css/order.css" />
-  <style>
-    @font-face {
-      font-family: 'YearOfTheCamel';
-      src: url('fonts/TheYearofTheCamel-Bold.otf') format('opentype');
-      font-weight: 700;
-    }
-    @font-face {
-      font-family: 'YearOfTheCamel';
-      src: url('fonts/TheYearofTheCamel-Regular.otf') format('opentype');
-      font-weight: 400;
-    }
-    @font-face {
-      font-family: 'YearOfTheCamel';
-      src: url('fonts/TheYearofTheCamel-Medium.otf') format('opentype');
-      font-weight: 500;
-    }
-    @font-face {
-      font-family: 'YearOfTheCamel';
-      src: url('fonts/TheYearofTheCamel-Light.otf') format('opentype');
-      font-weight: 300;
-    }
-  </style>
+  <link rel="stylesheet" href="css/sadu.css" />
   <style>
     /* === ORDER LANDING REDESIGN === */
 
@@ -219,6 +208,377 @@
       to   { transform: translateY(0);    opacity: 1; }
     }
 
+    /* ── AI MEASURE FLOW ── */
+    .aimeasure-sub { display: none; flex-direction: column; flex: 1; }
+    .aimeasure-sub.active { display: flex; flex-direction: column; flex: 1; }
+
+    .aimeasure-icon-wrap {
+      width: 80px;
+      height: 80px;
+      background: #F5F5F5;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+      flex-shrink: 0;
+    }
+
+    .aimeasure-trust-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      margin-bottom: 4px;
+    }
+
+    .aimeasure-trust-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.75rem;
+      color: #444;
+      white-space: nowrap;
+    }
+
+    .aimeasure-trust-sep {
+      width: 1px;
+      height: 14px;
+      background: #D0D0D0;
+    }
+
+    .aimeasure-headline {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #0A0A0A;
+      text-align: center;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .aimeasure-subtext {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.87rem;
+      color: #555;
+      text-align: center;
+      margin-bottom: 4px;
+      line-height: 1.7;
+    }
+
+    .aimeasure-skip-btn {
+      background: none;
+      border: none;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #0A0A0A;
+      cursor: pointer;
+      padding: 12px 20px;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .aimeasure-tips-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      /* Negative side margin extends the card past the step-body's 24px
+         horizontal padding, leaving ~16px from the screen edges. */
+      width: auto;
+      margin: 0 -8px;
+      background: #F5F5F5;
+      border: 1px solid rgba(10,10,10,0.05);
+      border-radius: 16px;
+      padding: 6px 22px;
+    }
+
+    .aimeasure-tip {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      direction: rtl;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 1.06rem;
+      color: #0A0A0A;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(10,10,10,0.07);
+    }
+
+    .aimeasure-tip:last-child { border-bottom: none; }
+
+    /* Tighten the gap between the headline and the tips card on this sub */
+    #aimeasure-sub-2 .screen-title {
+      margin-bottom: 18px;
+      margin-top: 4px;
+    }
+
+    /* AI consent checkbox (sub-1 entry) */
+    .aimeasure-consent {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      direction: rtl;
+      cursor: pointer;
+      padding: 4px 4px;
+      text-align: right;
+      user-select: none;
+    }
+    .aimeasure-consent input[type="checkbox"] {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: #0A0A0A;
+      cursor: pointer;
+    }
+    .aimeasure-consent-text {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: #666;
+      line-height: 1.55;
+    }
+
+    /* Disabled state for primary buttons (overrides sadu.css's !important).
+       Used by the AI start button until the consent checkbox is ticked. */
+    .btn-next:disabled,
+    .btn-next[disabled] {
+      background: #CCCCCC !important;
+      color: #FFFFFF !important;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    .btn-next:disabled::after,
+    .btn-next[disabled]::after {
+      opacity: 0.5;
+    }
+
+    /* PHOTO SOURCE BOTTOM SHEET */
+    .photo-sheet-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease;
+      z-index: 9990;
+    }
+    .photo-sheet-overlay.visible { opacity: 1; pointer-events: auto; }
+
+    .photo-sheet {
+      position: fixed; left: 0; right: 0; bottom: 0;
+      background: #FFFFFF;
+      border-radius: 18px 18px 0 0;
+      padding: 8px 18px calc(18px + env(safe-area-inset-bottom));
+      box-shadow: 0 -8px 28px rgba(0,0,0,0.12);
+      transform: translateY(100%);
+      transition: transform 0.28s cubic-bezier(.2,.8,.2,1);
+      z-index: 9991;
+      direction: rtl;
+    }
+    .photo-sheet.visible { transform: translateY(0); }
+
+    .photo-sheet-handle {
+      width: 40px; height: 4px;
+      background: rgba(10,10,10,0.15);
+      border-radius: 2px;
+      margin: 6px auto 10px;
+    }
+
+    .photo-sheet-option {
+      display: flex; align-items: center; gap: 14px;
+      direction: rtl;
+      width: 100%;
+      min-height: 56px;
+      padding: 14px 8px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(10,10,10,0.06);
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.96rem;
+      color: #0A0A0A;
+      cursor: pointer;
+      text-align: right;
+      transition: background 0.15s;
+    }
+    .photo-sheet-option:last-of-type { border-bottom: none; }
+    .photo-sheet-option:hover  { background: #FAFAFA; }
+    .photo-sheet-option:active { background: #F0F0F0; }
+    .photo-sheet-option svg { flex-shrink: 0; }
+
+    .photo-sheet-cancel {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 14px;
+      background: #F5F5F5;
+      border: none;
+      border-radius: 10px;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #888;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .photo-sheet-cancel:hover { background: #EEE; color: #555; }
+
+    .aimeasure-tip-icon {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .aimeasure-photo-guide {
+      width: 100%;
+      max-width: 240px;
+      aspect-ratio: 3 / 5;
+      background: #F5F5F5;
+      border-radius: 16px;
+      border: 2px dashed #E0E0E0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 0 14px;
+      gap: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .aimeasure-ref-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      border-radius: 14px;
+    }
+
+    .aimeasure-photo-preview {
+      position: absolute;
+      inset: 0;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      border-radius: 14px;
+      display: none;
+    }
+    .aimeasure-photo-preview.visible { display: block; }
+
+    /* Once the user's photo is shown, hide the reference example image so
+       it can't bleed through behind aspect-ratio gaps in `contain` fit,
+       and hide the "مثال للوقفة الصحيحة" caption above it (which is a
+       sibling of the guide, so target via the parent step-top). */
+    .aimeasure-photo-guide:has(.aimeasure-photo-preview.visible) .aimeasure-ref-img {
+      display: none;
+    }
+    .step-top:has(.aimeasure-photo-preview.visible) .aimeasure-ref-label {
+      display: none;
+    }
+
+    .aimeasure-ref-label {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #999;
+      text-align: center;
+      margin-bottom: 8px;
+      margin-top: 0;
+    }
+
+    .aimeasure-upload-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #0A0A0A;
+      color: #FFFFFF;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.88rem;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      z-index: 2;
+      position: relative;
+    }
+
+    .aimeasure-spinner {
+      width: 52px;
+      height: 52px;
+      border: 3px solid #E8E8E8;
+      border-top-color: #0A0A0A;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .aimeasure-loading-title {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #0A0A0A;
+      text-align: center;
+    }
+
+    .aimeasure-loading-status {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.85rem;
+      color: #767676;
+      text-align: center;
+      transition: opacity 0.3s ease;
+    }
+
+    .aimeasure-results-card {
+      width: 100%;
+      background: #F5F5F5;
+      border-radius: 14px;
+      padding: 0 16px;
+      margin: 12px 0;
+    }
+
+    .aimeasure-result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 13px 0;
+      border-bottom: 1px solid #E8E8E8;
+      direction: rtl;
+    }
+
+    .aimeasure-result-label {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.85rem;
+      color: #767676;
+    }
+
+    .aimeasure-result-val {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #0A0A0A;
+    }
+
+    @keyframes aiCircle {
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes aiTick {
+      to { stroke-dashoffset: 0; }
+    }
+    .ai-check-circle { animation: aiCircle 0.55s ease forwards; }
+    .ai-check-tick   { animation: aiTick  0.4s ease 0.55s forwards; }
+
     /* ── FABRIC CARDS ── */
     .fabric-cards-row {
       display: flex;
@@ -255,7 +615,7 @@
     }
 
     .fabric-card-label {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 700;
       font-size: 0.9rem;
       color: #0A0A0A;
@@ -263,7 +623,7 @@
     }
 
     .fabric-card-sub {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 400;
       font-size: 0.78rem;
       color: #767676;
@@ -286,7 +646,7 @@
       padding: 10px 14px;
       width: 100%;
       margin-bottom: 20px;
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 400;
       font-size: 0.78rem;
       color: #767676;
@@ -328,7 +688,7 @@
       color: #0A0A0A;
       border: 1.5px solid #0A0A0A;
       border-radius: 12px;
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 600;
       font-size: 0.95rem;
       cursor: pointer;
@@ -358,7 +718,7 @@
       cursor: pointer;
     }
     .scan-checkbox-row label {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 400;
       font-size: 0.78rem;
       color: #767676;
@@ -391,7 +751,7 @@
     }
 
     .scan-cam-state-title {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 600;
       font-size: 0.9rem;
       color: #0A0A0A;
@@ -399,7 +759,7 @@
     }
 
     .scan-cam-state-sub {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 400;
       font-size: 0.8rem;
       color: #767676;
@@ -414,7 +774,7 @@
       color: #0A0A0A;
       border: 1.5px solid #0A0A0A;
       border-radius: 8px;
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 600;
       font-size: 0.85rem;
       cursor: pointer;
@@ -446,7 +806,7 @@
       border-radius: 6px;
       padding: 4px 12px;
       white-space: nowrap;
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 600;
       font-size: 0.8rem;
       color: #FFFFFF;
@@ -505,7 +865,7 @@
     #scan-countdown.visible { display: flex; }
 
     #scan-countdown-num {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 700;
       font-size: 5rem;
       color: #FFFFFF;
@@ -546,7 +906,7 @@
 
     /* Analysis step labels */
     .scan-analysis-step {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 400;
       font-size: 0.82rem;
       color: #767676;
@@ -558,7 +918,7 @@
     .scan-analysis-step.visible { opacity: 1; }
 
     .scan-camera-hint {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 400;
       font-size: 0.82rem;
       color: #767676;
@@ -567,7 +927,7 @@
     }
 
     .scan-proc-title {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 700;
       font-size: 1.2rem;
       color: #0A0A0A;
@@ -575,7 +935,7 @@
     }
 
     .scan-proc-sub {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 400;
       font-size: 0.82rem;
       color: #767676;
@@ -612,7 +972,7 @@
     }
 
     .scan-meas-header {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 700;
       font-size: 0.78rem;
       letter-spacing: 0.08em;
@@ -633,14 +993,14 @@
     .scan-meas-row:last-child { border-bottom: none; }
 
     .scan-meas-label {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 400;
       font-size: 0.85rem;
       color: #767676;
     }
 
     .scan-meas-value {
-      font-family: 'Cairo', sans-serif;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
       font-weight: 700;
       font-size: 0.85rem;
       color: #0A0A0A;
@@ -654,37 +1014,58 @@
   <!-- End Google Tag Manager (noscript) -->
 
   <div id="loader-screen">
-    <div id="loader-bar"></div>
+    <div class="sadu-loader-diamond" aria-label="جاري التحميل">
+      <svg width="120" height="120" viewBox="0 0 100 100" aria-hidden="true">
+        <polygon class="sat" style="animation-delay:0s"    points="50,6 55,16 45,16" fill="#0A0A0A"/>
+        <polygon class="sat" style="animation-delay:0.4s"  points="94,50 84,55 84,45" fill="#0A0A0A"/>
+        <polygon class="sat" style="animation-delay:0.8s"  points="50,94 45,84 55,84" fill="#0A0A0A"/>
+        <polygon class="sat" style="animation-delay:1.2s"  points="6,50 16,45 16,55" fill="#0A0A0A"/>
+        <g class="center">
+          <polygon points="50,28 72,50 50,72 28,50" fill="none" stroke="#0A0A0A" stroke-width="1.2"/>
+          <polygon points="50,38 62,50 50,62 38,50" fill="#0A0A0A"/>
+        </g>
+      </svg>
+    </div>
   </div>
 
   <!-- GLOBAL HEADER (logo + step progress) -->
   <div class="order-header">
     <img src="images/logo.png" alt="مُهيب" class="logo-img">
     <div id="progress-container">
-      <div id="progress-steps">
-        <div class="progress-step active" id="step-dot-1">
-          <div class="step-dot"></div>
-          <span class="step-label">اللون والياقة</span>
+      <div id="progress-steps" class="sadu-steps">
+        <div class="sadu-step progress-step active" id="step-dot-1">
+          <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
+            <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
+          </svg>
+          <span class="sadu-step-label step-label">اللون والياقة</span>
         </div>
-        <div class="progress-line" id="line-1-2"></div>
-        <div class="progress-step" id="step-dot-2" style="display:none;">
-          <div class="step-dot"></div>
-          <span class="step-label">قياس الجسم</span>
+        <div class="sadu-step-line progress-line" id="line-1-2"></div>
+        <div class="sadu-step progress-step" id="step-dot-2" style="display:none;">
+          <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
+            <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
+          </svg>
+          <span class="sadu-step-label step-label">قياس الجسم</span>
         </div>
-        <div class="progress-line" id="line-2-3" style="display:none;"></div>
-        <div class="progress-step" id="step-dot-3">
-          <div class="step-dot"></div>
-          <span class="step-label">المقاسات</span>
+        <div class="sadu-step-line progress-line" id="line-2-3" style="display:none;"></div>
+        <div class="sadu-step progress-step" id="step-dot-3">
+          <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
+            <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
+          </svg>
+          <span class="sadu-step-label step-label">المقاسات</span>
         </div>
-        <div class="progress-line" id="line-3-4"></div>
-        <div class="progress-step" id="step-dot-4">
-          <div class="step-dot"></div>
-          <span class="step-label">شكل الجسم</span>
+        <div class="sadu-step-line progress-line" id="line-3-4"></div>
+        <div class="sadu-step progress-step" id="step-dot-4">
+          <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
+            <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
+          </svg>
+          <span class="sadu-step-label step-label">شكل الجسم</span>
         </div>
-        <div class="progress-line" id="line-4-5"></div>
-        <div class="progress-step" id="step-dot-5">
-          <div class="step-dot"></div>
-          <span class="step-label">المقاس المفضل</span>
+        <div class="sadu-step-line progress-line" id="line-4-5"></div>
+        <div class="sadu-step progress-step" id="step-dot-5">
+          <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
+            <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
+          </svg>
+          <span class="sadu-step-label step-label">المقاس المفضل</span>
         </div>
       </div>
     </div>
@@ -718,7 +1099,7 @@
           </svg>
           <div class="landing-step-text">
             <span class="landing-step-bold">اختر ثوبك</span>
-            <span class="landing-step-muted">اختار اللون والقماش والياقة اللي تناسبك</span>
+            <span class="landing-step-muted">اختار اللون والياقة اللي تناسبك</span>
           </div>
         </div>
         <!-- Row 2 -->
@@ -756,7 +1137,7 @@
 
       <button class="landing-cta-btn" id="order-landing-cta" style="margin-top:32px;">ابدأ طلبك ←</button>
 
-      <p style="font-family:'Cairo',sans-serif;font-size:0.82rem;font-weight:400;color:rgba(255,255,255,0.6);text-align:center;margin-top:16px;">
+      <p style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-size:0.82rem;font-weight:400;color:rgba(255,255,255,0.6);text-align:center;margin-top:16px;">
         عندك استفسار عن مهيب؟ <a href="https://wa.me/966552177857" target="_blank" rel="noopener" style="color:rgba(255,255,255,0.6);text-decoration:underline;">تواصل مع فريقنا</a>
       </p>
 
@@ -773,11 +1154,6 @@
     <div class="carousel-dots" id="carousel-dots"></div>
     <div class="step1-body">
       <div class="step-top">
-        <div class="section-block">
-          <span class="section-micro-label">القماش</span>
-          <div class="fabric-cards-row" id="fabric-cards"></div>
-          <div class="error-msg" id="error-fabric">الرجاء اختيار القماش</div>
-        </div>
         <div class="section-block">
           <span class="section-micro-label">اللون</span>
           <div class="color-swatches" id="color-swatches"></div>
@@ -967,8 +1343,8 @@
               <polyline points="17,28 24,36 38,20" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="35" stroke-dashoffset="35" class="scan-check-tick"/>
             </svg>
           </div>
-          <p style="font-family:'Cairo',sans-serif;font-weight:700;font-size:1.3rem;color:#0A0A0A;text-align:center;margin-bottom:4px;">تم بنجاح! 🎉</p>
-          <p style="font-family:'Cairo',sans-serif;font-weight:400;font-size:0.82rem;color:#767676;text-align:center;margin-bottom:20px;">إليك قياسات جسمك</p>
+          <p style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-weight:700;font-size:1.3rem;color:#0A0A0A;text-align:center;margin-bottom:4px;">تم بنجاح! 🎉</p>
+          <p style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-weight:400;font-size:0.82rem;color:#767676;text-align:center;margin-bottom:20px;">إليك قياسات جسمك</p>
           <div class="scan-meas-card">
             <div class="scan-meas-header">القياسات</div>
             <div class="scan-meas-row"><span class="scan-meas-label">محيط الصدر</span><span class="scan-meas-value">٩٦ سم</span></div>
@@ -1025,7 +1401,7 @@
             <span class="slider-value" id="s-shoe-val">٤٢ EU</span>
           </div>
           <div class="slider-track-wrapper">
-            <input type="range" id="slider-shoe" min="38" max="48" value="42" step="1" />
+            <input type="range" id="slider-shoe" min="38" max="48" value="42" step="0.5" />
           </div>
         </div>
         <div class="slider-wrapper">
@@ -1038,6 +1414,24 @@
           </div>
           <div class="slider-track-wrapper">
             <input type="range" id="slider-age" min="15" max="70" value="25" step="1" />
+          </div>
+        </div>
+
+        <div class="slider-wrapper">
+          <div class="slider-row-label">
+            <span class="slider-label">
+              <span>مقاس القميص</span>
+              <button class="info-btn" onclick="showTooltip('shirtSize')">?</button>
+            </span>
+            <span class="slider-value" id="s-shirt-val" style="opacity:.55;">اختياري</span>
+          </div>
+          <div class="size-pill-row" id="shirt-size-row">
+            <button type="button" class="size-pill" data-size="S"    onclick="selectShirtSize(this)">S</button>
+            <button type="button" class="size-pill" data-size="M"    onclick="selectShirtSize(this)">M</button>
+            <button type="button" class="size-pill" data-size="L"    onclick="selectShirtSize(this)">L</button>
+            <button type="button" class="size-pill" data-size="XL"   onclick="selectShirtSize(this)">XL</button>
+            <button type="button" class="size-pill" data-size="XXL"  onclick="selectShirtSize(this)">XXL</button>
+            <button type="button" class="size-pill" data-size="XXXL" onclick="selectShirtSize(this)">XXXL</button>
           </div>
         </div>
       </div>
@@ -1086,11 +1480,216 @@
     </div>
   </div>
 
+  <!-- SCREEN ai-measure: Optional AI Measurement (after fit preference) -->
+  <div id="screen-aimeasure" class="screen">
+
+    <!-- SUB 1: Entry -->
+    <div class="aimeasure-sub active" id="aimeasure-sub-1">
+      <div class="step-body step-body-center">
+        <div class="step-top" style="align-items:center;text-align:center;">
+          <div class="aimeasure-icon-wrap">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="6" y="14" width="36" height="26" rx="4" stroke="#0A0A0A" stroke-width="2.2" fill="none"/>
+              <circle cx="24" cy="27" r="7" stroke="#0A0A0A" stroke-width="2.2" fill="none"/>
+              <path d="M18 14v-2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2" stroke="#0A0A0A" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M33 10.5 L35 8 L37 10.5" stroke="#0A0A0A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="35" cy="8" r="1.2" fill="#0A0A0A"/>
+            </svg>
+          </div>
+          <h2 class="aimeasure-headline">ثوبك والم مع قياسات مُهيب بالذكاء الاصطناعي</h2>
+          <p class="aimeasure-subtext">هذه الخاصية تساعدنا نفصّل ثوبك على مقاسك بدقة أفضل. فقط نحتاج منك صورتين - من الأمام والجانب.</p>
+          <div class="aimeasure-trust-row">
+            <div class="aimeasure-trust-item">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 4.5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>دقة عالية</span>
+            </div>
+            <div class="aimeasure-trust-sep"></div>
+            <div class="aimeasure-trust-item">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#0A0A0A" stroke-width="1.8"/><path d="M8 5v3.5l2 1.5" stroke="#0A0A0A" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <span>أقل من دقيقة</span>
+            </div>
+            <div class="aimeasure-trust-sep"></div>
+            <div class="aimeasure-trust-item">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="#0A0A0A" stroke-width="1.8"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" stroke="#0A0A0A" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <span>الصور لا تُحفظ</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-bottom" style="gap:18px;">
+          <label class="aimeasure-consent" for="aimeasure-consent-cb">
+            <input type="checkbox" id="aimeasure-consent-cb"
+                   onchange="document.getElementById('aimeasure-start-btn').disabled = !this.checked;">
+            <span class="aimeasure-consent-text">أوافق على استخدام الصور لأغراض القياس فقط، ولا يتم حفظها أو مشاركتها.</span>
+          </label>
+          <button class="btn-next" id="aimeasure-start-btn" disabled onclick="aiMeasureStart()">ابدأ القياس</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB 2: Instructions -->
+    <div class="aimeasure-sub" id="aimeasure-sub-2">
+      <div class="step-body step-body-center">
+        <div class="step-top">
+          <h2 class="screen-title serif" style="text-align:center;">قبل ما ناخذ مقاساتك</h2>
+          <div class="aimeasure-tips-list">
+            <div class="aimeasure-tip">
+              <span class="aimeasure-tip-icon">
+                <!-- shirt / thobe outline — Lucide "shirt" -->
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/>
+                </svg>
+              </span>
+              <span>البس ثوب</span>
+            </div>
+            <div class="aimeasure-tip">
+              <span class="aimeasure-tip-icon">
+                <!-- lightbulb outline — Lucide "lightbulb" -->
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                  <path d="M9 18h6"/><path d="M10 22h4"/>
+                </svg>
+              </span>
+              <span>خلفية بيضاء وإضاءة جيدة</span>
+            </div>
+            <div class="aimeasure-tip">
+              <span class="aimeasure-tip-icon">
+                <!-- smartphone outline — Lucide "smartphone" -->
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/>
+                  <path d="M12 18h.01"/>
+                </svg>
+              </span>
+              <span>الجوال على بُعد ٢ متر تقريباً</span>
+            </div>
+            <div class="aimeasure-tip">
+              <span class="aimeasure-tip-icon">
+                <!-- standing person outline — Lucide "user" -->
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="7" r="4"/>
+                  <path d="M5.5 21a8.38 8.38 0 0 1 13 0"/>
+                </svg>
+              </span>
+              <span>وقوف مستقيم وذراعين على الجانب</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-bottom">
+          <button class="btn-next ready" onclick="showAiSub(3)">ابدأ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB 3: Front photo -->
+    <div class="aimeasure-sub" id="aimeasure-sub-3">
+      <div class="step-body step-body-center">
+        <div class="step-top" style="align-items:center;">
+          <h2 class="screen-title serif" style="text-align:center;">صورة من الأمام</h2>
+          <p class="aimeasure-subtext">وأنت لابس الثوب، صورة كاملة من الأمام</p>
+          <p class="aimeasure-ref-label">مثال للوقفة الصحيحة</p>
+          <div class="aimeasure-photo-guide" id="ai-front-guide">
+            <img src="images/front-photo.png" class="aimeasure-ref-img" alt="مثال الوقفة الأمامية">
+            <div class="aimeasure-photo-preview" id="ai-front-preview"></div>
+            <button type="button" class="aimeasure-upload-label" id="ai-front-label" onclick="openPhotoSheet('front')">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <span id="ai-front-label-text">التقط صورة أو ارفع</span>
+            </button>
+            <input type="file" id="ai-front-input-camera"  accept="image/*" capture="environment" style="display:none;" onchange="aiPhotoSelected('front', this)">
+            <input type="file" id="ai-front-input-gallery" accept="image/*"                       style="display:none;" onchange="aiPhotoSelected('front', this)">
+          </div>
+        </div>
+        <div class="step-bottom">
+          <button class="btn-next" id="btn-ai-front-next" disabled onclick="showAiSub(4)">التالي</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB 4: Side photo -->
+    <div class="aimeasure-sub" id="aimeasure-sub-4">
+      <div class="step-body step-body-center">
+        <div class="step-top" style="align-items:center;">
+          <h2 class="screen-title serif" style="text-align:center;">صورة من الجانب</h2>
+          <p class="aimeasure-subtext">نفس الثوب، التف على الجانب</p>
+          <p class="aimeasure-ref-label">مثال للوقفة الصحيحة</p>
+          <div class="aimeasure-photo-guide" id="ai-side-guide">
+            <img src="images/side-photo.png" class="aimeasure-ref-img" alt="مثال الوقفة الجانبية">
+            <div class="aimeasure-photo-preview" id="ai-side-preview"></div>
+            <button type="button" class="aimeasure-upload-label" id="ai-side-label" onclick="openPhotoSheet('side')">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <span id="ai-side-label-text">التقط صورة أو ارفع</span>
+            </button>
+            <input type="file" id="ai-side-input-camera"  accept="image/*" capture="environment" style="display:none;" onchange="aiPhotoSelected('side', this)">
+            <input type="file" id="ai-side-input-gallery" accept="image/*"                       style="display:none;" onchange="aiPhotoSelected('side', this)">
+          </div>
+        </div>
+        <div class="step-bottom">
+          <button class="btn-next" id="btn-ai-side-next" disabled onclick="aiMeasureAnalyze()">تحليل الصور</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB 5: Loading -->
+    <div class="aimeasure-sub" id="aimeasure-sub-5">
+      <div class="step-body step-body-center" style="justify-content:center;">
+        <div class="step-top" style="align-items:center;gap:20px;">
+          <div class="sadu-loader-diamond" aria-label="جاري التحميل">
+            <svg width="120" height="120" viewBox="0 0 100 100" aria-hidden="true">
+              <polygon class="sat" style="animation-delay:0s"    points="50,6 55,16 45,16" fill="#0A0A0A"/>
+              <polygon class="sat" style="animation-delay:0.4s"  points="94,50 84,55 84,45" fill="#0A0A0A"/>
+              <polygon class="sat" style="animation-delay:0.8s"  points="50,94 45,84 55,84" fill="#0A0A0A"/>
+              <polygon class="sat" style="animation-delay:1.2s"  points="6,50 16,45 16,55" fill="#0A0A0A"/>
+              <g class="center">
+                <polygon points="50,28 72,50 50,72 28,50" fill="none" stroke="#0A0A0A" stroke-width="1.2"/>
+                <polygon points="50,38 62,50 50,62 38,50" fill="#0A0A0A"/>
+              </g>
+            </svg>
+          </div>
+          <p class="aimeasure-loading-title" id="ai-loading-status">جاري تحليل الصورة الأمامية...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB 6: Results -->
+    <div class="aimeasure-sub" id="aimeasure-sub-6">
+      <div class="step-body step-body-center">
+        <div class="step-top" style="align-items:center;">
+          <span class="sadu-success" style="margin-bottom:4px;">
+            <svg width="72" height="72" viewBox="0 0 100 100" aria-hidden="true">
+              <polygon class="ray" style="animation-delay:0.45s" points="50,2 54,10 46,10" fill="#0A0A0A"/>
+              <polygon class="ray" style="animation-delay:0.55s" points="98,50 90,54 90,46" fill="#0A0A0A"/>
+              <polygon class="ray" style="animation-delay:0.65s" points="50,98 46,90 54,90" fill="#0A0A0A"/>
+              <polygon class="ray" style="animation-delay:0.75s" points="2,50 10,46 10,54" fill="#0A0A0A"/>
+              <g class="core">
+                <polygon points="50,16 84,50 50,84 16,50" fill="none" stroke="#0A0A0A" stroke-width="1.5"/>
+                <polygon points="50,28 72,50 50,72 28,50" fill="none" stroke="#0A0A0A" stroke-width="1"/>
+                <polygon points="50,42 58,50 50,58 42,50" fill="#0A0A0A"/>
+              </g>
+            </svg>
+          </span>
+          <h2 class="aimeasure-headline" style="margin-bottom:4px;">تم! مقاساتك جاهزة</h2>
+          <p style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-size:0.85rem;color:#767676;text-align:center;margin-top:8px;">يتم حفظ المقاسات تلقائياً مع طلبك</p>
+        </div>
+        <div class="step-bottom">
+          <button class="btn-next ready" onclick="aiMeasureContinue()">متابعة للدفع</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
   <!-- SCREEN processing -->
   <div id="screen-processing" class="screen">
     <div class="processing-wrap">
-      <div class="processing-bar-wrap">
-        <div class="processing-bar" id="processing-bar"></div>
+      <div class="sadu-loader-diamond" aria-label="جاري التحميل">
+        <svg width="120" height="120" viewBox="0 0 100 100" aria-hidden="true">
+          <polygon class="sat" style="animation-delay:0s"    points="50,6 55,16 45,16" fill="#0A0A0A"/>
+          <polygon class="sat" style="animation-delay:0.4s"  points="94,50 84,55 84,45" fill="#0A0A0A"/>
+          <polygon class="sat" style="animation-delay:0.8s"  points="50,94 45,84 55,84" fill="#0A0A0A"/>
+          <polygon class="sat" style="animation-delay:1.2s"  points="6,50 16,45 16,55" fill="#0A0A0A"/>
+          <g class="center">
+            <polygon points="50,28 72,50 50,72 28,50" fill="none" stroke="#0A0A0A" stroke-width="1.2"/>
+            <polygon points="50,38 62,50 50,62 38,50" fill="#0A0A0A"/>
+          </g>
+        </svg>
       </div>
       <p class="processing-text" id="processing-text">جاري تجهيز مقاساتك...</p>
     </div>
@@ -1132,7 +1731,7 @@
           </div>
         </div>
         <div class="error-msg" id="error-city">الرجاء إدخال المدينة</div>
-        <p style="font-family:'Cairo',sans-serif;font-size:0.82rem;font-weight:400;color:#767676;text-align:right;margin-top:8px;">نوصل لجميع مناطق المملكة</p>
+        <p style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-size:0.82rem;font-weight:400;color:#767676;text-align:right;margin-top:8px;">نوصل لجميع مناطق المملكة</p>
       </div>
 
       <!-- Summary -->
@@ -1140,10 +1739,6 @@
         <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E5E5E5;">
           <span style="font-size:0.82rem;color:#767676;">اللون</span>
           <span style="font-size:0.85rem;font-weight:700;" id="sum-color">—</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E5E5E5;">
-          <span style="font-size:0.82rem;color:#767676;">القماش</span>
-          <span style="font-size:0.85rem;font-weight:700;" id="sum-fabric">—</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E5E5E5;">
           <span style="font-size:0.82rem;color:#767676;">الياقة</span>
@@ -1183,10 +1778,19 @@
   <!-- SCREEN 6: Confirmation -->
   <div id="screen-6" class="screen">
     <div class="confirm-wrap">
-      <svg class="checkmark-svg" viewBox="0 0 80 80" width="80" height="80" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="40" cy="40" r="36" fill="none" stroke="#0A0A0A" stroke-width="3" stroke-dasharray="226" stroke-dashoffset="226" class="check-circle"/>
-        <polyline points="24,40 35,52 56,28" fill="none" stroke="#0A0A0A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="50" stroke-dashoffset="50" class="check-tick"/>
-      </svg>
+      <span class="sadu-success checkmark-svg">
+        <svg width="80" height="80" viewBox="0 0 100 100" aria-hidden="true">
+          <polygon class="ray" style="animation-delay:0.45s" points="50,2 54,10 46,10" fill="#0A0A0A"/>
+          <polygon class="ray" style="animation-delay:0.55s" points="98,50 90,54 90,46" fill="#0A0A0A"/>
+          <polygon class="ray" style="animation-delay:0.65s" points="50,98 46,90 54,90" fill="#0A0A0A"/>
+          <polygon class="ray" style="animation-delay:0.75s" points="2,50 10,46 10,54" fill="#0A0A0A"/>
+          <g class="core">
+            <polygon points="50,16 84,50 50,84 16,50" fill="none" stroke="#0A0A0A" stroke-width="1.5"/>
+            <polygon points="50,28 72,50 50,72 28,50" fill="none" stroke="#0A0A0A" stroke-width="1"/>
+            <polygon points="50,42 58,50 50,58 42,50" fill="#0A0A0A"/>
+          </g>
+        </svg>
+      </span>
       <h1 class="confirm-title serif" id="confirm-title">تم استلام طلبك!</h1>
       <p class="confirm-sub" id="confirm-sub"></p>
       <div class="confirm-line"></div>
@@ -1205,6 +1809,28 @@
     <h3 class="tooltip-title" id="tooltip-title"></h3>
     <p class="tooltip-body" id="tooltip-body"></p>
     <button class="tooltip-close" onclick="closeTooltip()">إغلاق</button>
+  </div>
+
+  <!-- PHOTO SOURCE BOTTOM SHEET (camera / gallery picker) -->
+  <div class="photo-sheet-overlay" id="photo-sheet-overlay" onclick="closePhotoSheet()"></div>
+  <div class="photo-sheet" id="photo-sheet" role="dialog" aria-label="اختر مصدر الصورة">
+    <div class="photo-sheet-handle"></div>
+    <button type="button" class="photo-sheet-option" onclick="pickPhotoSource('camera')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+      <span>التقط صورة جديدة</span>
+    </button>
+    <button type="button" class="photo-sheet-option" onclick="pickPhotoSource('gallery')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <circle cx="8.5" cy="9" r="1.5"/>
+        <path d="M21 15l-5-5L5 21"/>
+      </svg>
+      <span>اختر من المعرض</span>
+    </button>
+    <button type="button" class="photo-sheet-cancel" onclick="closePhotoSheet()">إلغاء</button>
   </div>
 
   <!-- Shutter flash overlay -->

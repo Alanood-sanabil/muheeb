@@ -4,7 +4,7 @@
 //  the module load if the CDN is slow or unavailable.
 // ============================================================
 
-const orderState = { fabric: null, color: null, collar: null, height: 170, weight: 80, shoeSize: 42, age: 25, bodyShape: null, fitPreference: null, name: null, phone: null, city: null };
+const orderState = { color: null, collar: null, height: 170, weight: 80, shoeSize: 42, age: 25, shirtSize: null, bodyShape: null, fitPreference: null, name: null, phone: null, city: null, ai_chest: null, ai_waist: null, ai_sleeve: null, ai_size: null };
 let currentScreen = 1;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -48,12 +48,8 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('[Muheeb] CTA clicked — starting loader');
       gtag('event', 'start_order', { event_category: 'funnel' });
       const loader = document.getElementById('loader-screen');
-      const bar = document.getElementById('loader-bar');
       loader.classList.add('visible');
       loader.classList.remove('hide');
-      bar.style.animation = 'none';
-      void bar.offsetWidth;
-      bar.style.animation = '';
       setTimeout(() => {
         console.log('[Muheeb] Loader done — switching to screen-2');
         document.getElementById('screen-1').classList.remove('active');
@@ -124,37 +120,9 @@ function populate() {
 
 // ---- BUILD CARDS ----
 function buildCards() {
-  buildFabricCards();
   buildColorSwatches();
   buildCollarCards();
   buildShapeCards();
-}
-
-const FABRICS = [
-  { value: 'كوري ربع وقفة', label: 'ربع وقفة', sub: 'كوري', img: 'images/Fabric.png'  },
-  { value: 'كوري سميراميس', label: 'سميراميس', sub: 'كوري', img: 'images/Fabric2.png' },
-];
-
-function buildFabricCards() {
-  const container = document.getElementById('fabric-cards');
-  if (!container) return;
-  FABRICS.forEach(fabric => {
-    const card = document.createElement('div');
-    card.className = 'fabric-card';
-    card.innerHTML = `
-      <img src="${fabric.img}" alt="${fabric.label}" />
-      <div class="fabric-card-info">
-        <div class="fabric-card-label">${fabric.label}</div>
-        <div class="fabric-card-sub">${fabric.sub}</div>
-      </div>`;
-    card.onclick = () => {
-      container.querySelectorAll('.fabric-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      orderState.fabric = fabric.value;
-      updateBtn(1);
-    };
-    container.appendChild(card);
-  });
 }
 
 const swatchBg = { white: '#FFFFFF', yellow: '#FAF3DC' };
@@ -294,10 +262,10 @@ function pick(field, card, container, step) {
 // ---- SLIDERS ----
 function initSliders() {
   const O = CONTENT.order;
-  setupSlider('slider-height', 's-height-val', O.heightUnit, 'height');
-  setupSlider('slider-weight', 's-weight-val', O.weightUnit, 'weight');
-  setupSlider('slider-shoe', 's-shoe-val', O.shoeSizeUnit, 'shoeSize');
-  setupSlider('slider-age', 's-age-val', 'سنة', 'age');
+  setupSlider('slider-height', 's-height-val', O.heightUnit,    'height');
+  setupSlider('slider-weight', 's-weight-val', O.weightUnit,    'weight');
+  setupSlider('slider-shoe',   's-shoe-val',   O.shoeSizeUnit,  'shoeSize');
+  setupSlider('slider-age',    's-age-val',    'سنة',           'age');
 }
 
 function setupSlider(sliderId, valId, unit, field) {
@@ -377,6 +345,7 @@ function showScreen(n) {
 
     if (n === 2) updateBtn(1);
     if (n === 'scan') resetScanFlow();
+    if (n === 'aimeasure') resetAiMeasureFlow();
     if (n === 4) updateBtn(3);
     if (n === '4b') updateBtn('4b');
 
@@ -407,8 +376,8 @@ function updateProgress(screenNumber) {
   const container = document.getElementById('progress-container');
   if (!container) return;
 
-  // Hide on landing, processing, and confirmation
-  if (screenNumber === 1 || screenNumber === 6 || screenNumber === 'processing') {
+  // Hide on landing, processing, confirmation, and ai-measure
+  if (screenNumber === 1 || screenNumber === 6 || screenNumber === 'processing' || screenNumber === 'aimeasure') {
     container.style.opacity = '0';
     container.style.pointerEvents = 'none';
     return;
@@ -457,7 +426,6 @@ function updateProgress(screenNumber) {
 function validateStep1() {
   clearErr();
   let ok = true;
-  if (!orderState.fabric) { showErr('error-fabric'); ok = false; }
   if (!orderState.color) { showErr('error-color'); ok = false; }
   if (!orderState.collar) { showErr('error-collar'); ok = false; }
   if (ok) { gtag('event', 'complete_step1', { event_category: 'funnel' }); showScreen(3); }
@@ -508,22 +476,31 @@ function selectFit(btn) {
 }
 window.selectFit = selectFit;
 
+// ---- T-SHIRT SIZE (optional) ----
+function selectShirtSize(btn) {
+  const row = document.getElementById('shirt-size-row');
+  if (row) row.querySelectorAll('.size-pill').forEach(p => p.classList.remove('selected'));
+  btn.classList.add('selected');
+  orderState.shirtSize = btn.dataset.size;
+  const valEl = document.getElementById('s-shirt-val');
+  if (valEl) { valEl.textContent = btn.dataset.size; valEl.style.opacity = ''; }
+}
+window.selectShirtSize = selectShirtSize;
+
 function validateStep4b() {
   if (!orderState.fitPreference) { showErr('error-fit'); return; }
-  showScreen('processing');
-  const bar = document.getElementById('processing-bar');
-  const txt = document.getElementById('processing-text');
-  bar.classList.remove('animate');
-  void bar.offsetWidth;
-  bar.classList.add('animate');
-
-  if (txt) txt.textContent = 'جاري تجهيز مقاس ثوبك...';
-
-  setTimeout(() => {
-    openOrderModal();
-  }, 4000);
+  gtag('event', 'ai_measure_offered', { event_category: 'ai_measure' });
+  showScreen('aimeasure');
+  resetAiMeasureFlow();
 }
 window.validateStep4b = validateStep4b;
+
+function goToProcessing() {
+  showScreen('processing');
+  const txt = document.getElementById('processing-text');
+  if (txt) txt.textContent = 'جاري تجهيز مقاس ثوبك...';
+  setTimeout(() => { openOrderModal(); }, 4000);
+}
 
 function openOrderModal() {
   const O = CONTENT.order;
@@ -533,8 +510,6 @@ function openOrderModal() {
   const sumMeas = document.getElementById('modal-sum-meas');
   const sumPrice = document.getElementById('modal-sum-price');
   if (sumColor) sumColor.textContent = orderState.color || '—';
-  const sumFabric = document.getElementById('sum-fabric');
-  if (sumFabric) sumFabric.textContent = orderState.fabric || '—';
   if (sumCollar) sumCollar.textContent = orderState.collar || '—';
   if (sumMeas) sumMeas.textContent = toAr(orderState.height) + ' سم — ' + toAr(orderState.weight) + ' كيلو';
   if (sumPrice) sumPrice.textContent = toAr(S.basePrice) + ' ' + O.priceUnit;
@@ -593,18 +568,41 @@ async function submit() {
       'https://mwcmfzzukqiutztkgagg.supabase.co',
       'sb_publishable_8zuxMDAcYGIozcmi8CS8sg_ZnjLmb6V'
     );
+
+    // ── AI PHOTO UPLOAD ──────────────────────────────────────────────
+    // TESTING MODE: Photos are being saved despite UI claiming
+    // "الصور لا تُحفظ". Before going live with real customers, either:
+    //   1. Update the consent text to reflect actual behavior, OR
+    //   2. Stop saving photos
+    // This is a privacy/legal issue that must be resolved before public launch.
+    let frontUrl = null, sideUrl = null;
+    try {
+      [frontUrl, sideUrl] = await Promise.all([
+        uploadPhotoToStorage(supabase, String(ref), 'front', _aiPhotoBlobs.front),
+        uploadPhotoToStorage(supabase, String(ref), 'side',  _aiPhotoBlobs.side),
+      ]);
+    } catch (e) {
+      console.error('[Muheeb] Photo upload step failed (non-fatal, continuing):', e);
+    }
+
     const payload = {
       order_number: String(ref),
       name: orderState.name,
       phone: orderState.phone,
       city: orderState.city,
-      fabric: orderState.fabric,
       color: orderState.color,
       collar: orderState.collar,
       height: String(orderState.height),
       weight: String(orderState.weight),
       shoe_size: String(orderState.shoeSize),
       age: String(orderState.age),
+      shirt_size: orderState.shirtSize || null,
+      ai_chest:  orderState.ai_chest  ? String(orderState.ai_chest)  : null,
+      ai_waist:  orderState.ai_waist  ? String(orderState.ai_waist)  : null,
+      ai_sleeve: orderState.ai_sleeve ? String(orderState.ai_sleeve) : null,
+      ai_size:   orderState.ai_size   || null,
+      ai_photo_front_url: frontUrl,
+      ai_photo_side_url:  sideUrl,
       body_type: orderState.bodyShape,
       fit_preference: orderState.fitPreference,
     };
@@ -666,6 +664,14 @@ const tooltips = {
   shoeSize: {
     title: 'لماذا نسأل عن مقاس حذاءك؟',
     body: 'قدمك بنفس طول ساعدك — جرب وشوف! نستخدم مقاس الحذاء كقياس إضافي يساعدنا نطلع لك مقاس أدق بدون ما تحتاج شريط قياس.'
+  },
+  age: {
+    title: 'لماذا نسأل عن عمرك؟',
+    body: 'نستخدم العمر لاقتراح أنسب قصة وطول للثوب يناسب فئتك العمرية.'
+  },
+  shirtSize: {
+    title: 'لماذا نسأل عن مقاس قميصك؟',
+    body: 'مقاس قميصك يساعدنا نحدد عرض الكتفين ومحيط الصدر بدقة، عشان الثوب يجي مضبوط على جسمك.'
   }
 };
 
@@ -955,6 +961,268 @@ function handleSubmit() {
     submit();
   }
 }
+
+// ---- AI MEASURE FLOW ----
+const AI_LOADING_MSGS = [
+  'جاري تحليل الصورة الأمامية...',
+  'جاري تحليل الصورة الجانبية...',
+  'جاري حساب المقاسات...',
+  'جاري التحقق من الدقة...',
+];
+
+let _aiLoadingTimer = null;
+
+function showAiSub(n) {
+  document.querySelectorAll('.aimeasure-sub').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('aimeasure-sub-' + n);
+  if (target) target.classList.add('active');
+}
+window.showAiSub = showAiSub;
+
+function resetAiMeasureFlow() {
+  showAiSub(1);
+  ['front', 'side'].forEach(side => {
+    _aiPhotoBlobs[side] = null;
+    const preview = document.getElementById('ai-' + side + '-preview');
+    if (preview) { preview.style.backgroundImage = ''; preview.classList.remove('visible'); }
+    ['camera', 'gallery'].forEach(src => {
+      const input = document.getElementById('ai-' + side + '-input-' + src);
+      if (input) input.value = '';
+    });
+    const lbl = document.getElementById('ai-' + side + '-label');
+    if (lbl) { lbl.style.opacity = '1'; lbl.style.display = ''; }
+    const lblText = document.getElementById('ai-' + side + '-label-text');
+    if (lblText) lblText.textContent = 'التقط صورة أو ارفع';
+  });
+  const btnFront = document.getElementById('btn-ai-front-next');
+  const btnSide  = document.getElementById('btn-ai-side-next');
+  if (btnFront) { btnFront.classList.remove('ready'); btnFront.disabled = true; }
+  if (btnSide)  { btnSide.classList.remove('ready');  btnSide.disabled  = true; }
+  if (_aiLoadingTimer) { clearTimeout(_aiLoadingTimer); _aiLoadingTimer = null; }
+}
+
+function aiMeasureSkip() {
+  gtag('event', 'ai_measure_skipped', { event_category: 'ai_measure' });
+  goToProcessing();
+}
+window.aiMeasureSkip = aiMeasureSkip;
+
+// Mid-flow exit — user bails out from somewhere inside the AI flow (after
+// they've already chosen to start it). Discards any captured photos,
+// clears any AI measurements, then routes to checkout.
+function aiMeasureExitMidflow(step) {
+  gtag('event', 'ai_measure_exit_midflow', { event_category: 'ai_measure', step: step });
+  ['front', 'side'].forEach(side => {
+    _aiPhotoBlobs[side] = null;
+    ['camera', 'gallery'].forEach(src => {
+      const input = document.getElementById('ai-' + side + '-input-' + src);
+      if (input) input.value = '';
+    });
+    const preview = document.getElementById('ai-' + side + '-preview');
+    if (preview) { preview.style.backgroundImage = ''; preview.classList.remove('visible'); }
+    const lbl = document.getElementById('ai-' + side + '-label');
+    if (lbl) { lbl.style.opacity = '1'; lbl.style.display = ''; }
+    const lblText = document.getElementById('ai-' + side + '-label-text');
+    if (lblText) lblText.textContent = 'التقط صورة أو ارفع';
+    const btn = document.getElementById('btn-ai-' + side + '-next');
+    if (btn) { btn.disabled = true; btn.classList.remove('ready'); }
+  });
+  orderState.ai_chest = null;
+  orderState.ai_waist = null;
+  orderState.ai_sleeve = null;
+  orderState.ai_size  = null;
+  if (_aiLoadingTimer) { clearTimeout(_aiLoadingTimer); _aiLoadingTimer = null; }
+  goToProcessing();
+}
+window.aiMeasureExitMidflow = aiMeasureExitMidflow;
+
+function aiMeasureStart() {
+  gtag('event', 'ai_measure_start', { event_category: 'ai_measure' });
+  showAiSub(2);
+}
+window.aiMeasureStart = aiMeasureStart;
+
+// ─────────────────────────────────────────────────────────────────────────
+// AI PHOTO STORAGE (compression + Supabase Storage upload)
+// ─────────────────────────────────────────────────────────────────────────
+// TESTING MODE: Photos are being saved despite UI claiming "الصور لا تُحفظ".
+// Before going live with real customers, either:
+//   1. Update the consent text to reflect actual behavior, OR
+//   2. Stop saving photos
+// This is a privacy/legal issue that must be resolved before public launch.
+// ─────────────────────────────────────────────────────────────────────────
+
+// Compressed Blobs for the front/side photos, captured client-side from the
+// user's File before upload. Cleared on flow reset / mid-flow exit.
+const _aiPhotoBlobs = { front: null, side: null };
+
+// Resize an image to maxDim on the long edge and re-encode as JPEG at the
+// given quality (0..1). Targets ~100–300 KB at 1080px / 0.78. Returns a Blob.
+async function compressImage(file, maxDim = 1080, quality = 0.78) {
+  // Use createImageBitmap when available (modern browsers, fastest path).
+  let bitmap;
+  if (typeof createImageBitmap === 'function') {
+    bitmap = await createImageBitmap(file);
+  } else {
+    // Fallback via Image element for older Safari
+    const url = URL.createObjectURL(file);
+    bitmap = await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = (err) => { URL.revokeObjectURL(url); reject(err); };
+      img.src = url;
+    });
+  }
+  let { width, height } = bitmap;
+  if (Math.max(width, height) > maxDim) {
+    const scale = maxDim / Math.max(width, height);
+    width  = Math.round(width  * scale);
+    height = Math.round(height * scale);
+  }
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(bitmap, 0, 0, width, height);
+  if (bitmap.close) bitmap.close();
+  return await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
+}
+
+// Upload one Blob to Supabase Storage and return its public URL.
+async function uploadPhotoToStorage(supabaseClient, orderRef, side, blob) {
+  if (!blob) return null;
+  const path = `${orderRef}/${side}.jpg`;
+  const { error } = await supabaseClient.storage
+    .from('ai-photos')
+    .upload(path, blob, { upsert: true, contentType: 'image/jpeg' });
+  if (error) {
+    console.error('[Muheeb] Photo upload failed (' + side + '):', error);
+    return null;
+  }
+  const { data } = supabaseClient.storage.from('ai-photos').getPublicUrl(path);
+  return data && data.publicUrl ? data.publicUrl : null;
+}
+
+// ── PHOTO SOURCE BOTTOM SHEET ─────────────────────────────
+let _photoSheetSide = null;
+
+function openPhotoSheet(side) {
+  _photoSheetSide = side;
+  document.getElementById('photo-sheet-overlay').classList.add('visible');
+  document.getElementById('photo-sheet').classList.add('visible');
+}
+window.openPhotoSheet = openPhotoSheet;
+
+function closePhotoSheet() {
+  document.getElementById('photo-sheet-overlay').classList.remove('visible');
+  document.getElementById('photo-sheet').classList.remove('visible');
+  // Don't null _photoSheetSide here — pickPhotoSource may run synchronously
+  // after a click that called close*indirectly* via re-entrancy. Setting it
+  // null only when the sheet is reopened or after a pick is fine.
+}
+window.closePhotoSheet = closePhotoSheet;
+
+function pickPhotoSource(source) {
+  const side = _photoSheetSide;
+  closePhotoSheet();
+  if (!side) return;
+  const input = document.getElementById('ai-' + side + '-input-' + source);
+  if (input) input.click();
+}
+window.pickPhotoSource = pickPhotoSource;
+
+async function aiPhotoSelected(side, input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+
+  // Compress for upload (target ~100–300 KB) and stash the Blob for submit().
+  // We render the preview from the COMPRESSED image so what the user sees in
+  // the UI matches what eventually gets stored.
+  let blob;
+  try {
+    blob = await compressImage(file);
+  } catch (e) {
+    console.error('[Muheeb] Photo compression failed, falling back to original:', e);
+    blob = file;
+  }
+  _aiPhotoBlobs[side] = blob;
+
+  const url = URL.createObjectURL(blob);
+  const preview = document.getElementById('ai-' + side + '-preview');
+  if (preview) {
+    preview.style.backgroundImage = `url(${url})`;
+    preview.classList.add('visible');
+  }
+  // Switch label to "retake" state so user can replace the photo
+  const lblText = document.getElementById('ai-' + side + '-label-text');
+  if (lblText) lblText.textContent = 'تغيير الصورة';
+  const btn = document.getElementById('btn-ai-' + side + '-next');
+  if (btn) { btn.disabled = false; btn.classList.add('ready'); }
+  if (side === 'front') gtag('event', 'ai_measure_photo_front', { event_category: 'ai_measure' });
+  if (side === 'side')  gtag('event', 'ai_measure_photo_side',  { event_category: 'ai_measure' });
+}
+window.aiPhotoSelected = aiPhotoSelected;
+
+function calcAIMeasurements() {
+  const h = orderState.height;
+  const w = orderState.weight;
+  const shape = orderState.bodyShape || '';
+  const isHeavy = shape === 'ممتلئ';
+  const chest  = Math.round(w * 1.1 + 25);
+  const waist  = Math.round(w * 1.0 + 15);
+  const sleeve = Math.round(h * 0.345);
+  let size;
+  if      (w <= 60)  size = isHeavy ? 'M'   : 'S';
+  else if (w <= 72)  size = isHeavy ? 'L'   : 'M';
+  else if (w <= 85)  size = isHeavy ? 'XL'  : 'L';
+  else if (w <= 100) size = isHeavy ? 'XXL' : 'XL';
+  else               size = 'XXL';
+  return { height: h, chest, waist, sleeve, size };
+}
+
+function aiMeasureAnalyze() {
+  showAiSub(5);
+  const statusEl = document.getElementById('ai-loading-status');
+  let msgIdx = 0;
+  function cycleMsg() {
+    if (!statusEl) return;
+    statusEl.style.opacity = '0';
+    setTimeout(() => {
+      msgIdx = (msgIdx + 1) % AI_LOADING_MSGS.length;
+      statusEl.textContent = AI_LOADING_MSGS[msgIdx];
+      statusEl.style.opacity = '1';
+    }, 300);
+  }
+  if (statusEl) statusEl.textContent = AI_LOADING_MSGS[0];
+  const interval = setInterval(cycleMsg, 1200);
+  _aiLoadingTimer = setTimeout(() => {
+    clearInterval(interval);
+    const m = calcAIMeasurements();
+    orderState.ai_chest  = m.chest;
+    orderState.ai_waist  = m.waist;
+    orderState.ai_sleeve = m.sleeve;
+    orderState.ai_size   = m.size;
+    showAiSub(6);
+    // Trigger checkmark animation restart
+    const circle = document.querySelector('.ai-check-circle');
+    const tick   = document.querySelector('.ai-check-tick');
+    if (circle) { circle.style.animation = 'none'; void circle.offsetWidth; circle.style.animation = ''; }
+    if (tick)   { tick.style.animation   = 'none'; void tick.offsetWidth;   tick.style.animation   = ''; }
+  }, 5000);
+}
+window.aiMeasureAnalyze = aiMeasureAnalyze;
+
+function aiMeasureContinue() {
+  gtag('event', 'ai_measure_completed', { event_category: 'ai_measure' });
+  openOrderModal();
+}
+window.aiMeasureContinue = aiMeasureContinue;
+
+function aiMeasureRetry() {
+  gtag('event', 'ai_measure_abandoned', { event_category: 'ai_measure' });
+  resetAiMeasureFlow();
+}
+window.aiMeasureRetry = aiMeasureRetry;
 
 window.showScreen = showScreen;
 window.selectScanMode = selectScanMode;

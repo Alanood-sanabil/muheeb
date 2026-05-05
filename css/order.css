@@ -1135,3 +1135,88 @@ input[type=range]::-moz-range-track {
 .fit-opt-btn.selected {
   color: #0A0A0A;
 }
+
+/* ---- STICKY BOTTOM ACTION BAR ----------------------------------------
+   Fixed bar pinned to viewport bottom on every order step.              */
+.screen.active .step-bottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  background: #FFFFFF;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* center content max 560px wide; reserve 14px at the bottom for the Sadu
+     strip + safe-area for iPhone home indicator */
+  padding:
+    14px
+    max(24px, calc((100vw - 560px) / 2))
+    calc(20px + env(safe-area-inset-bottom));
+  animation: stepBarIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes stepBarIn {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+
+/* Reserve space at the bottom of every step-body so the last content
+   item isn't hidden behind the fixed bar when scrolled to the end.    */
+.step-body { padding-bottom: 140px; }
+/* Note: #screen-5 .step-body already has padding-bottom: 160px (line ~908)
+   which wins on specificity — that screen keeps its larger reserve. */
+
+/* The above isn't enough on its own: .step-top has overflow-y:auto, so it
+   scrolls *internally* — the .step-body padding sits OUTSIDE that scroll
+   context and doesn't free the bottom of the scrollable content. Reserve
+   space inside the scroll area too. */
+.step-top { padding-bottom: 130px; }
+
+/* CRITICAL FIX — escape transformed-ancestor trap:
+   The original @keyframes screenIn ends with `transform: translateY(0)`
+   and the animation has fill-mode `forwards`, so .screen.active retains
+   that transform permanently. A non-`none` transform creates a new
+   containing block, so `position: fixed` inside the screen resolves to
+   the screen (not the viewport) — that's why the bar scrolled with the
+   page. Override screenIn to opacity-only so .screen has no lingering
+   transform and `position: fixed` correctly anchors to the viewport. */
+@keyframes screenIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ---- T-SHIRT SIZE PILLS (measurements step, optional) ---- */
+.size-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.size-pill {
+  flex: 1 1 0;
+  min-width: 56px;
+  height: 42px;
+  background: #FFFFFF;
+  color: #0A0A0A;
+  border: 1px solid #0A0A0A;
+  border-radius: 8px;
+  font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.size-pill:hover { background: #F5F5F5; }
+
+.size-pill.selected {
+  background: #0A0A0A;
+  color: #FFFFFF;
+}
+
