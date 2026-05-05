@@ -739,6 +739,29 @@
     .btn-back:hover  { background: #F5F5F5; }
     .btn-back:active { background: #EEEEEE; }
     .btn-back svg    { width: 22px; height: 22px; }
+
+    /* ─── AI SUB-1 (ENTRY+INSTRUCTIONS) — fit one viewport ─────────── */
+    /* Compacts every element so camera icon → headline → subtext →
+       trust badges → divider → tips card → consent → button → skip
+       all fit on iPhone 14 Pro (390×844) without scroll. */
+    #aimeasure-sub-1 .aimeasure-icon-wrap { width: 56px; height: 56px; margin-bottom: 12px; border-radius: 14px; }
+    #aimeasure-sub-1 .aimeasure-icon-wrap svg { width: 32px; height: 32px; }
+    #aimeasure-sub-1 .aimeasure-headline   { font-size: 1.1rem; margin-bottom: 6px; line-height: 1.35; }
+    #aimeasure-sub-1 .aimeasure-subtext    { font-size: 0.82rem; margin-bottom: 0; line-height: 1.55; }
+    #aimeasure-sub-1 .aimeasure-trust-row  { gap: 8px; margin-top: 12px; margin-bottom: 0; }
+    #aimeasure-sub-1 .aimeasure-trust-item { font-size: 0.7rem; gap: 4px; }
+    #aimeasure-sub-1 .aimeasure-trust-item svg { width: 12px; height: 12px; }
+    #aimeasure-sub-1 .aimeasure-divider    { margin: 10px auto 8px; }
+    #aimeasure-sub-1 .aimeasure-mini-section-label { font-size: 0.7rem; margin-bottom: 4px; }
+    #aimeasure-sub-1 .aimeasure-tips-compact { padding: 2px 12px; }
+    #aimeasure-sub-1 .aimeasure-tips-compact .aimeasure-tip {
+      padding: 6px 0;
+      gap: 10px;
+      font-size: 0.82rem;
+    }
+    #aimeasure-sub-1 .aimeasure-tips-compact .aimeasure-tip-icon { width: 16px; height: 16px; }
+    #aimeasure-sub-1 .aimeasure-tips-compact .aimeasure-tip-icon svg { width: 16px; height: 16px; }
+    #aimeasure-sub-1 .aimeasure-consent-text { font-size: 0.74rem; line-height: 1.45; }
   </style>
   <style>
     /* === BODY SCAN SUB-SCREENS === */
@@ -1150,13 +1173,13 @@
           <span class="sadu-step-label step-label">اللون والياقة</span>
         </div>
         <div class="sadu-step-line progress-line" id="line-1-2"></div>
-        <div class="sadu-step progress-step" id="step-dot-2" style="display:none;">
+        <div class="sadu-step progress-step" id="step-dot-2">
           <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
             <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
           </svg>
-          <span class="sadu-step-label step-label">قياس الجسم</span>
+          <span class="sadu-step-label step-label">القماش</span>
         </div>
-        <div class="sadu-step-line progress-line" id="line-2-3" style="display:none;"></div>
+        <div class="sadu-step-line progress-line" id="line-2-3"></div>
         <div class="sadu-step progress-step" id="step-dot-3">
           <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
             <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
@@ -1473,6 +1496,20 @@
 
   </div>
 
+  <!-- SCREEN FABRIC: Step 2 — Fabric selection -->
+  <div id="screen-fabric" class="screen">
+    <div class="step-body step-body-center">
+      <div class="step-top">
+        <h2 class="screen-title serif">اختر القماش</h2>
+        <div class="fabric-cards-row" id="fabric-cards"></div>
+        <div class="error-msg" id="error-fabric">الرجاء اختيار القماش</div>
+      </div>
+      <div class="step-bottom">
+        <button class="btn-next" id="btn-next-fabric" onclick="validateStepFabric()">اختر القماش</button>
+      </div>
+    </div>
+  </div>
+
   <!-- SCREEN 3: Step 3 — Measurements (sliders) -->
   <div id="screen-3" class="screen">
     <div class="step-body step-body-center">
@@ -1654,12 +1691,7 @@
                    onchange="document.getElementById('aimeasure-start-btn').disabled = !this.checked;">
             <span class="aimeasure-consent-text">أوافق على استخدام الصور لأغراض القياس فقط، ولا يتم حفظها أو مشاركتها.</span>
           </label>
-          <div class="step-actions-row">
-            <button type="button" class="btn-back" onclick="aiBackToFit()" aria-label="السابق">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
-            </button>
-            <button class="btn-next" id="aimeasure-start-btn" disabled onclick="aiMeasureStart()">ابدأ القياس</button>
-          </div>
+          <button class="btn-next" id="aimeasure-start-btn" disabled onclick="aiMeasureStart()">ابدأ القياس</button>
           <button class="aimeasure-skip-btn" onclick="aiMeasureSkip()">تخطي والذهاب للدفع</button>
         </div>
       </div>
@@ -1830,6 +1862,10 @@
         <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E5E5E5;">
           <span style="font-size:0.82rem;color:#767676;">اللون</span>
           <span style="font-size:0.85rem;font-weight:700;" id="sum-color">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E5E5E5;">
+          <span style="font-size:0.82rem;color:#767676;">القماش</span>
+          <span style="font-size:0.85rem;font-weight:700;" id="sum-fabric">—</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E5E5E5;">
           <span style="font-size:0.82rem;color:#767676;">الياقة</span>

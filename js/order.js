@@ -4,7 +4,7 @@
 //  the module load if the CDN is slow or unavailable.
 // ============================================================
 
-const orderState = { color: null, collar: null, height: 170, weight: 80, shoeSize: 42, age: 25, shirtSize: null, bodyShape: null, fitPreference: null, name: null, phone: null, city: null, ai_chest: null, ai_waist: null, ai_sleeve: null, ai_size: null };
+const orderState = { color: null, collar: null, fabric: null, height: 170, weight: 80, shoeSize: 42, age: 25, shirtSize: null, bodyShape: null, fitPreference: null, name: null, phone: null, city: null, ai_chest: null, ai_waist: null, ai_sleeve: null, ai_size: null };
 let currentScreen = 1;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -122,7 +122,38 @@ function populate() {
 function buildCards() {
   buildColorSwatches();
   buildCollarCards();
+  buildFabricCards();
   buildShapeCards();
+}
+
+// ---- FABRIC ----
+const FABRICS = [
+  { value: 'كوري ربع وقفة', label: 'ربع وقفة', sub: 'كوري', img: 'images/Fabric.png'  },
+  { value: 'كوري سميراميس', label: 'سميراميس', sub: 'كوري', img: 'images/Fabric2.png' },
+];
+
+function buildFabricCards() {
+  const container = document.getElementById('fabric-cards');
+  if (!container) return;
+  container.innerHTML = '';
+  FABRICS.forEach(fabric => {
+    const card = document.createElement('div');
+    card.className = 'fabric-card';
+    card.innerHTML = `
+      <img src="${fabric.img}" alt="${fabric.label}" />
+      <div class="fabric-card-info">
+        <div class="fabric-card-label">${fabric.label}</div>
+        <div class="fabric-card-sub">${fabric.sub}</div>
+      </div>`;
+    card.onclick = () => {
+      container.querySelectorAll('.fabric-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      orderState.fabric = fabric.value;
+      const btn = document.getElementById('btn-next-fabric');
+      if (btn) { btn.classList.add('ready'); btn.textContent = 'التالي'; }
+    };
+    container.appendChild(card);
+  });
 }
 
 const swatchBg = { white: '#FFFFFF', yellow: '#FAF3DC' };
@@ -376,8 +407,9 @@ function updateProgress(screenNumber) {
   const container = document.getElementById('progress-container');
   if (!container) return;
 
-  // Hide on landing, processing, confirmation, and ai-measure
-  if (screenNumber === 1 || screenNumber === 6 || screenNumber === 'processing' || screenNumber === 'aimeasure') {
+  // Hide on landing, processing, confirmation
+  // (AI flow keeps the indicator visible — shows full progress through all 5 form steps)
+  if (screenNumber === 1 || screenNumber === 6 || screenNumber === 'processing') {
     container.style.opacity = '0';
     container.style.pointerEvents = 'none';
     return;
@@ -386,10 +418,12 @@ function updateProgress(screenNumber) {
   container.style.opacity = '1';
   container.style.pointerEvents = '';
 
-  // Map screen to activeStep (1-5)
-  // screen 2=step1, 'scan'=step2, 3=step3, 4=step4, '4b'=step5
-  const stepMap = { 2: 1, 'scan': 2, 3: 3, 4: 4, '4b': 5 };
-  const screenTargets = [null, 2, 'scan', 3, 4, '4b']; // index = step number
+  // Map screen → activeStep (1–5)
+  // screen 2=step1 (color/collar), 'fabric'=step2, 3=step3 (measurements),
+  // 4=step4 (body), '4b'=step5 (fit), 'aimeasure'=5 (treat as final form step
+  // — all dots filled; AI is a bonus pre-checkout phase).
+  const stepMap = { 2: 1, 'fabric': 2, 3: 3, 4: 4, '4b': 5, 'aimeasure': 5 };
+  const screenTargets = [null, 2, 'fabric', 3, 4, '4b']; // index = step number for back-click navigation
   const activeStep = stepMap[screenNumber] || 1;
 
   for (let i = 1; i <= 5; i++) {
@@ -428,8 +462,16 @@ function validateStep1() {
   let ok = true;
   if (!orderState.color) { showErr('error-color'); ok = false; }
   if (!orderState.collar) { showErr('error-collar'); ok = false; }
-  if (ok) { gtag('event', 'complete_step1', { event_category: 'funnel' }); showScreen(3); }
+  if (ok) { gtag('event', 'complete_step1', { event_category: 'funnel' }); showScreen('fabric'); }
 }
+
+function validateStepFabric() {
+  clearErr();
+  if (!orderState.fabric) { showErr('error-fabric'); return; }
+  gtag('event', 'complete_fabric', { event_category: 'funnel' });
+  showScreen(3);
+}
+window.validateStepFabric = validateStepFabric;
 
 function validateStep2() {
   // Sliders always have values, so always valid
@@ -510,6 +552,8 @@ function openOrderModal() {
   const sumMeas = document.getElementById('modal-sum-meas');
   const sumPrice = document.getElementById('modal-sum-price');
   if (sumColor) sumColor.textContent = orderState.color || '—';
+  const sumFabric = document.getElementById('sum-fabric');
+  if (sumFabric) sumFabric.textContent = orderState.fabric || '—';
   if (sumCollar) sumCollar.textContent = orderState.collar || '—';
   if (sumMeas) sumMeas.textContent = toAr(orderState.height) + ' سم — ' + toAr(orderState.weight) + ' كيلو';
   if (sumPrice) sumPrice.textContent = toAr(S.basePrice) + ' ' + O.priceUnit;
@@ -604,6 +648,7 @@ async function submit() {
     phone: orderState.phone,
     city: orderState.city,
     color: orderState.color,
+    fabric: orderState.fabric,
     collar: orderState.collar,
     height: String(orderState.height),
     weight: String(orderState.weight),
