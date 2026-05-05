@@ -468,7 +468,8 @@ function validateStep1() {
 }
 
 function validateStep2() {
-  // Sliders always have values, so always valid
+  // Sliders always have values; t-shirt size is the only required pick
+  if (!orderState.shirtSize) return;
   gtag('event', 'complete_step2', { event_category: 'funnel' });
   showScreen(4);
 }
@@ -520,6 +521,9 @@ function selectShirtSize(btn) {
   orderState.shirtSize = btn.dataset.size;
   const valEl = document.getElementById('s-shirt-val');
   if (valEl) { valEl.textContent = btn.dataset.size; valEl.style.opacity = ''; }
+  // Enable the next-step button now that a shirt size is picked
+  const nextBtn = document.getElementById('btn-next-2');
+  if (nextBtn) { nextBtn.disabled = false; nextBtn.classList.add('ready'); nextBtn.textContent = 'التالي'; }
 }
 window.selectShirtSize = selectShirtSize;
 
