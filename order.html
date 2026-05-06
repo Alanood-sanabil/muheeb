@@ -429,22 +429,28 @@
     }
     .photo-sheet-cancel:hover { background: #EEE; color: #555; }
 
-    /* ─── AI ENTRY "تعرف أكثر" LINK + LEARN-MORE BOTTOM SHEET ──────── */
+    /* ─── AI ENTRY "تعرف أكثر" PILL BUTTON + LEARN-MORE BOTTOM SHEET ── */
     .aimeasure-learn-more {
-      display: inline-block;
-      background: none;
-      border: none;
-      padding: 8px 14px;
-      margin-top: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      direction: rtl;
+      background: #F0EDE8;
+      border: 1px solid rgba(10,10,10,0.08);
+      border-radius: 999px;
+      padding: 7px 14px;
+      margin: 16px 0;
       font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: #888;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #444;
       cursor: pointer;
-      text-decoration: underline;
-      text-underline-offset: 3px;
+      text-decoration: none;
+      transition: background 0.18s ease, transform 0.12s ease, border-color 0.18s ease;
     }
-    .aimeasure-learn-more:hover { color: #0A0A0A; }
+    .aimeasure-learn-more:hover  { background: #E8E3D8; border-color: rgba(10,10,10,0.12); color: #0A0A0A; }
+    .aimeasure-learn-more:active { background: #DDD6C7; transform: scale(0.97); }
+    .aimeasure-learn-more .lm-icon { font-size: 1rem; line-height: 1; opacity: 0.7; }
 
     .learn-more-overlay {
       position: fixed; inset: 0;
@@ -1745,7 +1751,10 @@
           </div>
           <h2 class="aimeasure-headline">ثوبك والم مع قياسات مُهيب بالذكاء الاصطناعي</h2>
           <p class="aimeasure-subtext">هذه الخاصية تساعدنا نفصّل ثوبك على مقاسك بدقة أفضل. فقط نحتاج منك صورتين — من الأمام والجانب.</p>
-          <button type="button" class="aimeasure-learn-more" onclick="openLearnMore()">تعرف أكثر</button>
+          <button type="button" class="aimeasure-learn-more" onclick="openLearnMore()">
+            <span class="lm-icon" aria-hidden="true">ⓘ</span>
+            <span>تعرف أكثر</span>
+          </button>
           <div class="aimeasure-trust-row">
             <div class="aimeasure-trust-item">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 4.5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
