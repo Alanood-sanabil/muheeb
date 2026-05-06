@@ -1254,6 +1254,25 @@ async function uploadPhotoToStorage(supabaseClient, orderRef, side, blob) {
   return publicUrl;
 }
 
+// ── LEARN-MORE BOTTOM SHEET (AI entry explainer) ──────────
+function openLearnMore() {
+  gtag('event', 'ai_learn_more_opened', { event_category: 'ai_measure' });
+  document.getElementById('learn-more-overlay').classList.add('visible');
+  document.getElementById('learn-more-sheet').classList.add('visible');
+}
+window.openLearnMore = openLearnMore;
+
+function closeLearnMore() {
+  document.getElementById('learn-more-overlay').classList.remove('visible');
+  document.getElementById('learn-more-sheet').classList.remove('visible');
+}
+window.closeLearnMore = closeLearnMore;
+
+function trackLearnMoreWhatsapp() {
+  gtag('event', 'ai_learn_more_whatsapp', { event_category: 'ai_measure' });
+}
+window.trackLearnMoreWhatsapp = trackLearnMoreWhatsapp;
+
 // ── PHOTO SOURCE BOTTOM SHEET ─────────────────────────────
 let _photoSheetSide = null;
 

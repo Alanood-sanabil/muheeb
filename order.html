@@ -429,6 +429,122 @@
     }
     .photo-sheet-cancel:hover { background: #EEE; color: #555; }
 
+    /* ─── AI ENTRY "تعرف أكثر" LINK + LEARN-MORE BOTTOM SHEET ──────── */
+    .aimeasure-learn-more {
+      display: inline-block;
+      background: none;
+      border: none;
+      padding: 8px 14px;
+      margin-top: 6px;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #888;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .aimeasure-learn-more:hover { color: #0A0A0A; }
+
+    .learn-more-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease;
+      z-index: 9990;
+    }
+    .learn-more-overlay.visible { opacity: 1; pointer-events: auto; }
+
+    .learn-more-sheet {
+      position: fixed; left: 0; right: 0; bottom: 0;
+      background: #FFFFFF;
+      border-radius: 18px 18px 0 0;
+      padding: 8px 22px calc(20px + env(safe-area-inset-bottom));
+      box-shadow: 0 -8px 28px rgba(0,0,0,0.12);
+      transform: translateY(100%);
+      transition: transform 0.28s cubic-bezier(.2,.8,.2,1);
+      z-index: 9991;
+      direction: rtl;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .learn-more-sheet.visible { transform: translateY(0); }
+
+    .learn-more-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 4px 0 12px;
+      border-bottom: 1px solid #F0F0F0;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+    .learn-more-title {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #0A0A0A;
+      margin: 0;
+      flex: 1;
+      text-align: right;
+    }
+    .learn-more-close {
+      flex-shrink: 0;
+      width: 32px; height: 32px;
+      background: #F5F5F5;
+      border: none;
+      border-radius: 50%;
+      font-size: 0.95rem;
+      color: #767676;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-inline-start: 12px;
+    }
+    .learn-more-close:hover { background: #EEE; color: #0A0A0A; }
+
+    .learn-more-body {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      padding: 4px 0 16px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .learn-more-section { margin-bottom: 18px; }
+    .learn-more-section:last-child { margin-bottom: 0; }
+    .learn-more-section h4 {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #0A0A0A;
+      margin: 0 0 6px;
+    }
+    .learn-more-section p {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.88rem;
+      color: #555;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .learn-more-wa-btn {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px;
+      width: 100%;
+      height: 50px;
+      margin-top: 10px;
+      flex-shrink: 0;
+      background: #25D366;
+      color: #FFFFFF;
+      border-radius: 10px;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.92rem;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .learn-more-wa-btn:hover { opacity: 0.9; }
+    .learn-more-wa-btn svg { flex-shrink: 0; }
+
     .aimeasure-tip-icon {
       width: 26px;
       height: 26px;
@@ -1629,6 +1745,7 @@
           </div>
           <h2 class="aimeasure-headline">ثوبك والم مع قياسات مُهيب بالذكاء الاصطناعي</h2>
           <p class="aimeasure-subtext">هذه الخاصية تساعدنا نفصّل ثوبك على مقاسك بدقة أفضل. فقط نحتاج منك صورتين — من الأمام والجانب.</p>
+          <button type="button" class="aimeasure-learn-more" onclick="openLearnMore()">تعرف أكثر</button>
           <div class="aimeasure-trust-row">
             <div class="aimeasure-trust-item">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 4.5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1949,6 +2066,36 @@
       <span>اختر من المعرض</span>
     </button>
     <button type="button" class="photo-sheet-cancel" onclick="closePhotoSheet()">إلغاء</button>
+  </div>
+
+  <!-- LEARN MORE BOTTOM SHEET (AI measurement explainer) -->
+  <div class="learn-more-overlay" id="learn-more-overlay" onclick="closeLearnMore()"></div>
+  <div class="learn-more-sheet" id="learn-more-sheet" role="dialog" aria-label="ليش نستخدم الذكاء الاصطناعي للقياس">
+    <div class="photo-sheet-handle"></div>
+    <div class="learn-more-header">
+      <h3 class="learn-more-title">ليش نستخدم الذكاء الاصطناعي للقياس؟</h3>
+      <button type="button" class="learn-more-close" onclick="closeLearnMore()" aria-label="إغلاق">✕</button>
+    </div>
+    <div class="learn-more-body">
+      <section class="learn-more-section">
+        <h4>لماذا الذكاء الاصطناعي؟</h4>
+        <p>نستخدم الذكاء الاصطناعي عشان نضبط مقاسك بدقة عالية بدون ما تحتاج تروح لخياط. صورتين بسيطتين فقط، ونحلل قياسات جسمك تلقائياً عشان نفصّل الثوب على مقاسك تماماً.</p>
+      </section>
+      <section class="learn-more-section">
+        <h4>كيف يشتغل؟</h4>
+        <p>بنحتاج منك صورتين — واحدة من الأمام وواحدة من الجانب — وأنت لابس الثوب. النظام يحلل الصور ويستخرج القياسات الدقيقة خلال ثواني.</p>
+      </section>
+      <section class="learn-more-section">
+        <h4>خصوصيتك</h4>
+        <p>صورك تستخدم فقط لأغراض القياس وتفصيل ثوبك. لا تتم مشاركتها مع أي طرف ثالث.</p>
+      </section>
+    </div>
+    <a class="learn-more-wa-btn"
+       href="https://wa.me/966552177857?text=السلام%20عليكم%D8%8C%20عندي%20استفسار%20عن%20قياسات%20مُهيب%20بالذكاء%20الاصطناعي."
+       target="_blank" rel="noopener" onclick="trackLearnMoreWhatsapp()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      <span>عندك استفسار؟ تواصل معنا</span>
+    </a>
   </div>
 
   <!-- Shutter flash overlay -->
