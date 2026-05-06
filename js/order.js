@@ -1142,41 +1142,6 @@ function resetAiMeasureFlow() {
   if (_aiLoadingTimer) { clearTimeout(_aiLoadingTimer); _aiLoadingTimer = null; }
 }
 
-function aiMeasureSkip() {
-  gtag('event', 'ai_measure_skipped', { event_category: 'ai_measure' });
-  goToProcessing();
-}
-window.aiMeasureSkip = aiMeasureSkip;
-
-// Mid-flow exit — user bails out from somewhere inside the AI flow (after
-// they've already chosen to start it). Discards any captured photos,
-// clears any AI measurements, then routes to checkout.
-function aiMeasureExitMidflow(step) {
-  gtag('event', 'ai_measure_exit_midflow', { event_category: 'ai_measure', step: step });
-  ['front', 'side'].forEach(side => {
-    _aiPhotoBlobs[side] = null;
-    ['camera', 'gallery'].forEach(src => {
-      const input = document.getElementById('ai-' + side + '-input-' + src);
-      if (input) input.value = '';
-    });
-    const preview = document.getElementById('ai-' + side + '-preview');
-    if (preview) { preview.style.backgroundImage = ''; preview.classList.remove('visible'); }
-    const lbl = document.getElementById('ai-' + side + '-label');
-    if (lbl) { lbl.style.opacity = '1'; lbl.style.display = ''; }
-    const lblText = document.getElementById('ai-' + side + '-label-text');
-    if (lblText) lblText.textContent = 'التقط صورة';
-  });
-  const analyzeBtn = document.getElementById('btn-ai-analyze');
-  if (analyzeBtn) { analyzeBtn.disabled = true; analyzeBtn.classList.remove('ready'); }
-  orderState.ai_chest = null;
-  orderState.ai_waist = null;
-  orderState.ai_sleeve = null;
-  orderState.ai_size  = null;
-  if (_aiLoadingTimer) { clearTimeout(_aiLoadingTimer); _aiLoadingTimer = null; }
-  goToProcessing();
-}
-window.aiMeasureExitMidflow = aiMeasureExitMidflow;
-
 function aiMeasureStart() {
   gtag('event', 'ai_measure_start', { event_category: 'ai_measure' });
   // Combined entry+instructions in sub-1 → straight to combined photo capture (sub-3)
