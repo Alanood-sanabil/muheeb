@@ -1168,6 +1168,15 @@ function aiBackToEntry() {
 }
 window.aiBackToEntry = aiBackToEntry;
 
+// From the checkout modal back button: close the modal AND return the
+// underlying screen to the photo capture sub. The previous behavior closed
+// onto the AI results screen (sub-6), but that screen no longer exists.
+function checkoutBackToPhotos() {
+  closeOrderModal();
+  showAiSub(3);
+}
+window.checkoutBackToPhotos = checkoutBackToPhotos;
+
 // ─────────────────────────────────────────────────────────────────────────
 // AI PHOTO STORAGE (compression + Supabase Storage upload)
 // ─────────────────────────────────────────────────────────────────────────
@@ -1378,21 +1387,13 @@ function aiMeasureAnalyze() {
     orderState.ai_waist  = m.waist;
     orderState.ai_sleeve = m.sleeve;
     orderState.ai_size   = m.size;
-    showAiSub(6);
-    // Trigger checkmark animation restart
-    const circle = document.querySelector('.ai-check-circle');
-    const tick   = document.querySelector('.ai-check-tick');
-    if (circle) { circle.style.animation = 'none'; void circle.offsetWidth; circle.style.animation = ''; }
-    if (tick)   { tick.style.animation   = 'none'; void tick.offsetWidth;   tick.style.animation   = ''; }
+    // AI flow effectively completes here — fire the completed event then
+    // jump straight to checkout (no separate results screen).
+    gtag('event', 'ai_measure_completed', { event_category: 'ai_measure' });
+    openOrderModal();
   }, 5000);
 }
 window.aiMeasureAnalyze = aiMeasureAnalyze;
-
-function aiMeasureContinue() {
-  gtag('event', 'ai_measure_completed', { event_category: 'ai_measure' });
-  openOrderModal();
-}
-window.aiMeasureContinue = aiMeasureContinue;
 
 function aiMeasureRetry() {
   gtag('event', 'ai_measure_abandoned', { event_category: 'ai_measure' });
