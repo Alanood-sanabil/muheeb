@@ -179,7 +179,7 @@ const CONTENT = {
 
     // Confirmation
     confirmTitle: "شكرا",
-    confirmSub: "سيتواصل معك فريق مُهيب على الواتساب لتأكيد الدفع",
+    confirmSub: "سيتواصل معك فريق مُهيب على الواتساب لتأكيد معلوماتك",
     confirmRefLabel: "رقم طلبك",
     confirmWhatsapp: "تواصل معنا على واتساب",
   },
