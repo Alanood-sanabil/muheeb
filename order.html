@@ -2148,6 +2148,39 @@
     </a>
   </div>
 
+  <!-- POST-PURCHASE RATING MODAL (auto-popups 2.5s after confirmation) -->
+  <div class="rating-modal-overlay" id="rating-modal-overlay"></div>
+  <div class="rating-modal" id="rating-modal" role="dialog" aria-label="كيف كانت تجربتك">
+    <h2 class="rating-modal-title">كيف كانت تجربتك؟</h2>
+    <p class="rating-modal-sub">تقييمك يساعدنا نطور تجربة مُهيب</p>
+
+    <div class="rating-stars-row" id="m-rating-stars-row" role="radiogroup" aria-label="تقييم">
+      <button type="button" class="rating-star" data-rating="1" onclick="setRatingModal(1)" aria-label="1 نجمة">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </button>
+      <button type="button" class="rating-star" data-rating="2" onclick="setRatingModal(2)" aria-label="2 نجوم">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </button>
+      <button type="button" class="rating-star" data-rating="3" onclick="setRatingModal(3)" aria-label="3 نجوم">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </button>
+      <button type="button" class="rating-star" data-rating="4" onclick="setRatingModal(4)" aria-label="4 نجوم">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </button>
+      <button type="button" class="rating-star" data-rating="5" onclick="setRatingModal(5)" aria-label="5 نجوم">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </button>
+    </div>
+
+    <div class="rating-comment-wrap">
+      <label class="rating-comment-label" for="m-rating-comment">ملاحظات (اختياري)</label>
+      <textarea id="m-rating-comment" class="rating-comment" rows="3" placeholder="شاركنا رأيك أو اقتراحاتك..." oninput="autoGrow(this)"></textarea>
+    </div>
+
+    <button type="button" class="rating-submit-btn" id="m-rating-submit-btn" disabled onclick="submitRatingModal()">إرسال التقييم</button>
+    <button type="button" class="rating-skip-link" onclick="skipRatingModal()">تخطي</button>
+  </div>
+
   <!-- Shutter flash overlay -->
   <div id="shutter-flash"></div>
 

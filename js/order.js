@@ -699,6 +699,9 @@ async function submit() {
   _lastConfirmedOrderRef = String(ref);
   gtag('event', 'order_submitted', { event_category: 'conversion' });
   console.log('[Muheeb] Showing success screen with order #' + ref);
+  // Schedule the rating modal to auto-popup ~2.5s after confirmation
+  // (gated once per order via sessionStorage)
+  scheduleRatingAutoPopup();
 
   showScreen(6);
 
@@ -1191,15 +1194,53 @@ function checkoutBackToPhotos() {
 window.checkoutBackToPhotos = checkoutBackToPhotos;
 
 // ─────────────────────────────────────────────────────────────────────────
-// POST-PURCHASE RATING SCREEN
+// POST-PURCHASE RATING — two surfaces share one persistence path:
+//   1. Standalone screen (#screen-rating + #screen-rating-done)
+//      reached via the "قيّم تجربتك" link on the confirmation screen.
+//   2. Auto-popup modal (#rating-modal) shown ~2.5s after the
+//      confirmation screen appears (gated once-per-order via sessionStorage).
+// Both call _persistRating() under the hood — the only duplication is the
+// star-state variable + DOM element references per surface.
 // ─────────────────────────────────────────────────────────────────────────
-let _starRating = 0;
+let _starRating = 0;       // selected stars on the standalone screen
+let _modalStarRating = 0;  // selected stars in the auto-popup modal
 
+// Shared core: persists the rating to Supabase (best-effort, non-blocking).
+async function _persistRating(rating, commentTrimmed, source) {
+  gtag('event', 'rating_submitted', {
+    event_category: 'engagement',
+    rating: rating,
+    has_comment: !!commentTrimmed,
+    source: source
+  });
+  if (!_lastConfirmedOrderRef) return;
+  try {
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+    const supabase = createClient(
+      'https://mwcmfzzukqiutztkgagg.supabase.co',
+      'sb_publishable_8zuxMDAcYGIozcmi8CS8sg_ZnjLmb6V'
+    );
+    const { error } = await supabase
+      .from('orders')
+      .update({
+        rating: rating,
+        rating_comment: commentTrimmed || null,
+        rating_submitted_at: new Date().toISOString()
+      })
+      .eq('order_number', _lastConfirmedOrderRef);
+    if (error) console.error('[Muheeb] Rating submission failed:', error);
+    else      console.log('[Muheeb] Rating saved for order #' + _lastConfirmedOrderRef + ' (source: ' + source + ')');
+  } catch (e) {
+    console.error('[Muheeb] Rating submission failed:', e);
+  }
+}
+
+// ── Standalone screen handlers ───────────────────────────────────────────
 function showRatingScreen() {
-  gtag('event', 'rating_screen_viewed', { event_category: 'engagement' });
-  // Reset state in case the user came back
+  gtag('event', 'rating_screen_viewed', { event_category: 'engagement', source: 'screen' });
   _starRating = 0;
-  document.querySelectorAll('.rating-star').forEach(s => s.classList.remove('filled'));
+  // Only reset stars within #screen-rating (don't touch the modal's stars)
+  document.querySelectorAll('#screen-rating .rating-star').forEach(s => s.classList.remove('filled'));
   const ta = document.getElementById('rating-comment');
   if (ta) { ta.value = ''; ta.style.height = ''; }
   const submitBtn = document.getElementById('rating-submit-btn');
@@ -1210,7 +1251,7 @@ window.showRatingScreen = showRatingScreen;
 
 function setRating(n) {
   _starRating = n;
-  document.querySelectorAll('.rating-star').forEach((s, i) => {
+  document.querySelectorAll('#screen-rating .rating-star').forEach((s, i) => {
     s.classList.toggle('filled', i < n);
   });
   const submitBtn = document.getElementById('rating-submit-btn');
@@ -1225,47 +1266,15 @@ function autoGrow(el) {
 window.autoGrow = autoGrow;
 
 async function submitRating() {
-  const rating = _starRating;
-  if (!rating) return;
+  if (!_starRating) return;
   const comment = (document.getElementById('rating-comment') || {}).value || '';
-  const trimmed = comment.trim();
-
-  gtag('event', 'rating_submitted', {
-    event_category: 'engagement',
-    rating: rating,
-    has_comment: !!trimmed
-  });
-
-  // Transition immediately — Supabase update runs in the background.
-  // If it fails, we don't block the user; just log per spec.
   showRatingDone(true);
-
-  if (_lastConfirmedOrderRef) {
-    try {
-      const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
-      const supabase = createClient(
-        'https://mwcmfzzukqiutztkgagg.supabase.co',
-        'sb_publishable_8zuxMDAcYGIozcmi8CS8sg_ZnjLmb6V'
-      );
-      const { error } = await supabase
-        .from('orders')
-        .update({
-          rating: rating,
-          rating_comment: trimmed || null,
-          rating_submitted_at: new Date().toISOString()
-        })
-        .eq('order_number', _lastConfirmedOrderRef);
-      if (error) console.error('[Muheeb] Rating submission failed:', error);
-      else      console.log('[Muheeb] Rating saved for order #' + _lastConfirmedOrderRef);
-    } catch (e) {
-      console.error('[Muheeb] Rating submission failed:', e);
-    }
-  }
+  await _persistRating(_starRating, comment.trim(), 'screen');
 }
 window.submitRating = submitRating;
 
 function skipRating() {
-  gtag('event', 'rating_skipped', { event_category: 'engagement' });
+  gtag('event', 'rating_skipped', { event_category: 'engagement', source: 'screen' });
   showRatingDone(false);
 }
 window.skipRating = skipRating;
@@ -1281,6 +1290,63 @@ function goHome() {
   window.location.href = window.location.pathname;
 }
 window.goHome = goHome;
+
+// ── Auto-popup modal handlers ────────────────────────────────────────────
+function setRatingModal(n) {
+  _modalStarRating = n;
+  document.querySelectorAll('#m-rating-stars-row .rating-star').forEach((s, i) => {
+    s.classList.toggle('filled', i < n);
+  });
+  const btn = document.getElementById('m-rating-submit-btn');
+  if (btn) btn.disabled = false;
+}
+window.setRatingModal = setRatingModal;
+
+async function submitRatingModal() {
+  if (!_modalStarRating) return;
+  const comment = (document.getElementById('m-rating-comment') || {}).value || '';
+  closeRatingModal();
+  await _persistRating(_modalStarRating, comment.trim(), 'auto_modal');
+}
+window.submitRatingModal = submitRatingModal;
+
+function skipRatingModal() {
+  gtag('event', 'rating_skipped', { event_category: 'engagement', source: 'auto_modal' });
+  closeRatingModal();
+}
+window.skipRatingModal = skipRatingModal;
+
+function closeRatingModal() {
+  const overlay = document.getElementById('rating-modal-overlay');
+  const sheet   = document.getElementById('rating-modal');
+  if (overlay) overlay.classList.remove('visible');
+  if (sheet)   sheet.classList.remove('visible');
+}
+window.closeRatingModal = closeRatingModal;
+
+// Schedules the auto-popup ~2.5s after the confirmation screen renders.
+// Gated by sessionStorage per order so it only fires ONCE per order — even
+// if the user navigates back to the confirmation screen.
+function scheduleRatingAutoPopup() {
+  if (!_lastConfirmedOrderRef) return;
+  const key = 'muheeb_rating_modal_shown_' + _lastConfirmedOrderRef;
+  if (sessionStorage.getItem(key)) return;
+  sessionStorage.setItem(key, '1');
+  setTimeout(() => {
+    // Reset modal state before showing
+    _modalStarRating = 0;
+    document.querySelectorAll('#m-rating-stars-row .rating-star').forEach(s => s.classList.remove('filled'));
+    const ta = document.getElementById('m-rating-comment');
+    if (ta) { ta.value = ''; ta.style.height = ''; }
+    const btn = document.getElementById('m-rating-submit-btn');
+    if (btn) btn.disabled = true;
+    const overlay = document.getElementById('rating-modal-overlay');
+    const sheet   = document.getElementById('rating-modal');
+    if (overlay) overlay.classList.add('visible');
+    if (sheet)   sheet.classList.add('visible');
+    gtag('event', 'rating_screen_viewed', { event_category: 'engagement', source: 'auto_modal' });
+  }, 2500);
+}
 
 // ─────────────────────────────────────────────────────────────────────────
 // AI PHOTO STORAGE (compression + Supabase Storage upload)

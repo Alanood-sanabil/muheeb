@@ -1107,6 +1107,60 @@ input[type=range]::-moz-range-track {
 }
 .rating-done-home:hover { background: #0A0A0A; color: #FFFFFF; }
 
+/* ── RATING MODAL (auto-popup version of the rating UI) ───────── */
+.rating-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 9990;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.32s ease;
+}
+.rating-modal-overlay.visible { opacity: 1; pointer-events: auto; }
+
+.rating-modal {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%) translateY(100%);
+  width: 100%;
+  max-width: 480px;
+  background: #FFFFFF;
+  border-radius: 18px 18px 0 0;
+  padding: 28px 24px calc(28px + env(safe-area-inset-bottom));
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.18);
+  z-index: 9991;
+  direction: rtl;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 92vh;
+  overflow-y: auto;
+  transition: transform 0.36s cubic-bezier(.2,.8,.2,1);
+}
+.rating-modal.visible { transform: translateX(-50%) translateY(0); }
+
+.rating-modal-title {
+  font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: #0A0A0A;
+  margin: 4px 0 8px;
+}
+.rating-modal-sub {
+  font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+  font-weight: 400;
+  font-size: 0.88rem;
+  color: #767676;
+  margin: 0 0 22px;
+  line-height: 1.55;
+}
+/* Stars + comment + submit + skip inside the modal reuse the
+   .rating-stars-row / .rating-star / .rating-comment / .rating-submit-btn /
+   .rating-skip-link rules defined above for the standalone screen. */
+
 /* ---- MOBILE ---- */
 @media (max-width: 390px) {
   .tab span { font-size: .62rem; }
