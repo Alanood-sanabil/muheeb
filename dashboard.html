@@ -2,7 +2,7 @@
 <html dir="rtl" lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <link rel="icon" type="image/png" href="/images/logo.png" />
   <link rel="apple-touch-icon" href="/images/logo.png" />
   <title>مُهيب — لوحة الطلبات</title>
@@ -13,6 +13,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
+      color-scheme: light;
       --black:  #0A0A0A;
       --white:  #FFFFFF;
       --gray:   #767676;
@@ -21,6 +22,8 @@
       --border: #E8E8E8;
       --err:    #C0392B;
     }
+
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
     body {
       font-family: 'Cairo', sans-serif;
@@ -582,6 +585,21 @@
       color: var(--gray);
       text-align: left;
       padding: 0 2px;
+    }
+
+    /* ── RESPONSIVE — narrow phones ── */
+    @media (max-width: 600px) {
+      .header { padding: 14px 16px; }
+      .main   { padding: 20px 14px 48px; }
+      .tabs   { flex-wrap: wrap; }
+      .brand h1 { font-size: 1.3rem; }
+      .conn-status { font-size: 0.7rem; }
+    }
+    @media (max-width: 359px) {
+      .header { padding: 12px 12px; }
+      .main   { padding: 16px 10px 40px; }
+      .brand h1 { font-size: 1.15rem; }
+      .tab-btn { font-size: 0.78rem; padding: 0 14px; }
     }
   </style>
 </head>
