@@ -935,6 +935,21 @@ input[type=range]::-moz-range-track {
 .btn-wa.pulse { animation: waPulse .4s ease; }
 @keyframes waPulse { 0%{transform:scale(1)} 50%{transform:scale(1.03)} 100%{transform:scale(1)} }
 
+/* Secondary WhatsApp text link below the Pay Now button on the
+   confirmation screen — small, muted, underlined. */
+.confirm-wa-secondary {
+  display: inline-block;
+  margin-top: 14px;
+  font-family: 'YearOfTheCamel', 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #767676;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 6px 10px;
+}
+.confirm-wa-secondary:hover { color: #0A0A0A; }
+
 /* ---- MOBILE ---- */
 @media (max-width: 390px) {
   .tab span { font-size: .62rem; }

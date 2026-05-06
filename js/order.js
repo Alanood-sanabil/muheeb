@@ -709,7 +709,16 @@ async function submit() {
     }, 16);
   }
 
-  // WhatsApp wiring
+  // Pay Now button — static href set in HTML; here we just wire the GA event
+  const payBtn = document.getElementById('confirm-pay-btn');
+  if (payBtn) {
+    payBtn.addEventListener('click', () => {
+      gtag('event', 'pay_now_clicked', { order_number: String(ref) });
+    });
+    setTimeout(() => { payBtn.classList.add('pulse'); }, 1200);
+  }
+
+  // Secondary WhatsApp link — preserves order number in the prefilled message
   const S = CONTENT.site;
   const msg = `ياهلا، رقم طلبي #${ref}`;
   const waBtn = document.getElementById('confirm-wa-btn');
@@ -718,7 +727,6 @@ async function submit() {
     waBtn.addEventListener('click', () => {
       gtag('event', 'whatsapp_click', { event_category: 'engagement' });
     });
-    setTimeout(() => { waBtn.classList.add('pulse'); }, 1200);
   }
 }
 
