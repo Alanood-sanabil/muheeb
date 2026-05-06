@@ -242,6 +242,94 @@
     .export-btn:disabled { opacity: 0.45; cursor: not-allowed; background: var(--white); }
     .export-btn svg { flex-shrink: 0; }
 
+    /* ── AI PHOTOS BADGE + VIEWER ── */
+    .ai-photos-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-inline-start: 6px;
+      padding: 3px 9px;
+      background: #EEF1F8;
+      color: #2C3E70;
+      border: 1px solid #C9D2E5;
+      border-radius: 999px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.7rem;
+      cursor: pointer;
+      vertical-align: middle;
+    }
+    .ai-photos-badge:hover { background: #E0E6F5; }
+    .ai-photos-badge svg { width: 11px; height: 11px; }
+
+    .ai-photo-viewer {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 99999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .ai-photo-viewer.visible { display: flex; }
+    .ai-photo-viewer-grid {
+      display: flex;
+      flex-direction: row-reverse;
+      gap: 14px;
+      max-width: 920px;
+      width: 100%;
+      max-height: 85vh;
+    }
+    .ai-photo-viewer-tile {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+    .ai-photo-viewer-label {
+      color: #FFFFFF;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
+    }
+    .ai-photo-viewer-img {
+      width: 100%;
+      max-height: 75vh;
+      object-fit: contain;
+      background: #1a1a1a;
+      border-radius: 6px;
+    }
+    .ai-photo-viewer-missing {
+      width: 100%;
+      aspect-ratio: 3 / 5;
+      max-height: 75vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1a1a1a;
+      color: #888;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.85rem;
+      border-radius: 6px;
+    }
+    .ai-photo-viewer-close {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.14);
+      color: #FFFFFF;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+    .ai-photo-viewer-close:hover { background: rgba(255,255,255,0.24); }
+
     /* ── STATUS STATS ── */
     .status-stats-row {
       display: flex;
@@ -616,6 +704,7 @@
           { label: 'الطول',       key: 'height'                           },
           { label: 'الوزن',       key: 'weight'                           },
           { label: 'مقاس الحذاء', key: 'shoe_size'                        },
+          { label: 'مقاس القميص', key: 'shirt_size'                       },
           { label: 'العمر',       key: 'age'                              },
           { label: 'تاريخ الطلب', key: 'created_at',    cls: 'date-cell', fmt: 'date' },
         ],
@@ -762,7 +851,15 @@
       const tbody = '<tbody>' + rows.map(row =>
         '<tr>' + schema.cols.map(col => {
           const cls = col.cls ? ` class="${col.cls}"` : '';
-          return `<td${cls}>${cellVal(row, col)}</td>`;
+          let inner = cellVal(row, col);
+          // Append "صور AI" badge next to order number if photos exist
+          if (col.key === 'order_number' && (row.ai_photo_front_url || row.ai_photo_side_url)) {
+            inner += ` <button type="button" class="ai-photos-badge" onclick="openAiPhotos(${row.id})" title="عرض صور القياس">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              صور AI
+            </button>`;
+          }
+          return `<td${cls}>${inner}</td>`;
         }).join('') + '</tr>'
       ).join('') + '</tbody>';
       return `<div class="table-wrap"><table>${thead}${tbody}</table></div>`;
@@ -851,7 +948,7 @@
       const headers = [
         'رقم الطلب','التاريخ','الحالة','الاسم','الهاتف','المدينة',
         'اللون','القماش','الياقة','نوع الجسم','المقاس المفضل',
-        'الطول','الوزن','العمر','مقاس الحذاء',
+        'الطول','الوزن','العمر','مقاس الحذاء','مقاس القميص',
         'استخدم القياس بالذكاء الاصطناعي','المقاسات المحسوبة',
         'السعر','ملاحظات'
       ];
@@ -873,7 +970,7 @@
           r.status || 'طلب جديد',
           r.name, r.phone, r.city,
           r.color, r.fabric, r.collar, r.body_type, r.fit_preference,
-          r.height, r.weight, r.age, r.shoe_size,
+          r.height, r.weight, r.age, r.shoe_size, r.shirt_size,
           usedAI ? 'نعم' : 'لا', aiCalc,
           r.price, r.notes
         ];
@@ -1053,11 +1150,51 @@
     document.addEventListener('click', closeFloatingDropdown);
     document.addEventListener('scroll', closeFloatingDropdown, true);
 
+    // ── AI PHOTOS VIEWER ─────────────────────────────────────────
+    function openAiPhotos(orderId) {
+      const row = (allRows || []).find(r => r.id === orderId);
+      if (!row) return;
+      const front = row.ai_photo_front_url;
+      const side  = row.ai_photo_side_url;
+      const tile = (url, label) => url
+        ? `<img class="ai-photo-viewer-img" src="${url}" alt="${label}" onerror="this.outerHTML='<div class=\\'ai-photo-viewer-missing\\'>الصورة غير متوفرة</div>'">`
+        : `<div class="ai-photo-viewer-missing">الصورة غير متوفرة</div>`;
+      const v = document.getElementById('ai-photo-viewer');
+      v.querySelector('.ai-photo-viewer-grid').innerHTML = `
+        <div class="ai-photo-viewer-tile">
+          <div class="ai-photo-viewer-label">صورة من الأمام</div>
+          ${tile(front, 'صورة من الأمام')}
+        </div>
+        <div class="ai-photo-viewer-tile">
+          <div class="ai-photo-viewer-label">صورة من الجانب</div>
+          ${tile(side, 'صورة من الجانب')}
+        </div>
+      `;
+      v.classList.add('visible');
+    }
+    window.openAiPhotos = openAiPhotos;
+
+    function closeAiPhotos(evt) {
+      // Don't close when clicking on the photo grid itself, only the backdrop / close btn
+      if (evt && evt.target.closest && evt.target.closest('.ai-photo-viewer-grid')) return;
+      document.getElementById('ai-photo-viewer').classList.remove('visible');
+    }
+    window.closeAiPhotos = closeAiPhotos;
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeAiPhotos();
+    });
+
     // ── INIT ─────────────────────────────────────────────────────
     // Only load data if already authenticated (login calls loadTab itself)
     if (sessionStorage.getItem(AUTH_KEY) === '1') {
       loadTab('orders');
     }
   </script>
+
+  <!-- AI PHOTOS VIEWER MODAL -->
+  <div class="ai-photo-viewer" id="ai-photo-viewer" onclick="closeAiPhotos(event)">
+    <button type="button" class="ai-photo-viewer-close" onclick="closeAiPhotos()" aria-label="إغلاق">✕</button>
+    <div class="ai-photo-viewer-grid"></div>
+  </div>
 </body>
 </html>
