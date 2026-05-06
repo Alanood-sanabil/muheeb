@@ -264,6 +264,29 @@
     .ai-photos-cell-btn:active { background: #D2DAEC; }
     .ai-photos-cell-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
 
+    /* ── RATING CELL ── */
+    .rating-stars-cell {
+      direction: ltr;
+      display: inline-block;
+      letter-spacing: 1px;
+      font-size: 0.95rem;
+      vertical-align: middle;
+    }
+    .rating-stars-cell .rs-filled { color: #F5A623; }
+    .rating-stars-cell .rs-empty  { color: #DDDDDD; }
+    .rating-num {
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.78rem;
+      color: #555;
+      margin-inline-start: 6px;
+      vertical-align: middle;
+    }
+    .rating-bubble {
+      cursor: help;
+      font-size: 0.92rem;
+      vertical-align: middle;
+    }
+
     .ai-photo-viewer {
       position: fixed;
       inset: 0;
@@ -709,6 +732,7 @@
           { label: 'مقاس القميص', key: 'shirt_size'                       },
           { label: 'العمر',       key: 'age'                              },
           { label: 'صور AI',      key: 'ai_photo_front_url', fmt: 'aiphotos' },
+          { label: 'التقييم',     key: 'rating',          fmt: 'rating'   },
           { label: 'تاريخ الطلب', key: 'created_at',    cls: 'date-cell', fmt: 'date' },
         ],
       },
@@ -776,9 +800,26 @@
       const v = row[col.key];
       if (col.fmt === 'status')   return buildStatusPill(row);
       if (col.fmt === 'aiphotos') return buildAiPhotosCell(row);
+      if (col.fmt === 'rating')   return buildRatingCell(row);
       if (v === null || v === undefined || v === '') return '—';
       if (col.fmt === 'date') return fmtDate(v);
       return v;
+    }
+
+    function buildRatingCell(row) {
+      const r = row.rating;
+      if (!r || r < 1 || r > 5) return '—';
+      const filled = '★'.repeat(r);
+      const empty  = '☆'.repeat(5 - r);
+      const stars = `<span class="rating-stars-cell"><span class="rs-filled">${filled}</span><span class="rs-empty">${empty}</span></span>`;
+      const num = `<span class="rating-num">${r}/5</span>`;
+      let bubble = '';
+      if (row.rating_comment) {
+        // Native title tooltip — hover/long-press shows the full comment
+        const safe = String(row.rating_comment).replace(/"/g, '&quot;');
+        bubble = ` <span class="rating-bubble" title="${safe}" aria-label="تعليق: ${safe}">💬</span>`;
+      }
+      return `${stars} ${num}${bubble}`;
     }
 
     function buildAiPhotosCell(row) {
@@ -956,6 +997,7 @@
         'الطول','الوزن','العمر','مقاس الحذاء','مقاس القميص',
         'صور AI',
         'استخدم القياس بالذكاء الاصطناعي','المقاسات المحسوبة',
+        'التقييم','تعليق التقييم',
         'السعر','ملاحظات'
       ];
       const lines = [headers.map(csvField).join(',')];
@@ -980,6 +1022,7 @@
           r.height, r.weight, r.age, r.shoe_size, r.shirt_size,
           hasPhotos ? 'نعم' : 'لا',
           usedAI ? 'نعم' : 'لا', aiCalc,
+          r.rating, r.rating_comment,
           r.price, r.notes
         ];
         lines.push(row.map(csvField).join(','));

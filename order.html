@@ -2028,6 +2028,63 @@
       <a class="confirm-wa-secondary" id="confirm-wa-btn" target="_blank" rel="noopener">
         <span id="confirm-wa-text">أو تواصل معنا على واتساب</span>
       </a>
+      <button type="button" class="confirm-rate-link" onclick="showRatingScreen()">قيّم تجربتك ←</button>
+    </div>
+  </div>
+
+  <!-- SCREEN rating: Post-purchase experience rating -->
+  <div id="screen-rating" class="screen">
+    <div class="rating-wrap">
+      <h1 class="rating-title">كيف كانت تجربتك؟</h1>
+      <p class="rating-sub">تقييمك يساعدنا نطور تجربة مُهيب</p>
+
+      <div class="rating-stars-row" id="rating-stars-row" role="radiogroup" aria-label="تقييم">
+        <button type="button" class="rating-star" data-rating="1" onclick="setRating(1)" aria-label="1 نجمة">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </button>
+        <button type="button" class="rating-star" data-rating="2" onclick="setRating(2)" aria-label="2 نجوم">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </button>
+        <button type="button" class="rating-star" data-rating="3" onclick="setRating(3)" aria-label="3 نجوم">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </button>
+        <button type="button" class="rating-star" data-rating="4" onclick="setRating(4)" aria-label="4 نجوم">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </button>
+        <button type="button" class="rating-star" data-rating="5" onclick="setRating(5)" aria-label="5 نجوم">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </button>
+      </div>
+
+      <div class="rating-comment-wrap">
+        <label class="rating-comment-label" for="rating-comment">ملاحظات (اختياري)</label>
+        <textarea id="rating-comment" class="rating-comment" rows="4" placeholder="شاركنا رأيك أو اقتراحاتك..." oninput="autoGrow(this)"></textarea>
+      </div>
+
+      <button type="button" class="rating-submit-btn" id="rating-submit-btn" disabled onclick="submitRating()">إرسال التقييم</button>
+      <button type="button" class="rating-skip-link" onclick="skipRating()">تخطي</button>
+    </div>
+  </div>
+
+  <!-- SCREEN rating-done: Post-rating thank-you -->
+  <div id="screen-rating-done" class="screen">
+    <div class="confirm-wrap">
+      <span class="sadu-success">
+        <svg width="64" height="64" viewBox="0 0 100 100" aria-hidden="true">
+          <polygon class="ray" style="animation-delay:0.45s" points="50,2 54,10 46,10" fill="#0A0A0A"/>
+          <polygon class="ray" style="animation-delay:0.55s" points="98,50 90,54 90,46" fill="#0A0A0A"/>
+          <polygon class="ray" style="animation-delay:0.65s" points="50,98 46,90 54,90" fill="#0A0A0A"/>
+          <polygon class="ray" style="animation-delay:0.75s" points="2,50 10,46 10,54" fill="#0A0A0A"/>
+          <g class="core">
+            <polygon points="50,16 84,50 50,84 16,50" fill="none" stroke="#0A0A0A" stroke-width="1.5"/>
+            <polygon points="50,28 72,50 50,72 28,50" fill="none" stroke="#0A0A0A" stroke-width="1"/>
+            <polygon points="50,42 58,50 50,58 42,50" fill="#0A0A0A"/>
+          </g>
+        </svg>
+      </span>
+      <h1 class="confirm-title serif" id="rating-done-headline">شكراً لتقييمك!</h1>
+      <p class="confirm-sub">نتطلع لخدمتك مرة أخرى</p>
+      <button type="button" class="rating-done-home" onclick="goHome()">العودة للصفحة الرئيسية</button>
     </div>
   </div>
 

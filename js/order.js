@@ -406,9 +406,10 @@ function updateProgress(screenNumber) {
   const container = document.getElementById('progress-container');
   if (!container) return;
 
-  // Hide on landing, processing, confirmation
+  // Hide on landing, processing, confirmation, rating screens
   // (AI flow keeps the indicator visible — shows full progress through all 5 form steps)
-  if (screenNumber === 1 || screenNumber === 6 || screenNumber === 'processing') {
+  if (screenNumber === 1 || screenNumber === 6 || screenNumber === 'processing'
+      || screenNumber === 'rating' || screenNumber === 'rating-done') {
     container.style.opacity = '0';
     container.style.pointerEvents = 'none';
     return;
@@ -604,6 +605,9 @@ function updateSummary() {
 // order_number and photo paths (avoids orphaning storage objects).
 // Cleared on successful insert.
 let _lastSubmitRef = null;
+// Persists across the confirmation → rating screen flow so the rating
+// update knows which order_number to write to in Supabase.
+let _lastConfirmedOrderRef = null;
 
 async function submit() {
   // Reuse ref on retry; generate fresh on first attempt of a new order
@@ -692,6 +696,7 @@ async function submit() {
 
   // ── 5. SUCCESS — only reached when a row actually persisted ────
   _lastSubmitRef = null;
+  _lastConfirmedOrderRef = String(ref);
   gtag('event', 'order_submitted', { event_category: 'conversion' });
   console.log('[Muheeb] Showing success screen with order #' + ref);
 
@@ -1184,6 +1189,98 @@ function checkoutBackToPhotos() {
   showAiSub(3);
 }
 window.checkoutBackToPhotos = checkoutBackToPhotos;
+
+// ─────────────────────────────────────────────────────────────────────────
+// POST-PURCHASE RATING SCREEN
+// ─────────────────────────────────────────────────────────────────────────
+let _starRating = 0;
+
+function showRatingScreen() {
+  gtag('event', 'rating_screen_viewed', { event_category: 'engagement' });
+  // Reset state in case the user came back
+  _starRating = 0;
+  document.querySelectorAll('.rating-star').forEach(s => s.classList.remove('filled'));
+  const ta = document.getElementById('rating-comment');
+  if (ta) { ta.value = ''; ta.style.height = ''; }
+  const submitBtn = document.getElementById('rating-submit-btn');
+  if (submitBtn) submitBtn.disabled = true;
+  showScreen('rating');
+}
+window.showRatingScreen = showRatingScreen;
+
+function setRating(n) {
+  _starRating = n;
+  document.querySelectorAll('.rating-star').forEach((s, i) => {
+    s.classList.toggle('filled', i < n);
+  });
+  const submitBtn = document.getElementById('rating-submit-btn');
+  if (submitBtn) submitBtn.disabled = false;
+}
+window.setRating = setRating;
+
+function autoGrow(el) {
+  el.style.height = 'auto';
+  el.style.height = (el.scrollHeight + 2) + 'px';
+}
+window.autoGrow = autoGrow;
+
+async function submitRating() {
+  const rating = _starRating;
+  if (!rating) return;
+  const comment = (document.getElementById('rating-comment') || {}).value || '';
+  const trimmed = comment.trim();
+
+  gtag('event', 'rating_submitted', {
+    event_category: 'engagement',
+    rating: rating,
+    has_comment: !!trimmed
+  });
+
+  // Transition immediately — Supabase update runs in the background.
+  // If it fails, we don't block the user; just log per spec.
+  showRatingDone(true);
+
+  if (_lastConfirmedOrderRef) {
+    try {
+      const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+      const supabase = createClient(
+        'https://mwcmfzzukqiutztkgagg.supabase.co',
+        'sb_publishable_8zuxMDAcYGIozcmi8CS8sg_ZnjLmb6V'
+      );
+      const { error } = await supabase
+        .from('orders')
+        .update({
+          rating: rating,
+          rating_comment: trimmed || null,
+          rating_submitted_at: new Date().toISOString()
+        })
+        .eq('order_number', _lastConfirmedOrderRef);
+      if (error) console.error('[Muheeb] Rating submission failed:', error);
+      else      console.log('[Muheeb] Rating saved for order #' + _lastConfirmedOrderRef);
+    } catch (e) {
+      console.error('[Muheeb] Rating submission failed:', e);
+    }
+  }
+}
+window.submitRating = submitRating;
+
+function skipRating() {
+  gtag('event', 'rating_skipped', { event_category: 'engagement' });
+  showRatingDone(false);
+}
+window.skipRating = skipRating;
+
+function showRatingDone(submitted) {
+  const headline = document.getElementById('rating-done-headline');
+  if (headline) headline.textContent = submitted ? 'شكراً لتقييمك!' : 'شكراً!';
+  showScreen('rating-done');
+}
+
+function goHome() {
+  // Strip query/hash and reload — fresh start on the landing screen
+  window.location.href = window.location.pathname;
+}
+window.goHome = goHome;
 
 // ─────────────────────────────────────────────────────────────────────────
 // AI PHOTO STORAGE (compression + Supabase Storage upload)
