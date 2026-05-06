@@ -242,25 +242,25 @@
     .export-btn:disabled { opacity: 0.45; cursor: not-allowed; background: var(--white); }
     .export-btn svg { flex-shrink: 0; }
 
-    /* ── AI PHOTOS BADGE + VIEWER ── */
-    .ai-photos-badge {
+    /* ── AI PHOTOS CELL BUTTON + VIEWER ── */
+    .ai-photos-cell-btn {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      margin-inline-start: 6px;
-      padding: 3px 9px;
+      gap: 5px;
+      padding: 5px 10px;
       background: #EEF1F8;
       color: #2C3E70;
       border: 1px solid #C9D2E5;
-      border-radius: 999px;
+      border-radius: 6px;
       font-family: 'Cairo', sans-serif;
       font-weight: 600;
-      font-size: 0.7rem;
+      font-size: 0.78rem;
       cursor: pointer;
-      vertical-align: middle;
+      white-space: nowrap;
     }
-    .ai-photos-badge:hover { background: #E0E6F5; }
-    .ai-photos-badge svg { width: 11px; height: 11px; }
+    .ai-photos-cell-btn:hover  { background: #E0E6F5; }
+    .ai-photos-cell-btn:active { background: #D2DAEC; }
+    .ai-photos-cell-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
 
     .ai-photo-viewer {
       position: fixed;
@@ -706,6 +706,7 @@
           { label: 'مقاس الحذاء', key: 'shoe_size'                        },
           { label: 'مقاس القميص', key: 'shirt_size'                       },
           { label: 'العمر',       key: 'age'                              },
+          { label: 'صور AI',      key: 'ai_photo_front_url', fmt: 'aiphotos' },
           { label: 'تاريخ الطلب', key: 'created_at',    cls: 'date-cell', fmt: 'date' },
         ],
       },
@@ -771,10 +772,20 @@
 
     function cellVal(row, col) {
       const v = row[col.key];
-      if (col.fmt === 'status') return buildStatusPill(row);
+      if (col.fmt === 'status')   return buildStatusPill(row);
+      if (col.fmt === 'aiphotos') return buildAiPhotosCell(row);
       if (v === null || v === undefined || v === '') return '—';
       if (col.fmt === 'date') return fmtDate(v);
       return v;
+    }
+
+    function buildAiPhotosCell(row) {
+      const has = !!(row.ai_photo_front_url || row.ai_photo_side_url);
+      if (!has) return '—';
+      return `<button type="button" class="ai-photos-cell-btn" onclick="openAiPhotos(${row.id})" title="عرض صور القياس">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        عرض الصور
+      </button>`;
     }
 
     // ── DATE GROUPING ─────────────────────────────────────────────
@@ -851,15 +862,7 @@
       const tbody = '<tbody>' + rows.map(row =>
         '<tr>' + schema.cols.map(col => {
           const cls = col.cls ? ` class="${col.cls}"` : '';
-          let inner = cellVal(row, col);
-          // Append "صور AI" badge next to order number if photos exist
-          if (col.key === 'order_number' && (row.ai_photo_front_url || row.ai_photo_side_url)) {
-            inner += ` <button type="button" class="ai-photos-badge" onclick="openAiPhotos(${row.id})" title="عرض صور القياس">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-              صور AI
-            </button>`;
-          }
-          return `<td${cls}>${inner}</td>`;
+          return `<td${cls}>${cellVal(row, col)}</td>`;
         }).join('') + '</tr>'
       ).join('') + '</tbody>';
       return `<div class="table-wrap"><table>${thead}${tbody}</table></div>`;
@@ -949,6 +952,7 @@
         'رقم الطلب','التاريخ','الحالة','الاسم','الهاتف','المدينة',
         'اللون','القماش','الياقة','نوع الجسم','المقاس المفضل',
         'الطول','الوزن','العمر','مقاس الحذاء','مقاس القميص',
+        'صور AI',
         'استخدم القياس بالذكاء الاصطناعي','المقاسات المحسوبة',
         'السعر','ملاحظات'
       ];
@@ -965,12 +969,14 @@
           if (r.ai_size)   parts.push(`مقاس ${r.ai_size}`);
           aiCalc = parts.join(' / ');
         }
+        const hasPhotos = !!(r.ai_photo_front_url || r.ai_photo_side_url);
         const row = [
           r.order_number, fmtDateCSV(r.created_at),
           r.status || 'طلب جديد',
           r.name, r.phone, r.city,
           r.color, r.fabric, r.collar, r.body_type, r.fit_preference,
           r.height, r.weight, r.age, r.shoe_size, r.shirt_size,
+          hasPhotos ? 'نعم' : 'لا',
           usedAI ? 'نعم' : 'لا', aiCalc,
           r.price, r.notes
         ];
