@@ -1139,6 +1139,14 @@ window.showAiSub = showAiSub;
 
 function resetAiMeasureFlow() {
   showAiSub(1);
+  // Defense against browser form-restoration: ensure the consent checkbox
+  // starts unchecked and the primary button is disabled on fresh entries.
+  // Within-flow back navigation (aiBackToEntry) calls showAiSub(1) directly
+  // and skips this reset, so the user's prior choice is preserved there.
+  const consent = document.getElementById('aimeasure-consent-cb');
+  if (consent) consent.checked = false;
+  const startBtn = document.getElementById('aimeasure-start-btn');
+  if (startBtn) startBtn.disabled = true;
   ['front', 'side'].forEach(side => {
     _aiPhotoBlobs[side] = null;
     const preview = document.getElementById('ai-' + side + '-preview');
