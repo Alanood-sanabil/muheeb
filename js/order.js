@@ -1165,6 +1165,14 @@ function aiMeasureStart() {
 }
 window.aiMeasureStart = aiMeasureStart;
 
+function aiMeasureSkip() {
+  gtag('event', 'ai_measure_skipped', { event_category: 'ai_measure' });
+  // Bypass photos/loading/results entirely. Manual measurements (entered in
+  // earlier steps) are used as-is; no AI fields or photo URLs are persisted.
+  openOrderModal();
+}
+window.aiMeasureSkip = aiMeasureSkip;
+
 // ── AI FLOW BACK NAVIGATION ─────────────────────────────────────
 // sub-1 (entry+instructions) → screen-4b (preferred fit) — exits AI flow
 // sub-3 (combined photos)    → sub-1                      — within AI flow

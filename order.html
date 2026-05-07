@@ -863,6 +863,27 @@
     .btn-back:hover  { background: #F5F5F5; }
     .btn-back:active { background: #EEEEEE; }
     .btn-back svg    { width: 22px; height: 22px; }
+
+    /* ─── AI SKIP BUTTON (sub-1 entry) ─────────────────────────────── */
+    /* Outline counterpart to the primary "ابدأ القياس". Sits directly
+       under the primary by reserving 62px on the start side (back btn 52
+       + row gap 10) so it visually aligns with the primary above. */
+    .aimeasure-skip-btn {
+      width: calc(100% - 62px);
+      margin-inline-start: 62px;
+      height: 52px;
+      background: #FFFFFF;
+      border: 1px solid #0A0A0A;
+      border-radius: 4px;
+      font-family: 'YearOfTheCamel', 'IBM Plex Sans Arabic', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #0A0A0A;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .aimeasure-skip-btn:hover  { background: #F5F5F5; }
+    .aimeasure-skip-btn:active { background: #EEEEEE; }
   </style>
   <style>
     /* === BODY SCAN SUB-SCREENS === */
@@ -1808,6 +1829,7 @@
             </button>
             <button class="btn-next" id="aimeasure-start-btn" disabled onclick="aiMeasureStart()">ابدأ القياس</button>
           </div>
+          <button type="button" class="aimeasure-skip-btn" onclick="aiMeasureSkip()">تخطي القياس الذكي</button>
         </div>
       </div>
     </div>
