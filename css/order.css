@@ -926,15 +926,45 @@ input[type=range]::-moz-range-track {
 .ref-label { font-weight: 300; font-size: .72rem; color: var(--muted); letter-spacing: .08em; margin-bottom: 6px; }
 .ref-num { font-weight: 700; font-size: 1.4rem; letter-spacing: .12em; direction: ltr; margin-bottom: 0; }
 
+/* ── PAY NOW (primary CTA on confirmation screen) ─────────────────
+   Two-line stacked button: main label with credit-card icon on top,
+   subtitle on the bottom. Green to signal "pay/success". Soft glow
+   shadow so it visibly lifts off the cream/white background. */
 .btn-wa {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  width: 100%; max-width: 360px; height: 52px; background: var(--black);
-  color: var(--white); border-radius: 4px; font-weight: 600; font-size: .9rem;
-  margin-top: 40px; transition: opacity .2s;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px;
+  width: 100%; max-width: 380px; min-height: 64px;
+  padding: 12px 20px;
+  background: #10B981; color: var(--white);
+  border-radius: 8px;
+  margin-top: 36px;
+  transition: opacity .2s, transform .25s, box-shadow .2s;
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.30), 0 2px 4px rgba(0, 0, 0, 0.06);
 }
-.btn-wa:hover { opacity: .88; }
-.btn-wa.pulse { animation: waPulse .4s ease; }
-@keyframes waPulse { 0%{transform:scale(1)} 50%{transform:scale(1.03)} 100%{transform:scale(1)} }
+.btn-wa:hover {
+  opacity: .95;
+  box-shadow: 0 8px 22px rgba(16, 185, 129, 0.36), 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+.btn-wa:active { transform: translateY(1px); }
+.btn-wa-main {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'YearOfTheCamel', 'IBM Plex Sans Arabic', sans-serif;
+  font-weight: 700; font-size: 1.02rem;
+}
+.btn-wa-sub {
+  font-family: 'YearOfTheCamel', 'IBM Plex Sans Arabic', sans-serif;
+  font-weight: 400; font-size: .78rem;
+  opacity: .92;
+}
+/* Gentle continuous pulse — added by JS via .pulse class once the
+   confirmation screen has settled. Animation pauses while hovered or
+   focused so it never fights the user's interaction. */
+.btn-wa.pulse { animation: payPulse 2.4s ease-in-out infinite; }
+.btn-wa.pulse:hover, .btn-wa.pulse:focus { animation-play-state: paused; }
+@keyframes payPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.02); }
+}
 
 /* Secondary WhatsApp text link below the Pay Now button on the
    confirmation screen — small, muted, underlined. */

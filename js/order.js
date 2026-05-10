@@ -1436,7 +1436,9 @@ function closeRatingModal() {
 }
 window.closeRatingModal = closeRatingModal;
 
-// Schedules the auto-popup ~2.5s after the confirmation screen renders.
+// Schedules the auto-popup 15s after the confirmation screen renders.
+// Long enough for the user to read the order ref, see the green Pay Now
+// CTA, and ideally tap it before the rating prompt arrives as a follow-up.
 // Gated by sessionStorage per order so it only fires ONCE per order — even
 // if the user navigates back to the confirmation screen.
 function scheduleRatingAutoPopup() {
@@ -1457,7 +1459,7 @@ function scheduleRatingAutoPopup() {
     if (overlay) overlay.classList.add('visible');
     if (sheet)   sheet.classList.add('visible');
     gtag('event', 'rating_screen_viewed', { event_category: 'engagement', source: 'auto_modal' });
-  }, 2500);
+  }, 15000);
 }
 
 // ─────────────────────────────────────────────────────────────────────────
