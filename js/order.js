@@ -561,6 +561,12 @@ function openOrderModal() {
     overlay.style.display = 'flex';
     document.body.style.overflow = 'hidden';
   }
+  // Reset phone "touched" state on every modal open so the user gets a
+  // clean visual slate; refresh the submit-button enabled state to reflect
+  // any pre-filled values (e.g. browser autofill).
+  _phoneTouched = false;
+  refreshPhoneState();
+  updateModalSubmitState();
 }
 window.openOrderModal = openOrderModal;
 
@@ -610,6 +616,15 @@ let _lastSubmitRef = null;
 let _lastConfirmedOrderRef = null;
 
 async function submit() {
+  // Defense in depth: even though handleSubmit() blocks invalid input,
+  // re-validate at the persistence boundary so no future code path can
+  // ship a malformed phone to Supabase.
+  const phoneCheck = validatePhoneSaudi(orderState.phone || '');
+  if (!phoneCheck.valid) {
+    console.error('[Muheeb] submit() blocked — invalid phone:', orderState.phone);
+    showSubmitError(new Error(phoneCheck.errorAr));
+    return;
+  }
   // Reuse ref on retry; generate fresh on first attempt of a new order
   const ref = _lastSubmitRef || Math.floor(100000 + Math.random() * 900000);
   _lastSubmitRef = ref;
@@ -1096,18 +1111,99 @@ function _startScanParticles() {
   _scanParticleRAF = requestAnimationFrame(draw);
 }
 
+// ─── SAUDI PHONE VALIDATION ──────────────────────────────────────
+// Format: exactly 10 digits, must start with "05" (no +966 prefix, no spaces).
+// Order of checks matters: starts-with-05 fires before length so a user
+// typing "0612" sees the correct hint instead of being told it's too short.
+function validatePhoneSaudi(p) {
+  if (!p) return { valid: false, errorAr: 'الرجاء إدخال رقم الجوال' };
+  if (!/^[0-9]+$/.test(p)) return { valid: false, errorAr: 'رقم الجوال غير صحيح' };
+  if (!p.startsWith('05')) return { valid: false, errorAr: 'رقم الجوال يبدأ بـ 05' };
+  if (p.length !== 10) return { valid: false, errorAr: 'رقم الجوال يجب أن يكون 10 أرقام' };
+  return { valid: true, errorAr: null };
+}
+window.validatePhoneSaudi = validatePhoneSaudi;
+
+// True once the user has blurred the phone field at least once OR pressed
+// submit. Gates whether the red border + error message appear while typing
+// for the first time (avoids showing red on the first keystroke).
+let _phoneTouched = false;
+
+function refreshPhoneState() {
+  const el = document.getElementById('input-phone');
+  const wrap = document.getElementById('phone-wrap');
+  const errEl = document.getElementById('error-phone');
+  if (!el || !wrap || !errEl) return;
+  const v = validatePhoneSaudi(el.value);
+
+  if (v.valid) {
+    // Always show the green state when valid — no "touched" gate.
+    wrap.classList.remove('invalid');
+    wrap.classList.add('valid');
+    errEl.classList.remove('show');
+  } else if (_phoneTouched) {
+    // Touched (blur with content, or submit clicked) — surface the specific
+    // error. Covers empty-on-submit too (validatePhoneSaudi returns
+    // "الرجاء إدخال رقم الجوال" for empty input).
+    wrap.classList.add('invalid');
+    wrap.classList.remove('valid');
+    errEl.textContent = v.errorAr;
+    errEl.classList.add('show');
+  } else {
+    // Untouched + invalid (still typing for the first time) — stay neutral
+    // so we don't yell at the user mid-keystroke.
+    wrap.classList.remove('invalid', 'valid');
+    errEl.classList.remove('show');
+  }
+}
+
+function onPhoneInput(el) {
+  // Strip non-digits + cap at 10 (HTML maxlength is a safety net, not enough
+  // for paste-with-formatting like "+966 51 234 5678").
+  const stripped = el.value.replace(/[^0-9]/g, '').slice(0, 10);
+  if (stripped !== el.value) el.value = stripped;
+  refreshPhoneState();
+  updateModalSubmitState();
+}
+window.onPhoneInput = onPhoneInput;
+
+function onPhoneBlur(el) {
+  if (el.value.length > 0) _phoneTouched = true;
+  refreshPhoneState();
+  updateModalSubmitState();
+}
+window.onPhoneBlur = onPhoneBlur;
+
+function updateModalSubmitState() {
+  const btn = document.getElementById('modal-submit-btn');
+  if (!btn) return;
+  const name = (document.getElementById('input-name')?.value || '').trim();
+  const phone = document.getElementById('input-phone')?.value || '';
+  const city = (document.getElementById('input-city')?.value || '').trim();
+  const allValid = name.length > 0 && city.length > 0 && validatePhoneSaudi(phone).valid;
+  btn.disabled = !allValid;
+  btn.style.opacity = allValid ? '1' : '0.4';
+}
+window.updateModalSubmitState = updateModalSubmitState;
+
 function handleSubmit() {
   clearErr();
+  // Force-show phone errors before final check (catches users who hit submit
+  // without ever blurring the phone field).
+  _phoneTouched = true;
+  refreshPhoneState();
+
   let ok = true;
   const nameEl  = document.getElementById('input-name');
   const phoneEl = document.getElementById('input-phone');
   const cityEl  = document.getElementById('input-city');
   if (!nameEl  || !nameEl.value.trim())  { showErr('error-name');  ok = false; }
-  if (!phoneEl || !phoneEl.value.trim()) { showErr('error-phone'); ok = false; }
   if (!cityEl  || !cityEl.value.trim())  { showErr('error-city');  ok = false; }
+  const phoneCheck = validatePhoneSaudi(phoneEl ? phoneEl.value : '');
+  if (!phoneCheck.valid) { ok = false; }
   if (ok) {
     orderState.name  = nameEl.value.trim();
-    orderState.phone = phoneEl.value.trim();
+    orderState.phone = phoneEl.value;
     orderState.city  = cityEl.value.trim();
     closeOrderModal();
     // Immediately switch the underlying screen to the processing loader so
