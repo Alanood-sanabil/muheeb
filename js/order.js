@@ -761,7 +761,7 @@ function showSubmitError(err) {
   if (!wrap) return;
   const errMsg = err && err.message ? err.message : String(err || 'unknown');
   console.error('[Muheeb] Order insert failed — showing error state:', err);
-  const waNum = (CONTENT && CONTENT.site && CONTENT.site.whatsapp) || '966552177857';
+  const waNum = (CONTENT && CONTENT.site && CONTENT.site.whatsapp) || '966533045580';
   const waText = encodeURIComponent('السلام عليكم، حصل خطأ في إرسال طلبي من الموقع. ممكن مساعدة؟');
   wrap.innerHTML = `
     <div style="max-width:380px;text-align:center;padding:0 20px;direction:rtl;">
