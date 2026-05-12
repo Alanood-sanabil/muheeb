@@ -1,0 +1,1718 @@
+// ============================================================
+//  MUHEEB — ORDER FLOW · 3DLOOK TEST VARIANT
+//  Loaded ONLY by order-test-3dlook.html. Differences from the
+//  live js/order.js:
+//    1. Writes orders to `orders_test_3dlook` (not `orders`)
+//    2. AI flow is replaced by the 3DLOOK widget — photo capture
+//       and "fake AI" loading are gone
+//    3. Payload uses `dl_*` measurement columns instead of `ai_*`
+//    4. GA events for the AI/measurement step use `tdlook_test_*`
+//       so test data doesn't pollute the real funnel
+//  Everything else (color/fabric/collar, measurements sliders,
+//  body type, fit, checkout, confirmation, rating) is unchanged.
+// ============================================================
+
+const TEST_TABLE = 'orders_test_3dlook';
+
+const orderState = { color: null, collar: null, fabric: null, height: 170, weight: 80, shoeSize: 42, age: 25, shirtSize: null, bodyShape: null, fitPreference: null, name: null, phone: null, city: null, ai_chest: null, ai_waist: null, ai_sleeve: null, ai_size: null };
+let currentScreen = 1;
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof CONTENT === 'undefined') {
+    console.error('CONTENT not loaded — check script order in order.html');
+    return;
+  }
+
+  // Ensure landing screen is active, all others hidden
+  document.querySelectorAll('.screen').forEach(function(s) {
+    s.classList.remove('active');
+  });
+  const landing = document.getElementById('screen-1');
+  if (landing) landing.classList.add('active');
+
+  // Hide progress bar on landing
+  const progressContainer = document.getElementById('progress-container');
+  if (progressContainer) progressContainer.style.opacity = '0';
+
+  // Initialize content and interactions
+  populate();
+  buildCards();
+  initSliders();
+  attachInputWatchers();
+
+  const defaultImg = document.getElementById('fit-img-normal');
+  if (defaultImg) defaultImg.classList.add('visible');
+  orderState.fitPreference = 'normal';
+  document.querySelector('.fit-opt-btn[data-fit="normal"]')?.classList.add('selected');
+  const btn4bInit = document.getElementById('btn-next-4b');
+  if (btn4bInit) { btn4bInit.classList.add('ready'); btn4bInit.textContent = 'التالي'; }
+  const fitDescEl = document.getElementById('fit-desc');
+  if (fitDescEl) { fitDescEl.textContent = ''; fitDescEl.style.opacity = '0'; }
+
+  const ctaBtn = document.getElementById('order-landing-cta');
+  if (!ctaBtn) {
+    console.error('[Muheeb] order-landing-cta button not found in DOM');
+  } else {
+    console.log('[Muheeb] CTA button found:', ctaBtn);
+    ctaBtn.onclick = function() {
+      console.log('[Muheeb] CTA clicked — starting loader');
+      gtag('event', 'start_order', { event_category: 'funnel' });
+      const loader = document.getElementById('loader-screen');
+      loader.classList.add('visible');
+      loader.classList.remove('hide');
+      setTimeout(() => {
+        console.log('[Muheeb] Loader done — switching to screen-2');
+        document.getElementById('screen-1').classList.remove('active');
+        loader.classList.add('hide');
+        setTimeout(() => {
+          loader.classList.remove('visible', 'hide');
+          showScreen(2);
+          console.log('[Muheeb] showScreen(2) called, currentScreen =', currentScreen);
+        }, 400);
+      }, 950);
+    };
+  }
+});
+
+// ---- POPULATE ----
+function populate() {
+  const O = CONTENT.order;
+  const S = CONTENT.site;
+
+  function setText(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  }
+  function setPlaceholder(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.placeholder = val;
+  }
+
+  // Landing
+  setText('order-sub', O.landingSub);
+  setText('order-landing-cta', O.landingCta);
+
+  // Slider labels
+  setText('s-height-label', O.heightLabel);
+  setText('s-weight-label', O.weightLabel);
+  setText('s-shoe-label', O.shoeSizeLabel);
+  setText('s-height-val', toAr(170) + ' ' + O.heightUnit);
+  setText('s-weight-val', toAr(80) + ' ' + O.weightUnit);
+  setText('s-shoe-val', toAr(42) + ' ' + O.shoeSizeUnit);
+
+  // Contact
+  setText('name-label', O.nameLabel);
+  setPlaceholder('input-name', O.namePlaceholder);
+  setText('phone-label', O.phoneLabel);
+  setPlaceholder('input-phone', O.phonePlaceholder);
+
+  // Summary
+  setText('summary-title', O.summaryTitle);
+  setText('sum-grp-thoob', O.summaryGroups.thoob);
+  setText('sum-grp-meas', O.summaryGroups.measurements);
+  setText('sum-grp-body', O.summaryGroups.body);
+  setText('sum-color-label', O.summaryLabels.color);
+  setText('sum-collar-label', O.summaryLabels.collar);
+  setText('sum-height-label', O.summaryLabels.height);
+  setText('sum-weight-label', O.summaryLabels.weight);
+  setText('sum-shoe-label', O.summaryLabels.shoeSize);
+  setText('sum-body-label', O.summaryLabels.bodyType);
+
+  // Edit links
+  document.querySelectorAll('.sum-edit').forEach(a => { a.textContent = O.editLabel; });
+
+  // Confirmation
+  setText('confirm-title', O.confirmTitle);
+  setText('confirm-sub', O.confirmSub);
+  setText('confirm-ref-label', O.confirmRefLabel);
+  setText('confirm-wa-text', O.confirmWhatsapp);
+}
+
+// ---- BUILD CARDS ----
+function buildCards() {
+  buildColorSwatches();
+  buildCollarCards();
+  buildFabricCards();
+  buildShapeCards();
+}
+
+// ---- FABRIC ----
+const FABRICS = [
+  { value: 'كوري ربع وقفة', label: 'ربع وقفة', sub: 'كوري', img: 'images/Fabric.png'  },
+  { value: 'كوري سميراميس', label: 'سميراميس', sub: 'كوري', img: 'images/Fabric2.png' },
+];
+
+function buildFabricCards() {
+  const container = document.getElementById('fabric-cards');
+  if (!container) return;
+  container.innerHTML = '';
+  FABRICS.forEach(fabric => {
+    const card = document.createElement('div');
+    card.className = 'fabric-card';
+    card.innerHTML = `
+      <img src="${fabric.img}" alt="${fabric.label}" />
+      <div class="fabric-card-info">
+        <div class="fabric-card-label">${fabric.label}</div>
+        <div class="fabric-card-sub">${fabric.sub}</div>
+      </div>`;
+    card.onclick = () => {
+      container.querySelectorAll('.fabric-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      orderState.fabric = fabric.value;
+      updateBtn(1);
+    };
+    container.appendChild(card);
+  });
+}
+
+const swatchBg = { white: '#FFFFFF', yellow: '#FAF3DC' };
+
+const colorImages = {
+  white: ['images/thob-white1.png','images/thob-white2.png','images/thob-white3.png','images/thob-white4.png','images/thob-white5.png','images/thob-white6.png'],
+  yellow: ['images/thob-yellow1.png','images/thob-yellow2.png','images/thob-yellow3.png','images/thob-yellow4.png','images/thob-yellow5.png'],
+};
+
+let _carouselObserver = null;
+
+function loadCarousel(colorId) {
+  const track = document.getElementById('carousel-track');
+  const dotsEl = document.getElementById('carousel-dots');
+  const images = colorImages[colorId] || [];
+
+  if (_carouselObserver) { _carouselObserver.disconnect(); _carouselObserver = null; }
+
+  track.innerHTML = '';
+  dotsEl.innerHTML = '';
+
+  const dots = [];
+  images.forEach((src, i) => {
+    const img = document.createElement('img');
+    img.src = src;
+    img.className = 'carousel-img';
+    img.alt = 'ثوب';
+    track.appendChild(img);
+    const dot = document.createElement('div');
+    dot.className = 'c-dot' + (i === 0 ? ' active' : '');
+    dotsEl.appendChild(dot);
+    dots.push(dot);
+  });
+
+  track.scrollLeft = 0;
+
+  _carouselObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const index = Array.from(track.children).indexOf(entry.target);
+        dots.forEach((d, i) => d.classList.toggle('active', i === index));
+      }
+    });
+  }, { root: track, threshold: 0.5 });
+
+  Array.from(track.children).forEach(img => _carouselObserver.observe(img));
+}
+
+function buildColorSwatches() {
+  const container = document.getElementById('color-swatches');
+  const nameEl = document.getElementById('selected-color-name');
+  const colors = CONTENT.order.colors;
+
+  orderState.color = colors[0].label;
+  if (nameEl) nameEl.textContent = colors[0].label;
+  loadCarousel(colors[0].id);
+
+  colors.forEach((color, idx) => {
+    const swatch = document.createElement('div');
+    swatch.className = 'color-swatch' + (idx === 0 ? ' selected' : '');
+    swatch.dataset.color = color.id;
+    swatch.style.background = swatchBg[color.id] || '#FFFFFF';
+    swatch.title = color.label;
+    swatch.onclick = () => {
+      container.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+      swatch.classList.add('selected');
+      orderState.color = color.label;
+      if (nameEl) nameEl.textContent = color.label;
+      loadCarousel(color.id);
+      updateBtn(1);
+    };
+    container.appendChild(swatch);
+  });
+  updateBtn(1);
+}
+
+function buildCollarCards() {
+  const c = document.getElementById('collar-cards');
+  CONTENT.order.collars.forEach(col => {
+    const d = document.createElement('div');
+    d.className = 'card collar-card';
+    d.dataset.value = col.label;
+    const img = col.id === 'qalabi'
+      ? '<img src="images/collar-removebg-preview.png" alt="قلابي">'
+      : '<img src="images/no-collar-removebg-preview.png" alt="بدون قلابي">';
+    d.innerHTML = `${img}<div class="card-label">${col.label}</div>`;
+    d.onclick = () => {
+      c.querySelectorAll('.collar-card').forEach(card => card.classList.remove('selected'));
+      d.classList.add('selected');
+      orderState.collar = col.label;
+      updateBtn(1);
+    };
+    c.appendChild(d);
+  });
+}
+
+function buildShapeCards() {
+  const c = document.getElementById('shape-cards');
+  const svgs = {
+    slim:   '<svg viewBox="0 0 100 120" width="44" height="44" xmlns="http://www.w3.org/2000/svg"><polygon points="5,15 95,15 65,105 35,105" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>',
+    normal: '<svg viewBox="0 0 100 120" width="44" height="44" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="15" width="60" height="90" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>',
+    full:   '<svg viewBox="0 0 100 120" width="44" height="44" xmlns="http://www.w3.org/2000/svg"><polygon points="30,15 70,15 95,105 5,105" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>',
+  };
+  CONTENT.order.bodyShapes.forEach(shape => {
+    const d = document.createElement('div');
+    d.className = 'body-shape-card';
+    d.dataset.value = shape.label;
+    const badge = shape.badge ? `<div class="most-common-badge">${shape.badge}</div>` : '';
+    d.innerHTML = `${badge}${svgs[shape.id]}<span class="body-shape-label">${shape.label}</span>`;
+    d.onclick = () => {
+      c.querySelectorAll('.body-shape-card').forEach(s => s.classList.remove('selected'));
+      d.classList.add('selected');
+      orderState.bodyShape = shape.label;
+      updateBtn(3);
+    };
+    c.appendChild(d);
+  });
+}
+
+function mk(cls, val) {
+  const d = document.createElement('div');
+  d.className = cls;
+  d.dataset.value = val;
+  return d;
+}
+
+// ---- CARD SELECT ----
+function pick(field, card, container, step) {
+  container.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+  card.classList.remove('bounce');
+  void card.offsetWidth;
+  card.classList.add('selected', 'bounce');
+  orderState[field] = card.dataset.value;
+  updateBtn(step);
+}
+
+// ---- SLIDERS ----
+function initSliders() {
+  const O = CONTENT.order;
+  setupSlider('slider-height', 's-height-val', O.heightUnit,    'height');
+  setupSlider('slider-weight', 's-weight-val', O.weightUnit,    'weight');
+  setupSlider('slider-shoe',   's-shoe-val',   O.shoeSizeUnit,  'shoeSize');
+  setupSlider('slider-age',    's-age-val',    'سنة',           'age');
+}
+
+function setupSlider(sliderId, valId, unit, field) {
+  const sl = document.getElementById(sliderId);
+  const valEl = document.getElementById(valId);
+  const update = () => {
+    updateSliderFill(sl);
+    valEl.textContent = toAr(sl.value) + ' ' + unit;
+    orderState[field] = sl.value;
+  };
+  sl.addEventListener('input', update);
+  update();
+}
+
+function updateSliderFill(slider) {
+  const min = parseFloat(slider.min);
+  const max = parseFloat(slider.max);
+  const val = parseFloat(slider.value);
+  const pct = ((val - min) / (max - min)) * 100;
+  // direction: ltr wrapper ensures left = min, right = max
+  slider.style.background = `linear-gradient(to right, #0A0A0A ${pct}%, #E5E5E5 ${pct}%)`;
+}
+
+// ---- INPUT WATCHERS ----
+function attachInputWatchers() {
+  const n = document.getElementById('input-name');
+  const p = document.getElementById('input-phone');
+  [n, p].forEach(inp => inp.addEventListener('input', () => updateBtn(5)));
+
+  document.querySelectorAll('.line-input-wrap input, .line-input-wrap select').forEach(inp => {
+    const label = inp.closest('.input-row')?.querySelector('label');
+    if (!label) return;
+    inp.addEventListener('focus', () => label.classList.add('float'));
+    inp.addEventListener('blur', () => { if (!inp.value) label.classList.remove('float'); });
+  });
+}
+
+// ---- BUTTON STATE ----
+function updateBtn(step) {
+  let btn, ready = false, readyText = '';
+  if (step === 1) {
+    btn = document.getElementById('btn-next-1');
+    ready = orderState.fabric && orderState.color && orderState.collar;
+    readyText = 'التالي';
+  } else if (step === 3) {
+    btn = document.getElementById('btn-next-3');
+    ready = !!orderState.bodyShape;
+    readyText = 'التالي';
+  } else if (step === 5) {
+    btn = document.getElementById('submit-btn');
+    ready = document.getElementById('input-name').value.trim()
+         && document.getElementById('input-phone').value.trim();
+    readyText = 'أرسل الطلب';
+  }
+  if (!btn) return;
+  if (ready) { btn.classList.add('ready'); btn.textContent = readyText; }
+  else { btn.classList.remove('ready'); btn.textContent = step === 5 ? 'أرسل الطلب' : 'اختر جميع الخيارات'; }
+}
+
+// ---- SCREEN NAV ----
+function showScreen(n) {
+  const current = document.querySelector('.screen.active');
+
+  function doSwitch() {
+    document.querySelectorAll('.screen').forEach(function(s) {
+      s.classList.remove('active');
+    });
+
+    const target = document.getElementById('screen-' + n);
+    if (target) target.classList.add('active');
+
+    // GA: track funnel entry from landing
+    if (n === 2 && currentScreen === 1) gtag('event', 'start_order', { event_category: 'funnel' });
+
+    currentScreen = n;
+    updateProgress(n);
+
+    if (n === 2) updateBtn(1);
+    if (n === 'scan') resetScanFlow();
+    if (n === 'aimeasure') resetAiMeasureFlow();
+    if (n === 4) updateBtn(3);
+    if (n === '4b') updateBtn('4b');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  if (current) {
+    current.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
+    current.style.opacity = '0';
+    current.style.transform = 'translateY(-16px)';
+    setTimeout(() => {
+      current.style.transition = '';
+      current.style.opacity = '';
+      current.style.transform = '';
+      doSwitch();
+    }, 450);
+  } else {
+    doSwitch();
+  }
+}
+
+function goToStep(stepNum) {
+  showScreen(stepNum + 1);
+}
+
+// ---- PROGRESS BAR ----
+function updateProgress(screenNumber) {
+  const container = document.getElementById('progress-container');
+  if (!container) return;
+
+  // Hide on landing, processing, confirmation, rating screens
+  // (AI flow keeps the indicator visible — shows full progress through all 5 form steps)
+  if (screenNumber === 1 || screenNumber === 6 || screenNumber === 'processing'
+      || screenNumber === 'rating' || screenNumber === 'rating-done') {
+    container.style.opacity = '0';
+    container.style.pointerEvents = 'none';
+    return;
+  }
+
+  container.style.opacity = '1';
+  container.style.pointerEvents = '';
+
+  // Map screen → activeStep (1–5). Five-dot indicator:
+  //   1 = الثوب (color + fabric + collar combined on screen-2)
+  //   2 = المقاسات (screen-3)
+  //   3 = شكل الجسم (screen-4)
+  //   4 = المقاس المفضل (screen-4b)
+  //   5 = قياسات AI (screen-aimeasure)
+  const stepMap = { 2: 1, 3: 2, 4: 3, '4b': 4, 'aimeasure': 5 };
+  const screenTargets = [null, 2, 3, 4, '4b', 'aimeasure']; // index = step number for back-click navigation
+  const activeStep = stepMap[screenNumber] || 1;
+
+  for (let i = 1; i <= 5; i++) {
+    const dot = document.getElementById('step-dot-' + i);
+    if (!dot) continue;
+
+    dot.classList.remove('active', 'completed', 'clickable');
+
+    if (i < activeStep) {
+      dot.classList.add('completed', 'clickable');
+      dot.style.cursor = 'pointer';
+      dot.onclick = (function(target) {
+        return function() { showScreen(target); };
+      })(screenTargets[i]);
+    } else if (i === activeStep) {
+      dot.classList.add('active');
+      dot.style.cursor = 'default';
+      dot.onclick = null;
+    } else {
+      dot.style.cursor = 'default';
+      dot.onclick = null;
+    }
+  }
+
+  for (let i = 1; i <= 4; i++) {
+    const line = document.getElementById('line-' + i + '-' + (i + 1));
+    if (!line) continue;
+    if (i < activeStep) line.classList.add('filled');
+    else line.classList.remove('filled');
+  }
+}
+
+// ---- VALIDATION ----
+function validateStep1() {
+  clearErr();
+  let ok = true;
+  if (!orderState.fabric) { showErr('error-fabric'); ok = false; }
+  if (!orderState.color)  { showErr('error-color');  ok = false; }
+  if (!orderState.collar) { showErr('error-collar'); ok = false; }
+  if (ok) { gtag('event', 'complete_step1', { event_category: 'funnel' }); showScreen(3); }
+}
+
+function validateStep2() {
+  // Sliders always have values; t-shirt size is the only required pick
+  if (!orderState.shirtSize) return;
+  gtag('event', 'complete_step2', { event_category: 'funnel' });
+  showScreen(4);
+}
+
+function validateStep3() {
+  clearErr();
+  if (!orderState.bodyShape) { showErr('error-body'); return; }
+  gtag('event', 'complete_step3', { event_category: 'funnel' });
+  showScreen('4b');
+}
+
+const fitDescriptions = {
+  slim:   'يلتصق بالجسم — أنيق وعصري',
+  normal: 'لا ضيق ولا واسع — الأنسب لمعظم الناس',
+  loose:  'مريح وواسع — مناسب للجلسات الطويلة',
+};
+
+function selectFit(btn) {
+  document.querySelectorAll('.fit-opt-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const fit = btn.dataset.fit;
+  orderState.fitPreference = fit;
+
+  const imgs = document.querySelectorAll('.fit-img');
+  imgs.forEach(img => img.classList.remove('visible'));
+
+  const target = document.getElementById('fit-img-' + fit);
+  if (target) target.classList.add('visible');
+
+  const desc = document.getElementById('fit-desc');
+  if (desc) {
+    desc.style.opacity = '0';
+    setTimeout(() => {
+      desc.textContent = fitDescriptions[fit];
+      desc.style.opacity = '1';
+    }, 180);
+  }
+
+  const btn4b = document.getElementById('btn-next-4b');
+  if (btn4b) { btn4b.classList.add('ready'); btn4b.textContent = 'التالي'; }
+}
+window.selectFit = selectFit;
+
+// ---- T-SHIRT SIZE (optional) ----
+function selectShirtSize(btn) {
+  const row = document.getElementById('shirt-size-row');
+  if (row) row.querySelectorAll('.size-pill').forEach(p => p.classList.remove('selected'));
+  btn.classList.add('selected');
+  orderState.shirtSize = btn.dataset.size;
+  const valEl = document.getElementById('s-shirt-val');
+  if (valEl) { valEl.textContent = btn.dataset.size; valEl.style.opacity = ''; }
+  // Enable the next-step button now that a shirt size is picked
+  const nextBtn = document.getElementById('btn-next-2');
+  if (nextBtn) { nextBtn.disabled = false; nextBtn.classList.add('ready'); nextBtn.textContent = 'التالي'; }
+}
+window.selectShirtSize = selectShirtSize;
+
+function validateStep4b() {
+  if (!orderState.fitPreference) { showErr('error-fit'); return; }
+  gtag('event', 'tdlook_test_offered', { event_category: 'tdlook_test' });
+  showScreen('aimeasure');
+  resetAiMeasureFlow();
+}
+window.validateStep4b = validateStep4b;
+
+function goToProcessing() {
+  showScreen('processing');
+  const txt = document.getElementById('processing-text');
+  if (txt) txt.textContent = 'جاري تجهيز مقاس ثوبك...';
+  setTimeout(() => { openOrderModal(); }, 4000);
+}
+
+function openOrderModal() {
+  const O = CONTENT.order;
+  const S = CONTENT.site;
+  const sumColor = document.getElementById('sum-color');
+  const sumCollar = document.getElementById('sum-collar');
+  const sumMeas = document.getElementById('modal-sum-meas');
+  const sumPrice = document.getElementById('modal-sum-price');
+  if (sumColor) sumColor.textContent = orderState.color || '—';
+  const sumFabric = document.getElementById('sum-fabric');
+  if (sumFabric) sumFabric.textContent = orderState.fabric || '—';
+  if (sumCollar) sumCollar.textContent = orderState.collar || '—';
+  if (sumMeas) sumMeas.textContent = toAr(orderState.height) + ' سم — ' + toAr(orderState.weight) + ' كيلو';
+  if (sumPrice) sumPrice.textContent = toAr(S.basePrice) + ' ' + O.priceUnit;
+  const overlay = document.getElementById('order-modal-overlay');
+  if (overlay) {
+    overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+  // Reset phone "touched" state on every modal open so the user gets a
+  // clean visual slate; refresh the submit-button enabled state to reflect
+  // any pre-filled values (e.g. browser autofill).
+  _phoneTouched = false;
+  refreshPhoneState();
+  updateModalSubmitState();
+}
+window.openOrderModal = openOrderModal;
+
+function closeOrderModal() {
+  const overlay = document.getElementById('order-modal-overlay');
+  if (overlay) overlay.style.display = 'none';
+  document.body.style.overflow = '';
+}
+window.closeOrderModal = closeOrderModal;
+
+function validateStep4() {
+  clearErr();
+  let ok = true;
+  if (!document.getElementById('input-name').value.trim()) { showErr('error-name'); ok = false; }
+  if (!document.getElementById('input-phone').value.trim()) { showErr('error-phone'); ok = false; }
+  if (!document.getElementById('input-city').value.trim()) { showErr('error-city'); ok = false; }
+  if (ok) {
+    orderState.name  = document.getElementById('input-name').value.trim();
+    orderState.phone = document.getElementById('input-phone').value.trim();
+    orderState.city  = document.getElementById('input-city').value.trim();
+    submit();
+  }
+}
+
+function showErr(id) { const e = document.getElementById(id); if (e) e.classList.add('show'); }
+function clearErr() { document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show')); }
+
+// ---- SUMMARY ----
+function updateSummary() {
+  const O = CONTENT.order;
+  const S = CONTENT.site;
+  document.getElementById('sum-color').textContent = orderState.color || '—';
+  document.getElementById('sum-collar').textContent = orderState.collar || '—';
+  document.getElementById('sum-height').textContent = toAr(orderState.height) + ' ' + O.heightUnit;
+  document.getElementById('sum-weight').textContent = toAr(orderState.weight) + ' ' + O.weightUnit;
+  document.getElementById('sum-shoe').textContent = toAr(orderState.shoeSize) + ' ' + O.shoeSizeUnit;
+  document.getElementById('sum-body').textContent = orderState.bodyShape || '—';
+}
+
+// ---- SUBMIT ----
+// Persists across retries so a failed insert + retry reuses the same
+// order_number and photo paths (avoids orphaning storage objects).
+// Cleared on successful insert.
+let _lastSubmitRef = null;
+// Persists across the confirmation → rating screen flow so the rating
+// update knows which order_number to write to in Supabase.
+let _lastConfirmedOrderRef = null;
+
+async function submit() {
+  // Defense in depth: even though handleSubmit() blocks invalid input,
+  // re-validate at the persistence boundary so no future code path can
+  // ship a malformed phone to Supabase.
+  const phoneCheck = validatePhoneSaudi(orderState.phone || '');
+  if (!phoneCheck.valid) {
+    console.error('[Muheeb] submit() blocked — invalid phone:', orderState.phone);
+    showSubmitError(new Error(phoneCheck.errorAr));
+    return;
+  }
+  // Reuse ref on retry; generate fresh on first attempt of a new order
+  const ref = _lastSubmitRef || Math.floor(100000 + Math.random() * 900000);
+  _lastSubmitRef = ref;
+
+  // ── 1. INIT SUPABASE ────────────────────────────────────────────
+  // Test variant: NO photo upload — 3DLOOK handles photos on their own
+  // infrastructure and only sends us measurements via postMessage.
+  let supabase = null;
+  let initError = null;
+  try {
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+    supabase = createClient(
+      'https://mwcmfzzukqiutztkgagg.supabase.co',
+      'sb_publishable_8zuxMDAcYGIozcmi8CS8sg_ZnjLmb6V'
+    );
+  } catch (e) {
+    console.error('[Muheeb-Test] Supabase init failed:', e);
+    initError = e;
+  }
+
+  // ── 2. BUILD PAYLOAD (orders_test_3dlook schema) ────────────────
+  // Pull 3DLOOK measurements off the global the postMessage listener
+  // populated. Tolerate inconsistent key naming since the widget's
+  // payload shape isn't documented — we try a few common variants.
+  const dl = (window._3dlookMeasurements && window._3dlookMeasurements.measurements) || {};
+  const dlRaw = window._3dlookMeasurements || null;
+  const num = (v) => (v == null || v === '' ? null : Number(v));
+  const pick = (...keys) => { for (const k of keys) { if (dl[k] != null) return dl[k]; } return null; };
+
+  const payload = {
+    order_number: String(ref),
+    name: orderState.name,
+    phone: orderState.phone,
+    city: orderState.city,
+    color: orderState.color,
+    fabric: orderState.fabric,
+    collar: orderState.collar,
+    height: parseInt(orderState.height, 10) || null,
+    weight: parseInt(orderState.weight, 10) || null,
+    shoe_size: num(orderState.shoeSize),
+    age: parseInt(orderState.age, 10) || null,
+    shirt_size: orderState.shirtSize || null,
+    body_type: orderState.bodyShape,
+    fit_preference: orderState.fitPreference,
+    used_3dlook: !!window._3dlookMeasurements,
+    dl_chest:    num(pick('chest', 'chest_circumference', 'chestGirth')),
+    dl_waist:    num(pick('waist', 'waist_circumference', 'waistGirth')),
+    dl_hips:     num(pick('hips', 'hip', 'hip_circumference', 'hipsGirth')),
+    dl_shoulder: num(pick('shoulder', 'shoulder_width', 'across_back_shoulder_width')),
+    dl_sleeve:   num(pick('sleeve', 'sleeve_length', 'arm_length')),
+    dl_height:   num(pick('height', 'total_height')),
+    dl_raw_data: dlRaw,
+    notes: 'TEST — 3DLOOK widget integration',
+  };
+  console.log('[Muheeb-Test] Submitting payload to ' + TEST_TABLE + ':', payload);
+
+  // Bail if Supabase couldn't init at all
+  if (initError || !supabase) {
+    const err = initError || new Error('Supabase client unavailable');
+    console.log('[Muheeb] Supabase insert response:', { data: null, error: err });
+    showSubmitError(err);
+    return;
+  }
+
+  // ── 3. INSERT ORDER ROW ─────────────────────────────────────────
+  let insertData = null, insertError = null;
+  try {
+    const result = await supabase.from(TEST_TABLE).insert([payload]).select();
+    insertData  = result.data;
+    insertError = result.error;
+  } catch (e) {
+    insertError = e;
+  }
+  console.log('[Muheeb] Supabase insert response:', { data: insertData, error: insertError });
+
+  // ── 4. GUARD: if insert failed OR no row came back, show error UI ──
+  if (insertError || !insertData || insertData.length === 0) {
+    showSubmitError(insertError || new Error('No row returned from insert'));
+    return;
+  }
+
+  // ── 5. SUCCESS — only reached when a row actually persisted ────
+  _lastSubmitRef = null;
+  _lastConfirmedOrderRef = String(ref);
+  gtag('event', 'test_order_submitted', { event_category: 'tdlook_test' });
+  console.log('[Muheeb] Showing success screen with order #' + ref);
+  // Schedule the rating modal to auto-popup ~2.5s after confirmation
+  // (gated once per order via sessionStorage)
+  scheduleRatingAutoPopup();
+
+  showScreen(6);
+
+  // Animate ref counter
+  const refEl = document.getElementById('order-ref');
+  if (refEl) {
+    let cur = 0;
+    const step = Math.ceil(ref / 50);
+    const timer = setInterval(() => {
+      cur += step;
+      if (cur >= ref) { cur = ref; clearInterval(timer); }
+      refEl.textContent = '#' + String(cur).padStart(6, '0');
+    }, 16);
+  }
+
+  // Pay Now button — static href set in HTML; here we just wire the GA event
+  const payBtn = document.getElementById('confirm-pay-btn');
+  if (payBtn) {
+    payBtn.addEventListener('click', () => {
+      gtag('event', 'pay_now_clicked', { order_number: String(ref) });
+    });
+    setTimeout(() => { payBtn.classList.add('pulse'); }, 1200);
+  }
+
+  // Secondary WhatsApp link — preserves order number in the prefilled message
+  const S = CONTENT.site;
+  const msg = `ياهلا، رقم طلبي #${ref}`;
+  const waBtn = document.getElementById('confirm-wa-btn');
+  if (waBtn) {
+    waBtn.href = `https://wa.me/${S.whatsapp}?text=${encodeURIComponent(msg)}`;
+    waBtn.addEventListener('click', () => {
+      gtag('event', 'whatsapp_click', { event_category: 'engagement' });
+    });
+  }
+}
+
+// ── ERROR UI for failed submits ─────────────────────────────────
+// Replaces the processing screen content with an Arabic error message,
+// a Retry button, and a WhatsApp fallback button.
+function showSubmitError(err) {
+  const wrap = document.querySelector('#screen-processing .processing-wrap');
+  if (!wrap) return;
+  const errMsg = err && err.message ? err.message : String(err || 'unknown');
+  console.error('[Muheeb] Order insert failed — showing error state:', err);
+  const waNum = (CONTENT && CONTENT.site && CONTENT.site.whatsapp) || '966533045580';
+  const waText = encodeURIComponent('السلام عليكم، حصل خطأ في إرسال طلبي من الموقع. ممكن مساعدة؟');
+  wrap.innerHTML = `
+    <div style="max-width:380px;text-align:center;padding:0 20px;direction:rtl;">
+      <div style="width:56px;height:56px;border-radius:50%;background:#FDEEED;color:#922B21;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.6rem;font-weight:700;">!</div>
+      <div style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-weight:700;font-size:1.1rem;color:#0A0A0A;margin-bottom:8px;">حدث خطأ في حفظ طلبك</div>
+      <div style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-size:0.9rem;color:#666;line-height:1.6;margin-bottom:8px;">الرجاء المحاولة مرة أخرى أو التواصل معنا على واتساب وسنكمل طلبك يدوياً.</div>
+      <div style="font-family:'JetBrains Mono','Cairo',monospace;font-size:0.7rem;color:#999;margin-bottom:24px;direction:ltr;text-align:left;background:#F5F5F5;padding:8px 10px;border-radius:6px;word-break:break-word;">${escapeHtmlSubmit(errMsg)}</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button onclick="retrySubmit()" style="background:#0A0A0A;color:#FFFFFF;border:none;border-radius:8px;height:48px;font-family:'YearOfTheCamel','Cairo',sans-serif;font-weight:600;font-size:0.95rem;cursor:pointer;">إعادة المحاولة</button>
+        <a href="https://wa.me/${waNum}?text=${waText}" target="_blank" rel="noopener" style="background:#25D366;color:#FFFFFF;border-radius:8px;height:48px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-family:'YearOfTheCamel','Cairo',sans-serif;font-weight:600;font-size:0.95rem;">تواصل على واتساب</a>
+      </div>
+    </div>
+  `;
+}
+function escapeHtmlSubmit(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// Retry — reset the processing screen UI to its loader state, then re-run
+// submit(). Reuses the same _lastSubmitRef so the order_number stays
+// consistent and photo storage paths get overwritten in place.
+async function retrySubmit() {
+  const wrap = document.querySelector('#screen-processing .processing-wrap');
+  if (wrap) {
+    wrap.innerHTML = `
+      <div class="sadu-loader-diamond" aria-label="جاري التحميل">
+        <svg width="120" height="120" viewBox="0 0 100 100" aria-hidden="true">
+          <polygon class="sat" style="animation-delay:0s"   points="50,6 55,16 45,16" fill="#0A0A0A"/>
+          <polygon class="sat" style="animation-delay:0.4s" points="94,50 84,55 84,45" fill="#0A0A0A"/>
+          <polygon class="sat" style="animation-delay:0.8s" points="50,94 45,84 55,84" fill="#0A0A0A"/>
+          <polygon class="sat" style="animation-delay:1.2s" points="6,50 16,45 16,55" fill="#0A0A0A"/>
+          <g class="center">
+            <polygon points="50,28 72,50 50,72 28,50" fill="none" stroke="#0A0A0A" stroke-width="1.2"/>
+            <polygon points="50,38 62,50 50,62 38,50" fill="#0A0A0A"/>
+          </g>
+        </svg>
+      </div>
+      <p class="processing-text" id="processing-text">جاري إرسال طلبك...</p>
+    `;
+  }
+  await submit();
+}
+window.retrySubmit = retrySubmit;
+
+// ---- HELPERS ----
+function toAr(n) { return String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]); }
+
+// ---- FOOTER PRICE ----
+function updateFooterPrice() {
+  const el = document.getElementById('footer-price');
+  if (!el) return;
+  const S = CONTENT.site;
+  const O = CONTENT.order;
+  el.textContent = toAr(S.basePrice) + ' ' + O.priceUnit;
+}
+
+// ---- TOOLTIPS ----
+const tooltips = {
+  height: {
+    title: 'لماذا نسأل عن طولك؟',
+    body: 'طولك يساعدنا نحدد الطول الصحيح للثوب والكم بدقة تامة.'
+  },
+  weight: {
+    title: 'لماذا نسأل عن وزنك؟',
+    body: 'وزنك مع شكل الجسم يساعدنا نضبط اتساع الثوب على اكتافك وخصرك.'
+  },
+  shoeSize: {
+    title: 'لماذا نسأل عن مقاس حذاءك؟',
+    body: 'قدمك بنفس طول ساعدك — جرب وشوف! نستخدم مقاس الحذاء كقياس إضافي يساعدنا نطلع لك مقاس أدق بدون ما تحتاج شريط قياس.'
+  },
+  age: {
+    title: 'لماذا نسأل عن عمرك؟',
+    body: 'نستخدم العمر لاقتراح أنسب قصة وطول للثوب يناسب فئتك العمرية.'
+  },
+  shirtSize: {
+    title: 'لماذا نسأل عن مقاس قميصك؟',
+    body: 'مقاس قميصك يساعدنا نحدد عرض الكتفين ومحيط الصدر بدقة، عشان الثوب يجي مضبوط على جسمك.'
+  }
+};
+
+function showTooltip(type) {
+  const data = tooltips[type];
+  if (!data) return;
+  document.getElementById('tooltip-title').textContent = data.title;
+  document.getElementById('tooltip-body').textContent = data.body;
+  document.getElementById('tooltip-overlay').classList.add('active');
+  document.getElementById('tooltip-sheet').classList.add('active');
+}
+
+function closeTooltip() {
+  document.getElementById('tooltip-overlay').classList.remove('active');
+  document.getElementById('tooltip-sheet').classList.remove('active');
+}
+
+// ---- EXPOSE FUNCTIONS TO WINDOW (for inline onclick handlers in module mode) ----
+// ---- BODY SCAN ----
+let _scanMode = null;
+let _scanParticleRAF = null;
+let _cameraStream = null;
+
+function resetScanFlow() {
+  _scanMode = null;
+  _stopCamera();
+  if (_scanParticleRAF) { cancelAnimationFrame(_scanParticleRAF); _scanParticleRAF = null; }
+  document.querySelectorAll('.scan-toggle-btn').forEach(c => c.classList.remove('selected'));
+  const privacyCheck = document.getElementById('scan-privacy-check');
+  if (privacyCheck) privacyCheck.checked = false;
+  // Reset hero SVG to default (two people)
+  const svgSelf  = document.getElementById('scan-svg-self');
+  const svgOther = document.getElementById('scan-svg-other');
+  if (svgSelf)  svgSelf.style.display  = 'none';
+  if (svgOther) svgOther.style.display = 'block';
+  const btn = document.getElementById('btn-scan-1');
+  if (btn) { btn.classList.remove('ready'); btn.textContent = 'اختر طريقة القياس'; }
+  // Reset sub-3 state
+  const bar = document.getElementById('scan-progress-bar');
+  if (bar) bar.style.width = '0%';
+  const label = document.getElementById('scan-analysis-label');
+  if (label) { label.textContent = ''; label.classList.remove('visible'); }
+  const frozenBg = document.getElementById('scan-frozen-bg');
+  if (frozenBg) frozenBg.style.display = 'none';
+  showScanSub(1);
+}
+
+function _stopCamera() {
+  if (_cameraStream) {
+    _cameraStream.getTracks().forEach(t => t.stop());
+    _cameraStream = null;
+  }
+  const video = document.getElementById('scan-video');
+  if (video) { video.srcObject = null; video.style.display = 'none'; }
+  const overlay = document.getElementById('scan-cam-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
+function showScanSub(n) {
+  document.querySelectorAll('.scan-sub').forEach(s => s.classList.remove('active'));
+  const sub = document.getElementById('scan-sub-' + n);
+  if (sub) sub.classList.add('active');
+}
+
+function selectScanMode(mode, card) {
+  _scanMode = mode;
+  document.querySelectorAll('.scan-toggle-btn').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+
+  // Swap hero SVG
+  const svgSelf  = document.getElementById('scan-svg-self');
+  const svgOther = document.getElementById('scan-svg-other');
+  if (svgSelf && svgOther) {
+    svgSelf.style.display  = mode === 'self'  ? 'block' : 'none';
+    svgOther.style.display = mode === 'other' ? 'block' : 'none';
+  }
+
+  updateScanSub1Btn();
+}
+
+function updateScanSub1Btn() {
+  const checked = document.getElementById('scan-privacy-check')?.checked;
+  const btn = document.getElementById('btn-scan-1');
+  if (!btn) return;
+  if (_scanMode && checked) { btn.classList.add('ready'); }
+  else { btn.classList.remove('ready'); }
+}
+
+function validateScanSub1() {
+  const checked = document.getElementById('scan-privacy-check')?.checked;
+  if (!_scanMode) { showErr('error-scan-mode'); return; }
+  if (!checked) { showErr('error-scan-mode'); return; }
+  clearErr();
+  showScanSub(2);
+  _openCamera();
+}
+
+async function _openCamera() {
+  const loading = document.getElementById('scan-cam-loading');
+  const error   = document.getElementById('scan-cam-error');
+  const video   = document.getElementById('scan-video');
+  const overlay = document.getElementById('scan-cam-overlay');
+
+  if (loading) loading.style.display = 'flex';
+  if (error)   error.style.display   = 'none';
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+    _cameraStream = stream;
+    video.srcObject = stream;
+    await video.play();
+
+    if (loading) loading.style.display = 'none';
+    video.style.display = 'block';
+    if (overlay) overlay.style.display = 'block';
+  } catch (err) {
+    console.warn('[Muheeb] Camera error:', err);
+    if (loading) loading.style.display = 'none';
+    if (error)   error.style.display   = 'flex';
+  }
+}
+
+function startScanCapture() {
+  const video    = document.getElementById('scan-video');
+  const cdOverlay = document.getElementById('scan-countdown');
+  const cdNum    = document.getElementById('scan-countdown-num');
+  if (!cdOverlay || !cdNum) { _doShutterAndProcess(); return; }
+
+  // 3-second countdown
+  let count = 3;
+  cdNum.textContent = count;
+  cdOverlay.classList.add('visible');
+
+  function tick() {
+    count--;
+    if (count <= 0) {
+      cdOverlay.classList.remove('visible');
+      _doShutterAndProcess();
+    } else {
+      cdNum.style.animation = 'none';
+      void cdNum.offsetWidth; // reflow to restart animation
+      cdNum.style.animation = '';
+      cdNum.textContent = count;
+      setTimeout(tick, 1000);
+    }
+  }
+  setTimeout(tick, 1000);
+}
+
+function _doShutterAndProcess() {
+  const video = document.getElementById('scan-video');
+
+  // Capture frozen frame into canvas
+  let frozenDataUrl = null;
+  try {
+    const cap = document.createElement('canvas');
+    cap.width  = video.videoWidth  || 320;
+    cap.height = video.videoHeight || 320;
+    cap.getContext('2d').drawImage(video, 0, 0, cap.width, cap.height);
+    frozenDataUrl = cap.toDataURL('image/jpeg', 0.7);
+  } catch(e) { /* cross-origin or no stream — ignore */ }
+
+  // Stop camera
+  _stopCamera();
+
+  // Shutter flash
+  const flash = document.getElementById('shutter-flash');
+  if (flash) {
+    flash.style.display = 'block';
+    flash.style.opacity = '1';
+    flash.style.transition = 'none';
+    setTimeout(() => {
+      flash.style.transition = 'opacity 0.2s ease';
+      flash.style.opacity = '0';
+      setTimeout(() => { flash.style.display = 'none'; }, 220);
+    }, 150);
+  }
+
+  // Apply frozen frame as blurred bg in sub-3
+  if (frozenDataUrl) {
+    const bg = document.getElementById('scan-frozen-bg');
+    if (bg) {
+      bg.style.backgroundImage = `url(${frozenDataUrl})`;
+      bg.style.display = 'block';
+    }
+  }
+
+  // Move to processing
+  setTimeout(() => _startScanProcessing(), 150);
+}
+
+function _startScanProcessing() {
+  showScanSub(3);
+  _startScanParticles();
+
+  const bar   = document.getElementById('scan-progress-bar');
+  const label = document.getElementById('scan-analysis-label');
+  if (!bar) return;
+
+  const steps = [
+    { at: 0,  text: 'جاري تحديد نقاط الجسم...' },
+    { at: 25, text: 'قياس الكتفين والصدر...' },
+    { at: 50, text: 'تحليل الخصر والطول...' },
+    { at: 75, text: 'حساب القياسات النهائية...' },
+  ];
+  let shownStep = -1;
+  bar.style.width = '0%';
+
+  const start    = performance.now();
+  const duration = 4000;
+
+  function tick(now) {
+    const pct = Math.min((now - start) / duration * 100, 100);
+    bar.style.width = pct + '%';
+
+    // Fade in analysis labels at their thresholds
+    const stepIdx = steps.filter(s => pct >= s.at).length - 1;
+    if (stepIdx > shownStep && label) {
+      shownStep = stepIdx;
+      label.classList.remove('visible');
+      void label.offsetWidth;
+      label.textContent = steps[stepIdx].text;
+      requestAnimationFrame(() => label.classList.add('visible'));
+    }
+
+    if (pct < 100) {
+      requestAnimationFrame(tick);
+    } else {
+      setTimeout(() => {
+        if (_scanParticleRAF) { cancelAnimationFrame(_scanParticleRAF); _scanParticleRAF = null; }
+        showScanSub(4);
+      }, 500);
+    }
+  }
+  requestAnimationFrame(tick);
+}
+
+function _startScanParticles() {
+  const canvas = document.getElementById('scan-particle-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = 260, H = 260, cx = W / 2, cy = H / 2;
+  if (_scanParticleRAF) cancelAnimationFrame(_scanParticleRAF);
+  const NUM = 28;
+  const particles = Array.from({ length: NUM }, (_, i) => ({
+    angle: (i / NUM) * Math.PI * 2,
+    speed: 0.35 + Math.random() * 0.4,
+    maxR: 60 + Math.random() * 40,
+    size: 1.5,
+    phase: Math.random() * Math.PI * 2,
+  }));
+  const t0 = performance.now();
+  function draw(now) {
+    const t = (now - t0) / 1000;
+    ctx.clearRect(0, 0, W, H);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#0A0A0A';
+    ctx.fill();
+    particles.forEach(p => {
+      const r = p.maxR * (0.5 + 0.5 * Math.sin(t * p.speed + p.phase));
+      const alpha = 0.12 + 0.55 * (0.5 + 0.5 * Math.sin(t * p.speed + p.phase));
+      ctx.beginPath();
+      ctx.arc(cx + Math.cos(p.angle) * r, cy + Math.sin(p.angle) * r, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(10,10,10,${alpha.toFixed(2)})`;
+      ctx.fill();
+    });
+    _scanParticleRAF = requestAnimationFrame(draw);
+  }
+  _scanParticleRAF = requestAnimationFrame(draw);
+}
+
+// ─── SAUDI PHONE VALIDATION ──────────────────────────────────────
+// Format: exactly 10 digits, must start with "05" (no +966 prefix, no spaces).
+// Order of checks matters: starts-with-05 fires before length so a user
+// typing "0612" sees the correct hint instead of being told it's too short.
+function validatePhoneSaudi(p) {
+  if (!p) return { valid: false, errorAr: 'الرجاء إدخال رقم الجوال' };
+  if (!/^[0-9]+$/.test(p)) return { valid: false, errorAr: 'رقم الجوال غير صحيح' };
+  if (!p.startsWith('05')) return { valid: false, errorAr: 'رقم الجوال يبدأ بـ 05' };
+  if (p.length !== 10) return { valid: false, errorAr: 'رقم الجوال يجب أن يكون 10 أرقام' };
+  return { valid: true, errorAr: null };
+}
+window.validatePhoneSaudi = validatePhoneSaudi;
+
+// True once the user has blurred the phone field at least once OR pressed
+// submit. Gates whether the red border + error message appear while typing
+// for the first time (avoids showing red on the first keystroke).
+let _phoneTouched = false;
+
+function refreshPhoneState() {
+  const el = document.getElementById('input-phone');
+  const wrap = document.getElementById('phone-wrap');
+  const errEl = document.getElementById('error-phone');
+  if (!el || !wrap || !errEl) return;
+  const v = validatePhoneSaudi(el.value);
+
+  if (v.valid) {
+    // Always show the green state when valid — no "touched" gate.
+    wrap.classList.remove('invalid');
+    wrap.classList.add('valid');
+    errEl.classList.remove('show');
+  } else if (_phoneTouched) {
+    // Touched (blur with content, or submit clicked) — surface the specific
+    // error. Covers empty-on-submit too (validatePhoneSaudi returns
+    // "الرجاء إدخال رقم الجوال" for empty input).
+    wrap.classList.add('invalid');
+    wrap.classList.remove('valid');
+    errEl.textContent = v.errorAr;
+    errEl.classList.add('show');
+  } else {
+    // Untouched + invalid (still typing for the first time) — stay neutral
+    // so we don't yell at the user mid-keystroke.
+    wrap.classList.remove('invalid', 'valid');
+    errEl.classList.remove('show');
+  }
+}
+
+function onPhoneInput(el) {
+  // Strip non-digits + cap at 10 (HTML maxlength is a safety net, not enough
+  // for paste-with-formatting like "+966 51 234 5678").
+  const stripped = el.value.replace(/[^0-9]/g, '').slice(0, 10);
+  if (stripped !== el.value) el.value = stripped;
+  refreshPhoneState();
+  updateModalSubmitState();
+}
+window.onPhoneInput = onPhoneInput;
+
+function onPhoneBlur(el) {
+  if (el.value.length > 0) _phoneTouched = true;
+  refreshPhoneState();
+  updateModalSubmitState();
+}
+window.onPhoneBlur = onPhoneBlur;
+
+function updateModalSubmitState() {
+  const btn = document.getElementById('modal-submit-btn');
+  if (!btn) return;
+  const name = (document.getElementById('input-name')?.value || '').trim();
+  const phone = document.getElementById('input-phone')?.value || '';
+  const city = (document.getElementById('input-city')?.value || '').trim();
+  const allValid = name.length > 0 && city.length > 0 && validatePhoneSaudi(phone).valid;
+  btn.disabled = !allValid;
+  btn.style.opacity = allValid ? '1' : '0.4';
+}
+window.updateModalSubmitState = updateModalSubmitState;
+
+function handleSubmit() {
+  clearErr();
+  // Force-show phone errors before final check (catches users who hit submit
+  // without ever blurring the phone field).
+  _phoneTouched = true;
+  refreshPhoneState();
+
+  let ok = true;
+  const nameEl  = document.getElementById('input-name');
+  const phoneEl = document.getElementById('input-phone');
+  const cityEl  = document.getElementById('input-city');
+  if (!nameEl  || !nameEl.value.trim())  { showErr('error-name');  ok = false; }
+  if (!cityEl  || !cityEl.value.trim())  { showErr('error-city');  ok = false; }
+  const phoneCheck = validatePhoneSaudi(phoneEl ? phoneEl.value : '');
+  if (!phoneCheck.valid) { ok = false; }
+  if (ok) {
+    orderState.name  = nameEl.value.trim();
+    orderState.phone = phoneEl.value;
+    orderState.city  = cityEl.value.trim();
+    closeOrderModal();
+    // Immediately switch the underlying screen to the processing loader so
+    // the AI results screen (which sat behind the modal) doesn't flash
+    // during the async photo upload + Supabase insert.
+    const txt = document.getElementById('processing-text');
+    if (txt) txt.textContent = 'جاري إرسال طلبك...';
+    showScreen('processing');
+    submit();
+  }
+}
+
+// ---- AI MEASURE FLOW ----
+const AI_LOADING_MSGS = [
+  'جاري تحليل الصورة الأمامية...',
+  'جاري تحليل الصورة الجانبية...',
+  'جاري حساب المقاسات...',
+  'جاري التحقق من الدقة...',
+];
+
+let _aiLoadingTimer = null;
+
+// Switch between the two 3DLOOK subs (`dl-sub-entry` and `dl-sub-widget`).
+function showDlSub(name) {
+  document.querySelectorAll('#screen-aimeasure .aimeasure-sub').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('dl-sub-' + name);
+  if (target) target.classList.add('active');
+}
+window.showDlSub = showDlSub;
+// Legacy compatibility shim: any leftover code that calls showAiSub() routes
+// to the entry sub. Should be unreachable from the new HTML.
+function showAiSub(_n) { showDlSub('entry'); }
+window.showAiSub = showAiSub;
+
+function resetAiMeasureFlow() {
+  // Show the entry sub, hide the widget sub. Disable the "continue to
+  // checkout" button until 3DLOOK actually returns measurements.
+  showDlSub('entry');
+  const continueBtn = document.getElementById('dl-continue-btn');
+  if (continueBtn) { continueBtn.disabled = true; continueBtn.classList.remove('ready'); }
+  const status = document.getElementById('dl-status-text');
+  if (status) status.textContent = 'اتبع التعليمات داخل الويدجت لإكمال القياس';
+  // NB: we deliberately don't clear `window._3dlookMeasurements` so a user
+  // who navigates away and comes back doesn't lose their scan.
+}
+
+// Open the 3DLOOK widget — show the widget sub. The widget itself was
+// auto-rendered into `.saia-widget-container` when the integration script
+// loaded, so all we do here is reveal that sub.
+function openThreeDLook() {
+  gtag('event', 'tdlook_test_start', { event_category: 'tdlook_test' });
+  showDlSub('widget');
+}
+window.openThreeDLook = openThreeDLook;
+
+function dlBackToEntry() {
+  showDlSub('entry');
+}
+window.dlBackToEntry = dlBackToEntry;
+
+function dlContinueToCheckout() {
+  // Guard: don't proceed if no measurements were captured.
+  if (!window._3dlookMeasurements) {
+    console.warn('[Muheeb-Test] dlContinueToCheckout called without measurements');
+    return;
+  }
+  openOrderModal();
+}
+window.dlContinueToCheckout = dlContinueToCheckout;
+
+// Legacy alias so the old aiMeasureStart inline-handler (if any survives)
+// routes into the new flow.
+function aiMeasureStart() { openThreeDLook(); }
+window.aiMeasureStart = aiMeasureStart;
+
+function aiMeasureSkip() {
+  gtag('event', 'tdlook_test_skipped', { event_category: 'tdlook_test' });
+  // Bypass photos/loading/results entirely. Manual measurements (entered in
+  // earlier steps) are used as-is; no AI fields or photo URLs are persisted.
+  openOrderModal();
+}
+window.aiMeasureSkip = aiMeasureSkip;
+
+// ── AI FLOW BACK NAVIGATION ─────────────────────────────────────
+// sub-1 (entry+instructions) → screen-4b (preferred fit) — exits AI flow
+// sub-3 (combined photos)    → sub-1                      — within AI flow
+// Within-flow back preserves user data (photos in _aiPhotoBlobs and consent
+// checkbox state stay intact). Exiting back to 4b does NOT reset the AI
+// state — but if the user re-enters AI via validateStep4b, showScreen
+// triggers resetAiMeasureFlow which clears everything (existing behavior).
+function aiBackToFit() {
+  gtag('event', 'tdlook_test_back_to_fit', { event_category: 'tdlook_test' });
+  showScreen('4b');
+}
+window.aiBackToFit = aiBackToFit;
+
+function aiBackToEntry() {
+  gtag('event', 'tdlook_test_back_to_entry', { event_category: 'tdlook_test' });
+  showAiSub(1);
+}
+window.aiBackToEntry = aiBackToEntry;
+
+// From the checkout modal back button: close the modal AND return the
+// underlying screen to the 3DLOOK widget sub (where the user was).
+function checkoutBackToPhotos() {
+  closeOrderModal();
+  showDlSub('widget');
+}
+window.checkoutBackToPhotos = checkoutBackToPhotos;
+
+// ─────────────────────────────────────────────────────────────────────────
+// POST-PURCHASE RATING — two surfaces share one persistence path:
+//   1. Standalone screen (#screen-rating + #screen-rating-done)
+//      reached via the "قيّم تجربتك" link on the confirmation screen.
+//   2. Auto-popup modal (#rating-modal) shown ~2.5s after the
+//      confirmation screen appears (gated once-per-order via sessionStorage).
+// Both call _persistRating() under the hood — the only duplication is the
+// star-state variable + DOM element references per surface.
+// ─────────────────────────────────────────────────────────────────────────
+let _starRating = 0;       // selected stars on the standalone screen
+let _modalStarRating = 0;  // selected stars in the auto-popup modal
+
+// Shared core: persists the rating to Supabase (best-effort, non-blocking).
+async function _persistRating(rating, commentTrimmed, source) {
+  gtag('event', 'rating_submitted', {
+    event_category: 'engagement',
+    rating: rating,
+    has_comment: !!commentTrimmed,
+    source: source
+  });
+  if (!_lastConfirmedOrderRef) return;
+  try {
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+    const supabase = createClient(
+      'https://mwcmfzzukqiutztkgagg.supabase.co',
+      'sb_publishable_8zuxMDAcYGIozcmi8CS8sg_ZnjLmb6V'
+    );
+    const { error } = await supabase
+      .from(TEST_TABLE)
+      .update({
+        rating: rating,
+        rating_comment: commentTrimmed || null,
+        rating_submitted_at: new Date().toISOString()
+      })
+      .eq('order_number', _lastConfirmedOrderRef);
+    if (error) console.error('[Muheeb] Rating submission failed:', error);
+    else      console.log('[Muheeb] Rating saved for order #' + _lastConfirmedOrderRef + ' (source: ' + source + ')');
+  } catch (e) {
+    console.error('[Muheeb] Rating submission failed:', e);
+  }
+}
+
+// ── Standalone screen handlers ───────────────────────────────────────────
+function showRatingScreen() {
+  gtag('event', 'rating_screen_viewed', { event_category: 'engagement', source: 'screen' });
+  _starRating = 0;
+  // Only reset stars within #screen-rating (don't touch the modal's stars)
+  document.querySelectorAll('#screen-rating .rating-star').forEach(s => s.classList.remove('filled'));
+  const ta = document.getElementById('rating-comment');
+  if (ta) { ta.value = ''; ta.style.height = ''; }
+  const submitBtn = document.getElementById('rating-submit-btn');
+  if (submitBtn) submitBtn.disabled = true;
+  showScreen('rating');
+}
+window.showRatingScreen = showRatingScreen;
+
+function setRating(n) {
+  _starRating = n;
+  document.querySelectorAll('#screen-rating .rating-star').forEach((s, i) => {
+    s.classList.toggle('filled', i < n);
+  });
+  const submitBtn = document.getElementById('rating-submit-btn');
+  if (submitBtn) submitBtn.disabled = false;
+}
+window.setRating = setRating;
+
+function autoGrow(el) {
+  el.style.height = 'auto';
+  el.style.height = (el.scrollHeight + 2) + 'px';
+}
+window.autoGrow = autoGrow;
+
+async function submitRating() {
+  if (!_starRating) return;
+  const comment = (document.getElementById('rating-comment') || {}).value || '';
+  showRatingDone(true);
+  await _persistRating(_starRating, comment.trim(), 'screen');
+}
+window.submitRating = submitRating;
+
+function skipRating() {
+  gtag('event', 'rating_skipped', { event_category: 'engagement', source: 'screen' });
+  showRatingDone(false);
+}
+window.skipRating = skipRating;
+
+function showRatingDone(submitted) {
+  const headline = document.getElementById('rating-done-headline');
+  if (headline) headline.textContent = submitted ? 'شكراً لتقييمك!' : 'شكراً!';
+  showScreen('rating-done');
+}
+
+function goHome() {
+  // Strip query/hash and reload — fresh start on the landing screen
+  window.location.href = window.location.pathname;
+}
+window.goHome = goHome;
+
+// ── Auto-popup modal handlers ────────────────────────────────────────────
+function setRatingModal(n) {
+  _modalStarRating = n;
+  document.querySelectorAll('#m-rating-stars-row .rating-star').forEach((s, i) => {
+    s.classList.toggle('filled', i < n);
+  });
+  const btn = document.getElementById('m-rating-submit-btn');
+  if (btn) btn.disabled = false;
+}
+window.setRatingModal = setRatingModal;
+
+async function submitRatingModal() {
+  if (!_modalStarRating) return;
+  const comment = (document.getElementById('m-rating-comment') || {}).value || '';
+  closeRatingModal();
+  await _persistRating(_modalStarRating, comment.trim(), 'auto_modal');
+}
+window.submitRatingModal = submitRatingModal;
+
+function skipRatingModal() {
+  gtag('event', 'rating_skipped', { event_category: 'engagement', source: 'auto_modal' });
+  closeRatingModal();
+}
+window.skipRatingModal = skipRatingModal;
+
+function closeRatingModal() {
+  const overlay = document.getElementById('rating-modal-overlay');
+  const sheet   = document.getElementById('rating-modal');
+  if (overlay) overlay.classList.remove('visible');
+  if (sheet)   sheet.classList.remove('visible');
+}
+window.closeRatingModal = closeRatingModal;
+
+// Schedules the auto-popup 15s after the confirmation screen renders.
+// Long enough for the user to read the order ref, see the green Pay Now
+// CTA, and ideally tap it before the rating prompt arrives as a follow-up.
+// Gated by sessionStorage per order so it only fires ONCE per order — even
+// if the user navigates back to the confirmation screen.
+function scheduleRatingAutoPopup() {
+  if (!_lastConfirmedOrderRef) return;
+  const key = 'muheeb_rating_modal_shown_' + _lastConfirmedOrderRef;
+  if (sessionStorage.getItem(key)) return;
+  sessionStorage.setItem(key, '1');
+  setTimeout(() => {
+    // Reset modal state before showing
+    _modalStarRating = 0;
+    document.querySelectorAll('#m-rating-stars-row .rating-star').forEach(s => s.classList.remove('filled'));
+    const ta = document.getElementById('m-rating-comment');
+    if (ta) { ta.value = ''; ta.style.height = ''; }
+    const btn = document.getElementById('m-rating-submit-btn');
+    if (btn) btn.disabled = true;
+    const overlay = document.getElementById('rating-modal-overlay');
+    const sheet   = document.getElementById('rating-modal');
+    if (overlay) overlay.classList.add('visible');
+    if (sheet)   sheet.classList.add('visible');
+    gtag('event', 'rating_screen_viewed', { event_category: 'engagement', source: 'auto_modal' });
+  }, 15000);
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// AI PHOTO STORAGE (compression + Supabase Storage upload)
+// ─────────────────────────────────────────────────────────────────────────
+// TESTING MODE: Photos are being saved despite UI claiming "الصور لا تُحفظ".
+// Before going live with real customers, either:
+//   1. Update the consent text to reflect actual behavior, OR
+//   2. Stop saving photos
+// This is a privacy/legal issue that must be resolved before public launch.
+// ─────────────────────────────────────────────────────────────────────────
+
+// Compressed Blobs for the front/side photos, captured client-side from the
+// user's File before upload. Cleared on flow reset / mid-flow exit.
+const _aiPhotoBlobs = { front: null, side: null };
+
+// Resize an image to maxDim on the long edge and re-encode as JPEG at the
+// given quality (0..1). Targets ~100–300 KB at 1080px / 0.78. Returns a Blob.
+async function compressImage(file, maxDim = 1080, quality = 0.78) {
+  // Use createImageBitmap when available (modern browsers, fastest path).
+  let bitmap;
+  if (typeof createImageBitmap === 'function') {
+    bitmap = await createImageBitmap(file);
+  } else {
+    // Fallback via Image element for older Safari
+    const url = URL.createObjectURL(file);
+    bitmap = await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = (err) => { URL.revokeObjectURL(url); reject(err); };
+      img.src = url;
+    });
+  }
+  let { width, height } = bitmap;
+  if (Math.max(width, height) > maxDim) {
+    const scale = maxDim / Math.max(width, height);
+    width  = Math.round(width  * scale);
+    height = Math.round(height * scale);
+  }
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(bitmap, 0, 0, width, height);
+  if (bitmap.close) bitmap.close();
+  return await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
+}
+
+// Upload one Blob to Supabase Storage and return its public URL.
+async function uploadPhotoToStorage(supabaseClient, orderRef, side, blob) {
+  if (!blob) {
+    console.log('[Muheeb] No blob to upload for side=' + side + ' — skipping');
+    return null;
+  }
+  const path = `${orderRef}/${side}.jpg`;
+  const { error } = await supabaseClient.storage
+    .from('ai-photos')
+    .upload(path, blob, { upsert: true, contentType: 'image/jpeg' });
+  if (error) {
+    console.error('[Muheeb] Photo upload failed (' + side + '):', error);
+    return null;
+  }
+
+  // getPublicUrl response shape varies by SDK version:
+  //   v2:  { data: { publicUrl: '...' } }
+  //   v1:  { publicURL: '...' }   (capital URL, no data wrapper)
+  // The CDN ESM import isn't version-pinned, so handle both shapes —
+  // and fall back to manual URL construction (always works for public
+  // buckets) so we NEVER silently drop the URL after a successful upload.
+  let publicUrl = null;
+  try {
+    const result = supabaseClient.storage.from('ai-photos').getPublicUrl(path);
+    publicUrl = (result && result.data && result.data.publicUrl)
+             || (result && result.data && result.data.publicURL)
+             || (result && result.publicURL)
+             || (result && result.publicUrl)
+             || null;
+    if (!publicUrl) console.warn('[Muheeb] getPublicUrl returned no URL — falling back to manual construction. Raw response:', result);
+  } catch (e) {
+    console.error('[Muheeb] getPublicUrl threw (' + side + '):', e);
+  }
+  if (!publicUrl) {
+    publicUrl = `https://mwcmfzzukqiutztkgagg.supabase.co/storage/v1/object/public/ai-photos/${path}`;
+  }
+  console.log('[Muheeb] ' + (side === 'front' ? 'Front' : 'Side') + ' photo uploaded, URL:', publicUrl);
+  return publicUrl;
+}
+
+// ── LEARN-MORE BOTTOM SHEET (AI entry explainer) ──────────
+function openLearnMore() {
+  gtag('event', 'ai_learn_more_opened', { event_category: 'ai_measure' });
+  document.getElementById('learn-more-overlay').classList.add('visible');
+  document.getElementById('learn-more-sheet').classList.add('visible');
+}
+window.openLearnMore = openLearnMore;
+
+function closeLearnMore() {
+  document.getElementById('learn-more-overlay').classList.remove('visible');
+  document.getElementById('learn-more-sheet').classList.remove('visible');
+}
+window.closeLearnMore = closeLearnMore;
+
+function trackLearnMoreWhatsapp() {
+  gtag('event', 'ai_learn_more_whatsapp', { event_category: 'ai_measure' });
+}
+window.trackLearnMoreWhatsapp = trackLearnMoreWhatsapp;
+
+// ── PHOTO SOURCE BOTTOM SHEET ─────────────────────────────
+let _photoSheetSide = null;
+
+function openPhotoSheet(side) {
+  _photoSheetSide = side;
+  document.getElementById('photo-sheet-overlay').classList.add('visible');
+  document.getElementById('photo-sheet').classList.add('visible');
+}
+window.openPhotoSheet = openPhotoSheet;
+
+function closePhotoSheet() {
+  document.getElementById('photo-sheet-overlay').classList.remove('visible');
+  document.getElementById('photo-sheet').classList.remove('visible');
+  // Don't null _photoSheetSide here — pickPhotoSource may run synchronously
+  // after a click that called close*indirectly* via re-entrancy. Setting it
+  // null only when the sheet is reopened or after a pick is fine.
+}
+window.closePhotoSheet = closePhotoSheet;
+
+function pickPhotoSource(source) {
+  const side = _photoSheetSide;
+  closePhotoSheet();
+  if (!side) return;
+  const input = document.getElementById('ai-' + side + '-input-' + source);
+  if (input) input.click();
+}
+window.pickPhotoSource = pickPhotoSource;
+
+async function aiPhotoSelected(side, input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+
+  // Compress for upload (target ~100–300 KB) and stash the Blob for submit().
+  // We render the preview from the COMPRESSED image so what the user sees in
+  // the UI matches what eventually gets stored.
+  let blob;
+  try {
+    blob = await compressImage(file);
+  } catch (e) {
+    console.error('[Muheeb] Photo compression failed, falling back to original:', e);
+    blob = file;
+  }
+  _aiPhotoBlobs[side] = blob;
+
+  const url = URL.createObjectURL(blob);
+  const preview = document.getElementById('ai-' + side + '-preview');
+  if (preview) {
+    preview.style.backgroundImage = `url(${url})`;
+    preview.classList.add('visible');
+  }
+  // Switch label to "retake" state so user can replace the photo
+  const lblText = document.getElementById('ai-' + side + '-label-text');
+  if (lblText) lblText.textContent = 'تغيير الصورة';
+  // Combined photo screen has a single analyze button — enable only when
+  // BOTH photos are present.
+  const analyzeBtn = document.getElementById('btn-ai-analyze');
+  if (analyzeBtn) {
+    const bothReady = !!(_aiPhotoBlobs.front && _aiPhotoBlobs.side);
+    analyzeBtn.disabled = !bothReady;
+    if (bothReady) analyzeBtn.classList.add('ready');
+  }
+  if (side === 'front') gtag('event', 'tdlook_test_photo_front', { event_category: 'tdlook_test' });
+  if (side === 'side')  gtag('event', 'tdlook_test_photo_side',  { event_category: 'tdlook_test' });
+}
+window.aiPhotoSelected = aiPhotoSelected;
+
+function calcAIMeasurements() {
+  const h = orderState.height;
+  const w = orderState.weight;
+  const shape = orderState.bodyShape || '';
+  const isHeavy = shape === 'ممتلئ';
+  const chest  = Math.round(w * 1.1 + 25);
+  const waist  = Math.round(w * 1.0 + 15);
+  const sleeve = Math.round(h * 0.345);
+  let size;
+  if      (w <= 60)  size = isHeavy ? 'M'   : 'S';
+  else if (w <= 72)  size = isHeavy ? 'L'   : 'M';
+  else if (w <= 85)  size = isHeavy ? 'XL'  : 'L';
+  else if (w <= 100) size = isHeavy ? 'XXL' : 'XL';
+  else               size = 'XXL';
+  return { height: h, chest, waist, sleeve, size };
+}
+
+function aiMeasureAnalyze() {
+  showAiSub(5);
+  const statusEl = document.getElementById('ai-loading-status');
+  let msgIdx = 0;
+  function cycleMsg() {
+    if (!statusEl) return;
+    statusEl.style.opacity = '0';
+    setTimeout(() => {
+      msgIdx = (msgIdx + 1) % AI_LOADING_MSGS.length;
+      statusEl.textContent = AI_LOADING_MSGS[msgIdx];
+      statusEl.style.opacity = '1';
+    }, 300);
+  }
+  if (statusEl) statusEl.textContent = AI_LOADING_MSGS[0];
+  const interval = setInterval(cycleMsg, 1200);
+  _aiLoadingTimer = setTimeout(() => {
+    clearInterval(interval);
+    const m = calcAIMeasurements();
+    orderState.ai_chest  = m.chest;
+    orderState.ai_waist  = m.waist;
+    orderState.ai_sleeve = m.sleeve;
+    orderState.ai_size   = m.size;
+    // AI flow effectively completes here — fire the completed event then
+    // jump straight to checkout (no separate results screen).
+    gtag('event', 'tdlook_test_completed', { event_category: 'tdlook_test' });
+    openOrderModal();
+  }, 5000);
+}
+window.aiMeasureAnalyze = aiMeasureAnalyze;
+
+function aiMeasureRetry() {
+  gtag('event', 'tdlook_test_abandoned', { event_category: 'tdlook_test' });
+  resetAiMeasureFlow();
+}
+window.aiMeasureRetry = aiMeasureRetry;
+
+window.showScreen = showScreen;
+window.selectScanMode = selectScanMode;
+window.updateScanSub1Btn = updateScanSub1Btn;
+window.validateScanSub1 = validateScanSub1;
+window.startScanCapture = startScanCapture;
+window.showScanSub = showScanSub;
+window.validateStep1 = validateStep1;
+window.validateStep2 = validateStep2;
+window.validateStep3 = validateStep3;
+window.validateStep4 = validateStep4;
+window.handleSubmit = handleSubmit;
+window.goToStep = goToStep;
+window.showTooltip = showTooltip;
+window.closeTooltip = closeTooltip;

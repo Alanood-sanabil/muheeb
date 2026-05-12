@@ -1,0 +1,2181 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KP4MV75XLM"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KP4MV75XLM');
+  </script>
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-KHMK4ND3');</script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-L6V8XL5GLG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-L6V8XL5GLG');
+  </script>
+  <!-- Hotjar Tracking Code for Muheeb -->
+  <script>
+      (function(h,o,t,j,a,r){
+          h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+          h._hjSettings={hjid:6688595,hjsv:6};
+          a=o.getElementsByTagName('head')[0];
+          r=o.createElement('script');r.async=1;
+          r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+          a.appendChild(r);
+      })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="apple-touch-icon" href="/images/logo.png" />
+  <title>[TEST · 3DLOOK] مُهيب — اطلب ثوبك</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="fonts/fonts.css" />
+  <link rel="stylesheet" href="css/order.css" />
+  <link rel="stylesheet" href="css/sadu.css" />
+  <style>
+    /* === ORDER LANDING REDESIGN === */
+
+    /* Hide white fixed header on landing screen */
+    body:has(#screen-1.active) .order-header {
+      display: none !important;
+    }
+
+    #screen-1 {
+      position: fixed !important;
+      inset: 0;
+      height: 100vh !important;
+      min-height: 100vh !important;
+      overflow: hidden;
+    }
+
+    #screen-1 .landing-bg-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 60%;
+      display: block;
+      z-index: 0;
+    }
+
+    /* Top vignette so logo is readable */
+    #screen-1::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 140px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, transparent 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    #screen-1 .landing-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        transparent 25%,
+        rgba(0,0,0,0.55) 55%,
+        rgba(0,0,0,0.88) 75%,
+        rgba(0,0,0,0.94) 100%
+      );
+      z-index: 1;
+    }
+
+    #screen-1 .landing-topbar {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 20px 24px;
+      z-index: 10;
+    }
+
+    /* Full-height flex column over the image */
+    #screen-1 .landing-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 0 24px;
+      z-index: 10;
+    }
+
+    /* Zone 1: Title */
+    #screen-1 .landing-title-zone {
+      padding-top: 96px;
+      padding-bottom: 0;
+    }
+
+    #screen-1 .landing-big-title {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 2rem;
+      color: #FFFFFF;
+      text-align: right;
+      margin: 0;
+      margin-top: 60px;
+      line-height: 1.2;
+    }
+
+    #screen-1 .landing-sub-title {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 300;
+      font-size: 1rem;
+      color: #FFFFFF;
+      opacity: 0.85;
+      text-align: right;
+      margin: 8px 0 0;
+    }
+
+    /* Zone 2: Steps */
+    #screen-1 .landing-steps-zone {
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+      padding: 16px 0 0;
+      margin-top: 32px;
+    }
+
+    #screen-1 .landing-step-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
+    }
+
+    #screen-1 .landing-step-icon {
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    #screen-1 .landing-step-text {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+      text-align: right;
+    }
+
+    #screen-1 .landing-step-bold {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #FFFFFF;
+    }
+
+    #screen-1 .landing-step-muted {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.7);
+    }
+
+    #screen-1 .landing-cta-btn {
+      width: 100%;
+      height: 54px;
+      background: #FFFFFF;
+      color: #0A0A0A;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    /* ── AI MEASURE FLOW ── */
+    .aimeasure-sub { display: none; flex-direction: column; flex: 1; }
+    .aimeasure-sub.active { display: flex; flex-direction: column; flex: 1; }
+
+    .aimeasure-icon-wrap {
+      width: 80px;
+      height: 80px;
+      background: #F5F5F5;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+      flex-shrink: 0;
+    }
+
+    .aimeasure-trust-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      margin-bottom: 4px;
+    }
+
+    .aimeasure-trust-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.75rem;
+      color: #444;
+      white-space: nowrap;
+    }
+
+    .aimeasure-trust-sep {
+      width: 1px;
+      height: 14px;
+      background: #D0D0D0;
+    }
+
+    .aimeasure-headline {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #0A0A0A;
+      text-align: center;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .aimeasure-subtext {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.87rem;
+      color: #555;
+      text-align: center;
+      margin-bottom: 4px;
+      line-height: 1.7;
+    }
+
+    .aimeasure-skip-btn {
+      background: none;
+      border: none;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #0A0A0A;
+      cursor: pointer;
+      padding: 12px 20px;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .aimeasure-tips-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      /* Negative side margin extends the card past the step-body's 24px
+         horizontal padding, leaving ~16px from the screen edges. */
+      width: auto;
+      margin: 0 -8px;
+      background: #F5F5F5;
+      border: 1px solid rgba(10,10,10,0.05);
+      border-radius: 16px;
+      padding: 6px 22px;
+    }
+
+    .aimeasure-tip {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      direction: rtl;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 1.06rem;
+      color: #0A0A0A;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(10,10,10,0.07);
+    }
+
+    .aimeasure-tip:last-child { border-bottom: none; }
+
+    /* Tighten the gap between the headline and the tips card on this sub */
+    #aimeasure-sub-2 .screen-title {
+      margin-bottom: 18px;
+      margin-top: 4px;
+    }
+
+    /* AI consent checkbox (sub-1 entry) */
+    .aimeasure-consent {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      direction: rtl;
+      cursor: pointer;
+      padding: 4px 4px;
+      text-align: right;
+      user-select: none;
+    }
+    .aimeasure-consent input[type="checkbox"] {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: #0A0A0A;
+      cursor: pointer;
+    }
+    .aimeasure-consent-text {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: #666;
+      line-height: 1.55;
+    }
+
+    /* Disabled state for primary buttons (overrides sadu.css's !important).
+       Used by the AI start button until the consent checkbox is ticked. */
+    .btn-next:disabled,
+    .btn-next[disabled] {
+      background: #CCCCCC !important;
+      color: #FFFFFF !important;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    .btn-next:disabled::after,
+    .btn-next[disabled]::after {
+      opacity: 0.5;
+    }
+
+    /* PHOTO SOURCE BOTTOM SHEET */
+    .photo-sheet-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease;
+      z-index: 9990;
+    }
+    .photo-sheet-overlay.visible { opacity: 1; pointer-events: auto; }
+
+    .photo-sheet {
+      position: fixed; left: 0; right: 0; bottom: 0;
+      background: #FFFFFF;
+      border-radius: 18px 18px 0 0;
+      padding: 8px 18px calc(18px + env(safe-area-inset-bottom));
+      box-shadow: 0 -8px 28px rgba(0,0,0,0.12);
+      transform: translateY(100%);
+      transition: transform 0.28s cubic-bezier(.2,.8,.2,1);
+      z-index: 9991;
+      direction: rtl;
+    }
+    .photo-sheet.visible { transform: translateY(0); }
+
+    .photo-sheet-handle {
+      width: 40px; height: 4px;
+      background: rgba(10,10,10,0.15);
+      border-radius: 2px;
+      margin: 6px auto 10px;
+    }
+
+    .photo-sheet-option {
+      display: flex; align-items: center; gap: 14px;
+      direction: rtl;
+      width: 100%;
+      min-height: 56px;
+      padding: 14px 8px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(10,10,10,0.06);
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.96rem;
+      color: #0A0A0A;
+      cursor: pointer;
+      text-align: right;
+      transition: background 0.15s;
+    }
+    .photo-sheet-option:last-of-type { border-bottom: none; }
+    .photo-sheet-option:hover  { background: #FAFAFA; }
+    .photo-sheet-option:active { background: #F0F0F0; }
+    .photo-sheet-option svg { flex-shrink: 0; }
+
+    .photo-sheet-cancel {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 14px;
+      background: #F5F5F5;
+      border: none;
+      border-radius: 10px;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #888;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .photo-sheet-cancel:hover { background: #EEE; color: #555; }
+
+    /* ─── AI ENTRY "تعرف أكثر" PILL BUTTON + LEARN-MORE BOTTOM SHEET ── */
+    .aimeasure-learn-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      direction: rtl;
+      background: #F0EDE8;
+      border: 1px solid rgba(10,10,10,0.08);
+      border-radius: 999px;
+      padding: 7px 14px;
+      margin: 16px 0;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #444;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.18s ease, transform 0.12s ease, border-color 0.18s ease;
+    }
+    .aimeasure-learn-more:hover  { background: #E8E3D8; border-color: rgba(10,10,10,0.12); color: #0A0A0A; }
+    .aimeasure-learn-more:active { background: #DDD6C7; transform: scale(0.97); }
+    .aimeasure-learn-more .lm-icon { font-size: 1rem; line-height: 1; opacity: 0.7; }
+
+    .learn-more-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease;
+      z-index: 9990;
+    }
+    .learn-more-overlay.visible { opacity: 1; pointer-events: auto; }
+
+    .learn-more-sheet {
+      position: fixed; left: 0; right: 0; bottom: 0;
+      background: #FFFFFF;
+      border-radius: 18px 18px 0 0;
+      padding: 8px 22px calc(20px + env(safe-area-inset-bottom));
+      box-shadow: 0 -8px 28px rgba(0,0,0,0.12);
+      transform: translateY(100%);
+      transition: transform 0.28s cubic-bezier(.2,.8,.2,1);
+      z-index: 9991;
+      direction: rtl;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .learn-more-sheet.visible { transform: translateY(0); }
+
+    .learn-more-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 4px 0 12px;
+      border-bottom: 1px solid #F0F0F0;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+    .learn-more-title {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #0A0A0A;
+      margin: 0;
+      flex: 1;
+      text-align: right;
+    }
+    .learn-more-close {
+      flex-shrink: 0;
+      width: 32px; height: 32px;
+      background: #F5F5F5;
+      border: none;
+      border-radius: 50%;
+      font-size: 0.95rem;
+      color: #767676;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-inline-start: 12px;
+    }
+    .learn-more-close:hover { background: #EEE; color: #0A0A0A; }
+
+    .learn-more-body {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      padding: 4px 0 16px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .learn-more-section { margin-bottom: 18px; }
+    .learn-more-section:last-child { margin-bottom: 0; }
+    .learn-more-section h4 {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #0A0A0A;
+      margin: 0 0 6px;
+    }
+    .learn-more-section p {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.88rem;
+      color: #555;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .learn-more-wa-btn {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px;
+      width: 100%;
+      height: 50px;
+      margin-top: 10px;
+      flex-shrink: 0;
+      background: #25D366;
+      color: #FFFFFF;
+      border-radius: 10px;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.92rem;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .learn-more-wa-btn:hover { opacity: 0.9; }
+    .learn-more-wa-btn svg { flex-shrink: 0; }
+
+    .aimeasure-tip-icon {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .aimeasure-photo-guide {
+      width: 100%;
+      max-width: 240px;
+      aspect-ratio: 3 / 5;
+      background: #F5F5F5;
+      border-radius: 16px;
+      border: 2px dashed #E0E0E0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 0 14px;
+      gap: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .aimeasure-ref-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      border-radius: 14px;
+    }
+
+    .aimeasure-photo-preview {
+      position: absolute;
+      inset: 0;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      border-radius: 14px;
+      display: none;
+    }
+    .aimeasure-photo-preview.visible { display: block; }
+
+    /* Once the user's photo is shown, hide the reference example image so
+       it can't bleed through behind aspect-ratio gaps in `contain` fit,
+       and hide the "مثال للوقفة الصحيحة" caption above it (which is a
+       sibling of the guide, so target via the parent step-top). */
+    .aimeasure-photo-guide:has(.aimeasure-photo-preview.visible) .aimeasure-ref-img {
+      display: none;
+    }
+    .step-top:has(.aimeasure-photo-preview.visible) .aimeasure-ref-label {
+      display: none;
+    }
+
+    .aimeasure-ref-label {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #999;
+      text-align: center;
+      margin-bottom: 8px;
+      margin-top: 0;
+    }
+
+    .aimeasure-upload-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #0A0A0A;
+      color: #FFFFFF;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.88rem;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      z-index: 2;
+      position: relative;
+    }
+
+    .aimeasure-spinner {
+      width: 52px;
+      height: 52px;
+      border: 3px solid #E8E8E8;
+      border-top-color: #0A0A0A;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .aimeasure-loading-title {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #0A0A0A;
+      text-align: center;
+    }
+
+    .aimeasure-loading-status {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.85rem;
+      color: #767676;
+      text-align: center;
+      transition: opacity 0.3s ease;
+    }
+
+    .aimeasure-results-card {
+      width: 100%;
+      background: #F5F5F5;
+      border-radius: 14px;
+      padding: 0 16px;
+      margin: 12px 0;
+    }
+
+    .aimeasure-result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 13px 0;
+      border-bottom: 1px solid #E8E8E8;
+      direction: rtl;
+    }
+
+    .aimeasure-result-label {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.85rem;
+      color: #767676;
+    }
+
+    .aimeasure-result-val {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #0A0A0A;
+    }
+
+    @keyframes aiCircle {
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes aiTick {
+      to { stroke-dashoffset: 0; }
+    }
+    .ai-check-circle { animation: aiCircle 0.55s ease forwards; }
+    .ai-check-tick   { animation: aiTick  0.4s ease 0.55s forwards; }
+
+    /* ── FABRIC CARDS ── */
+    .fabric-cards-row {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .fabric-card {
+      flex: 1;
+      border: 1.5px solid #E8E8E8;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.15s, border-width 0.15s;
+      background: #FFFFFF;
+    }
+
+    .fabric-card.selected {
+      border: 2px solid #0A0A0A;
+    }
+
+    .fabric-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: contain;
+      object-position: center;
+      display: block;
+      border-radius: 12px 12px 0 0;
+      background: #F5F5F5;
+    }
+
+    .fabric-card-info {
+      padding: 10px 12px 12px;
+    }
+
+    .fabric-card-label {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #0A0A0A;
+      line-height: 1.2;
+    }
+
+    .fabric-card-sub {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.78rem;
+      color: #767676;
+      margin-top: 2px;
+    }
+
+    /* ─── COMBINED AI ENTRY (sub-1): compact tips card ──────────────── */
+    .aimeasure-divider {
+      width: 60%;
+      height: 1px;
+      background: #E5E5E5;
+      border: none;
+      margin: 14px auto 12px;
+    }
+    .aimeasure-mini-section {
+      width: 100%;
+      direction: rtl;
+      text-align: right;
+    }
+    .aimeasure-mini-section-label {
+      font-family: 'YearOfTheCamel','Cairo',sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #888;
+      letter-spacing: 0.04em;
+      display: block;
+      margin: 0 8px 6px;
+    }
+    .aimeasure-tips-compact { padding: 4px 16px; }
+    .aimeasure-tips-compact .aimeasure-tip {
+      padding: 9px 0;
+      gap: 12px;
+      font-size: 0.92rem;
+      font-weight: 500;
+    }
+    .aimeasure-tips-compact .aimeasure-tip-icon { width: 20px; height: 20px; }
+
+    /* ─── COMBINED PHOTO CAPTURE (sub-3): two tiles side-by-side ────── */
+    .ai-dual-photos {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      width: 100%;
+      direction: rtl;
+    }
+    .ai-dual-tile {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .ai-dual-tile-label {
+      font-family: 'YearOfTheCamel','Cairo',sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #555;
+      text-align: center;
+    }
+    .ai-dual-guide {
+      width: 100% !important;
+      max-width: none !important;
+      max-height: 44vh !important;
+      aspect-ratio: 3 / 5;
+      padding: 0 0 8px !important;
+    }
+    .ai-dual-upload {
+      font-size: 0.74rem !important;
+      padding: 7px 12px !important;
+      gap: 5px !important;
+    }
+    .ai-dual-note {
+      font-family: 'YearOfTheCamel','Cairo',sans-serif;
+      font-size: 0.78rem;
+      color: #888;
+      text-align: center;
+      margin-top: 12px;
+      width: 100%;
+    }
+
+    /* ─── BACK BUTTON (AI flow only) ────────────────────────────────── */
+    /* In RTL, the chevron-right glyph (›) means "back" — going against
+       the right-to-left reading direction. Visually sits on the right
+       (start) of the action row; primary CTA fills the rest. */
+    .step-actions-row {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      width: 100%;
+      direction: rtl;
+      align-items: stretch;
+    }
+    .step-actions-row .btn-next {
+      flex: 1;
+      width: auto;
+    }
+    .btn-back {
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      background: #FFFFFF;
+      border: 1.5px solid #0A0A0A;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #0A0A0A;
+      transition: background 0.15s ease;
+      padding: 0;
+    }
+    .btn-back:hover  { background: #F5F5F5; }
+    .btn-back:active { background: #EEEEEE; }
+    .btn-back svg    { width: 22px; height: 22px; }
+
+    /* ─── AI SKIP BUTTON (sub-1 entry) ─────────────────────────────── */
+    /* Outline counterpart to the primary "ابدأ القياس". Sits directly
+       under the primary by reserving 62px on the start side (back btn 52
+       + row gap 10) so it visually aligns with the primary above. */
+    .aimeasure-skip-btn {
+      width: calc(100% - 62px);
+      margin-inline-start: 62px;
+      height: 52px;
+      background: #FFFFFF;
+      border: 1px solid #0A0A0A;
+      border-radius: 4px;
+      font-family: 'YearOfTheCamel', 'IBM Plex Sans Arabic', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #0A0A0A;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .aimeasure-skip-btn:hover  { background: #F5F5F5; }
+    .aimeasure-skip-btn:active { background: #EEEEEE; }
+
+    /* ─── CHECKOUT PHONE VALIDATION STATES (modal only) ────────────── */
+    #order-modal .line-input-wrap.invalid .line-border      { background: #C0392B; height: 2px; }
+    #order-modal .line-input-wrap.invalid .line-border-fill { background: #C0392B; }
+    #order-modal .line-input-wrap.valid   .line-border      { background: #1D8A3A; height: 2px; }
+    #order-modal .line-input-wrap.valid   .line-border-fill { background: #1D8A3A; }
+    #order-modal .line-input-wrap.valid::after {
+      content: '✓';
+      position: absolute;
+      left: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #1D8A3A;
+      font-weight: 700;
+      font-size: 1rem;
+      pointer-events: none;
+    }
+    #order-modal #modal-submit-btn:disabled { cursor: not-allowed; }
+  </style>
+  <style>
+    /* === BODY SCAN SUB-SCREENS === */
+    .scan-sub { display: none; flex-direction: column; flex: 1; }
+    .scan-sub.active { display: flex; flex-direction: column; flex: 1; }
+
+    /* Privacy banner */
+    .scan-privacy-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      background: #F5F5F5;
+      border-radius: 8px;
+      padding: 10px 14px;
+      width: 100%;
+      margin-bottom: 20px;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.78rem;
+      color: #767676;
+      text-align: center;
+      direction: rtl;
+    }
+
+    /* Hero image placeholder */
+    .scan-hero-placeholder {
+      width: 100%;
+      height: 220px;
+      background: #E8E8E8;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .scan-hero-svg {
+      transition: opacity 0.25s ease;
+    }
+
+    /* Stacked toggle buttons */
+    .scan-mode-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .scan-toggle-btn {
+      width: 100%;
+      height: 52px;
+      background: #FFFFFF;
+      color: #0A0A0A;
+      border: 1.5px solid #0A0A0A;
+      border-radius: 12px;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      text-align: center;
+    }
+    .scan-toggle-btn.selected {
+      background: #0A0A0A;
+      color: #FFFFFF;
+      border-color: #0A0A0A;
+    }
+
+    /* Privacy checkbox */
+    .scan-checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      direction: rtl;
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+    .scan-checkbox-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #0A0A0A;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .scan-checkbox-row label {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.78rem;
+      color: #767676;
+      cursor: pointer;
+      line-height: 1.5;
+    }
+
+    .scan-camera-box {
+      width: 100%;
+      height: 320px;
+      background: #1A1A1A;
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 16px;
+      flex-shrink: 0;
+    }
+
+    /* Loading / error states inside camera box */
+    .scan-cam-state {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #F5F5F5;
+      border-radius: 16px;
+    }
+
+    .scan-cam-state-title {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #0A0A0A;
+      text-align: center;
+    }
+
+    .scan-cam-state-sub {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.8rem;
+      color: #767676;
+      text-align: center;
+    }
+
+    .btn-scan-manual {
+      margin-top: 6px;
+      height: 40px;
+      padding: 0 20px;
+      background: #FFFFFF;
+      color: #0A0A0A;
+      border: 1.5px solid #0A0A0A;
+      border-radius: 8px;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    #scan-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    /* Live camera overlay (silhouette + corners + scan line + label) */
+    #scan-cam-overlay {
+      position: absolute;
+      inset: 0;
+      display: none;
+      pointer-events: none;
+    }
+
+    .scan-top-label {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.45);
+      border-radius: 6px;
+      padding: 4px 12px;
+      white-space: nowrap;
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: #FFFFFF;
+      z-index: 3;
+    }
+
+    /* Corner bracket marks */
+    .scan-corner {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-color: rgba(255,255,255,0.85);
+      border-style: solid;
+    }
+    .scan-corner-tl { top: 10px; right: 10px; border-width: 2px 0 0 2px; }
+    .scan-corner-tr { top: 10px; left: 10px;  border-width: 2px 2px 0 0; }
+    .scan-corner-bl { bottom: 10px; right: 10px; border-width: 0 0 2px 2px; }
+    .scan-corner-br { bottom: 10px; left: 10px;  border-width: 0 2px 2px 0; }
+
+    /* Body silhouette guide */
+    .scan-silhouette {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.55;
+      z-index: 2;
+    }
+
+    /* Scanning beam */
+    .scan-beam {
+      position: absolute;
+      left: 20%;
+      width: 60%;
+      height: 2px;
+      background: rgba(255,255,255,0.55);
+      box-shadow: 0 0 8px 2px rgba(255,255,255,0.3);
+      animation: scanBeam 2.5s linear infinite;
+      z-index: 4;
+    }
+    @keyframes scanBeam {
+      0%   { top: 10%; }
+      100% { top: 90%; }
+    }
+
+    /* Countdown overlay */
+    #scan-countdown {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.35);
+      z-index: 10;
+    }
+    #scan-countdown.visible { display: flex; }
+
+    #scan-countdown-num {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 5rem;
+      color: #FFFFFF;
+      line-height: 1;
+      text-shadow: 0 2px 16px rgba(0,0,0,0.5);
+      animation: countPulse 1s ease-in-out;
+    }
+    @keyframes countPulse {
+      0%   { transform: scale(1.4); opacity: 0; }
+      30%  { transform: scale(1);   opacity: 1; }
+      80%  { transform: scale(1);   opacity: 1; }
+      100% { transform: scale(0.8); opacity: 0; }
+    }
+
+    /* Shutter flash (full screen) */
+    #shutter-flash {
+      position: fixed;
+      inset: 0;
+      background: #FFFFFF;
+      z-index: 9999;
+      display: none;
+      pointer-events: none;
+    }
+
+    /* Frozen frame background in sub-3 */
+    #scan-frozen-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: blur(10px);
+      transform: scale(1.05);
+      z-index: 0;
+      display: none;
+    }
+
+    #scan-sub-3 .step-body { position: relative; z-index: 1; }
+
+    /* Analysis step labels */
+    .scan-analysis-step {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.82rem;
+      color: #767676;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      min-height: 1.2em;
+    }
+    .scan-analysis-step.visible { opacity: 1; }
+
+    .scan-camera-hint {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.82rem;
+      color: #767676;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .scan-proc-title {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #0A0A0A;
+      text-align: center;
+    }
+
+    .scan-proc-sub {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.82rem;
+      color: #767676;
+      text-align: center;
+      max-width: 280px;
+      line-height: 1.6;
+    }
+
+    .scan-prog-wrap {
+      width: 70%;
+      max-width: 320px;
+      height: 4px;
+      background: #E8E8E8;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .scan-prog-fill {
+      height: 100%;
+      width: 0%;
+      background: #0A0A0A;
+      border-radius: 2px;
+    }
+
+    .scan-check-circle { animation: drawCircle 0.5s ease forwards; }
+    .scan-check-tick   { animation: drawTick  0.4s ease 0.5s forwards; }
+
+    .scan-meas-card {
+      width: 100%;
+      background: #F5F5F5;
+      border-radius: 12px;
+      padding: 0 16px;
+      margin-bottom: 8px;
+    }
+
+    .scan-meas-header {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      color: #0A0A0A;
+      padding: 14px 0 10px;
+      border-bottom: 1px solid #E8E8E8;
+      text-align: right;
+    }
+
+    .scan-meas-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #E8E8E8;
+      direction: rtl;
+    }
+    .scan-meas-row:last-child { border-bottom: none; }
+
+    .scan-meas-label {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 400;
+      font-size: 0.85rem;
+      color: #767676;
+    }
+
+    .scan-meas-value {
+      font-family: 'YearOfTheCamel', 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #0A0A0A;
+    }
+  </style>
+</head>
+<body>
+  <!-- TEST BANNER — visible reminder this is the 3DLOOK experiment, not the live order page -->
+  <div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#FFB300;color:#0A0A0A;font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:11px;font-weight:700;text-align:center;padding:4px 8px;letter-spacing:.05em;text-transform:uppercase;pointer-events:none;">
+    TEST · 3DLOOK · writes to orders_test_3dlook
+  </div>
+
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KHMK4ND3"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div id="loader-screen">
+    <div class="sadu-loader-diamond" aria-label="جاري التحميل">
+      <svg width="120" height="120" viewBox="0 0 100 100" aria-hidden="true">
+        <polygon class="sat" style="animation-delay:0s"    points="50,6 55,16 45,16" fill="#0A0A0A"/>
+        <polygon class="sat" style="animation-delay:0.4s"  points="94,50 84,55 84,45" fill="#0A0A0A"/>
+        <polygon class="sat" style="animation-delay:0.8s"  points="50,94 45,84 55,84" fill="#0A0A0A"/>
+        <polygon class="sat" style="animation-delay:1.2s"  points="6,50 16,45 16,55" fill="#0A0A0A"/>
+        <g class="center">
+          <polygon points="50,28 72,50 50,72 28,50" fill="none" stroke="#0A0A0A" stroke-width="1.2"/>
+          <polygon points="50,38 62,50 50,62 38,50" fill="#0A0A0A"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <!-- GLOBAL HEADER (logo + step progress) -->
+  <div class="order-header">
+    <img src="images/logo.png" alt="مُهيب" class="logo-img">
+    <div id="progress-container">
+      <div id="progress-steps" class="sadu-steps">
+        <div class="sadu-step progress-step active" id="step-dot-1">
+          <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
+            <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
+          </svg>
+          <span class="sadu-step-label step-label">الثوب</span>
+        </div>
+        <div class="sadu-step-line progress-line" id="line-1-2"></div>
+        <div class="sadu-step progress-step" id="step-dot-2">
+          <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
+            <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
+          </svg>
+          <span class="sadu-step-label step-label">المقاسات</span>
+        </div>
+        <div class="sadu-step-line progress-line" id="line-2-3"></div>
+        <div class="sadu-step progress-step" id="step-dot-3">
+          <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
+            <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
+          </svg>
+          <span class="sadu-step-label step-label">شكل الجسم</span>
+        </div>
+        <div class="sadu-step-line progress-line" id="line-3-4"></div>
+        <div class="sadu-step progress-step" id="step-dot-4">
+          <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
+            <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
+          </svg>
+          <span class="sadu-step-label step-label">المقاس المفضل</span>
+        </div>
+        <div class="sadu-step-line progress-line" id="line-4-5"></div>
+        <div class="sadu-step progress-step" id="step-dot-5">
+          <svg class="sadu-step-diamond" viewBox="0 0 14 14" aria-hidden="true">
+            <polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="none" stroke="#0A0A0A" stroke-width="1"/>
+          </svg>
+          <span class="sadu-step-label step-label">قياسات AI</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 1: Landing -->
+  <div id="screen-1" class="screen active">
+    <img src="images/A.N.ZAHY-28 (1).jpg" alt="ثوبك المثالي" class="landing-bg-img">
+    <div class="landing-gradient"></div>
+
+    <div class="landing-topbar">
+      <img src="images/logo.png" alt="مُهيب" style="height:56px;width:auto;display:block;object-fit:contain;filter:invert(1) brightness(2);">
+    </div>
+
+    <div class="landing-overlay">
+
+      <!-- Zone 1: Title -->
+      <div class="landing-title-zone">
+        <h1 class="landing-big-title">ثوبك المثالي يوصلك للبيت</h1>
+        <p class="landing-sub-title">اختر قماشك، أعطنا مقاساتك — نوصله لك في ٤ أيام</p>
+      </div>
+
+      <!-- Zone 2: Steps (centered) -->
+      <div class="landing-steps-zone">
+        <!-- Row 1 -->
+        <div class="landing-step-row">
+          <svg class="landing-step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/>
+            <line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/>
+            <line x1="8.12" y1="8.12" x2="12" y2="12"/>
+          </svg>
+          <div class="landing-step-text">
+            <span class="landing-step-bold">اختر ثوبك</span>
+            <span class="landing-step-muted">اختار اللون والياقة اللي تناسبك</span>
+          </div>
+        </div>
+        <!-- Row 2 -->
+        <div class="landing-step-row">
+          <svg class="landing-step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 3H3v7l9 2 9-2V3z"/><line x1="12" y1="12" x2="12" y2="21"/>
+            <line x1="9" y1="21" x2="15" y2="21"/>
+          </svg>
+          <div class="landing-step-text">
+            <span class="landing-step-bold">أدخل مقاساتك</span>
+            <span class="landing-step-muted">طولك، وزنك، وشكل جسمك</span>
+          </div>
+        </div>
+        <!-- Row 3 -->
+        <div class="landing-step-row">
+          <svg class="landing-step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <div class="landing-step-text">
+            <span class="landing-step-bold">اكد وانتظر</span>
+            <span class="landing-step-muted">نوصل ثوبك لبابك في الوقت المحدد</span>
+          </div>
+        </div>
+        <!-- Row 4 -->
+        <div class="landing-step-row">
+          <svg class="landing-step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+          <div class="landing-step-text">
+            <span class="landing-step-bold">نوصل لجميع أنحاء المملكة</span>
+            <span class="landing-step-muted">وين ما كنت، ثوبك يجيك وألم وجاهز</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="landing-cta-btn" id="order-landing-cta" style="margin-top:32px;">ابدأ طلبك ←</button>
+
+      <p style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-size:0.82rem;font-weight:400;color:rgba(255,255,255,0.6);text-align:center;margin-top:16px;">
+        عندك استفسار عن مهيب؟ <a href="https://wa.me/966533045580" target="_blank" rel="noopener" style="color:rgba(255,255,255,0.6);text-decoration:underline;">تواصل مع فريقنا</a>
+      </p>
+
+    </div>
+  </div>
+
+  <!-- SCREEN 2: Step 1 — Color + Fabric + Collar -->
+  <div id="screen-2" class="screen">
+    <div class="step1-hero-image">
+      <div class="hero-carousel" id="hero-carousel">
+        <div class="carousel-track" id="carousel-track"></div>
+      </div>
+    </div>
+    <div class="carousel-dots" id="carousel-dots"></div>
+    <div class="step1-body">
+      <div class="step-top">
+        <div class="section-block">
+          <span class="section-micro-label">القماش</span>
+          <div class="fabric-cards-row step1-fabric-row" id="fabric-cards"></div>
+          <div class="error-msg" id="error-fabric">الرجاء اختيار القماش</div>
+        </div>
+        <div class="section-block">
+          <span class="section-micro-label">اللون</span>
+          <div class="color-swatches" id="color-swatches"></div>
+          <div class="selected-color-name" id="selected-color-name"></div>
+          <div class="error-msg" id="error-color">الرجاء اختيار اللون</div>
+        </div>
+        <div class="section-block">
+          <span class="section-micro-label">الياقة</span>
+          <div class="card-row" id="collar-cards"></div>
+          <div class="error-msg" id="error-collar">الرجاء اختيار الياقة</div>
+        </div>
+      </div>
+      <div class="step-bottom">
+        <button class="btn-next" id="btn-next-1" onclick="validateStep1()">اختر جميع الخيارات</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN scan: Step 2 — Body Scan -->
+  <div id="screen-scan" class="screen">
+
+    <!-- SUB-SCREEN 1: Choose mode -->
+    <div class="scan-sub active" id="scan-sub-1">
+      <div class="step-body">
+        <div class="step-top">
+          <h2 class="screen-title serif" style="text-align:center;margin-bottom:16px;">قياس الجسم</h2>
+
+          <!-- Privacy banner -->
+          <div class="scan-privacy-banner">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#767676" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span>صورك تُحذف فور المعالجة — خصوصيتك أهم شيء</span>
+          </div>
+
+          <!-- Big image placeholder — swaps SVG based on selection -->
+          <div class="scan-hero-placeholder" id="scan-hero-placeholder">
+            <!-- Single person (shown when بنفسي selected) -->
+            <svg id="scan-svg-self" class="scan-hero-svg" viewBox="0 0 120 220" width="90" height="165" fill="none" stroke="#BBBBBB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+              <circle cx="60" cy="28" r="20"/>
+              <path d="M20,65 C20,57 36,50 60,50 C84,50 100,57 100,65 L95,140 C95,146 82,152 60,152 C38,152 25,146 25,140 Z"/>
+              <line x1="25" y1="140" x2="18" y2="210"/>
+              <line x1="95" y1="140" x2="102" y2="210"/>
+              <line x1="42" y1="66" x2="12" y2="118"/>
+              <line x1="78" y1="66" x2="108" y2="118"/>
+            </svg>
+            <!-- Two people (default + when مع شخص ثاني selected) -->
+            <svg id="scan-svg-other" class="scan-hero-svg" viewBox="0 0 200 220" width="150" height="165" fill="none" stroke="#BBBBBB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <!-- Person 1 -->
+              <circle cx="60" cy="28" r="18"/>
+              <path d="M22,63 C22,56 36,50 60,50 C84,50 98,56 98,63 L93,135 C93,141 81,147 60,147 C39,147 27,141 27,135 Z"/>
+              <line x1="27"  y1="135" x2="20"  y2="210"/>
+              <line x1="93"  y1="135" x2="100" y2="210"/>
+              <line x1="40"  y1="64"  x2="12"  y2="112"/>
+              <line x1="80"  y1="64"  x2="98"  y2="112"/>
+              <!-- Person 2 -->
+              <circle cx="140" cy="28" r="18"/>
+              <path d="M102,63 C102,56 116,50 140,50 C164,50 178,56 178,63 L173,135 C173,141 161,147 140,147 C119,147 107,141 107,135 Z"/>
+              <line x1="107" y1="135" x2="100" y2="210"/>
+              <line x1="173" y1="135" x2="180" y2="210"/>
+              <line x1="120" y1="64"  x2="100" y2="112"/>
+              <line x1="160" y1="64"  x2="180" y2="112"/>
+            </svg>
+          </div>
+
+          <!-- Two stacked toggle buttons -->
+          <div class="scan-mode-list">
+            <button class="scan-toggle-btn" id="scan-opt-self" onclick="selectScanMode('self', this)">بنفسي</button>
+            <button class="scan-toggle-btn" id="scan-opt-other" onclick="selectScanMode('other', this)">مع شخص ثاني</button>
+          </div>
+
+          <div class="error-msg" id="error-scan-mode">الرجاء اختيار طريقة القياس</div>
+
+          <!-- Privacy checkbox -->
+          <div class="scan-checkbox-row">
+            <input type="checkbox" id="scan-privacy-check" onchange="updateScanSub1Btn()" />
+            <label for="scan-privacy-check">أوافق على سياسة الخصوصية والشروط</label>
+          </div>
+        </div>
+        <div class="step-bottom">
+          <button class="btn-next" id="btn-scan-1" onclick="validateScanSub1()">التالي</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-SCREEN 2: Real Camera -->
+    <div class="scan-sub" id="scan-sub-2">
+      <div class="step-body step-body-center">
+        <div class="step-top">
+          <h2 class="screen-title serif" style="text-align:center;margin-bottom:16px;">قياس الجسم</h2>
+
+          <div class="scan-camera-box" id="scan-camera-box">
+
+            <!-- Loading state -->
+            <div class="scan-cam-state" id="scan-cam-loading">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#AAAAAA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+              <p class="scan-cam-state-title">جاري فتح الكاميرا...</p>
+            </div>
+
+            <!-- Error state -->
+            <div class="scan-cam-state" id="scan-cam-error" style="display:none;">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#AAAAAA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              <p class="scan-cam-state-title">تعذّر فتح الكاميرا</p>
+              <p class="scan-cam-state-sub">يمكنك إدخال قياساتك يدوياً</p>
+              <button class="btn-scan-manual" onclick="showScanSub(4)">إدخال يدوي</button>
+            </div>
+
+            <!-- Live video -->
+            <video id="scan-video" autoplay muted playsinline></video>
+
+            <!-- Camera overlays (shown when video is live) -->
+            <div id="scan-cam-overlay">
+              <span class="scan-top-label">اضبط جسمك داخل الإطار</span>
+
+              <!-- Corner brackets -->
+              <div class="scan-corner scan-corner-tl"></div>
+              <div class="scan-corner scan-corner-tr"></div>
+              <div class="scan-corner scan-corner-bl"></div>
+              <div class="scan-corner scan-corner-br"></div>
+
+              <!-- Body silhouette -->
+              <svg class="scan-silhouette" viewBox="0 0 70 180" width="70" height="180" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Head -->
+                <circle cx="35" cy="16" r="12"/>
+                <!-- Neck -->
+                <line x1="35" y1="28" x2="35" y2="38"/>
+                <!-- Shoulders to waist -->
+                <path d="M10,45 C10,42 22,38 35,38 C48,38 60,42 60,45 L57,95 C57,98 48,102 35,102 C22,102 13,98 13,95 Z"/>
+                <!-- Left arm -->
+                <path d="M10,47 C6,55 4,75 6,100"/>
+                <!-- Right arm -->
+                <path d="M60,47 C64,55 66,75 64,100"/>
+                <!-- Left leg -->
+                <path d="M22,102 L18,170"/>
+                <!-- Right leg -->
+                <path d="M48,102 L52,170"/>
+              </svg>
+
+              <!-- Scan beam -->
+              <div class="scan-beam"></div>
+            </div>
+
+            <!-- Countdown overlay -->
+            <div id="scan-countdown">
+              <span id="scan-countdown-num">3</span>
+            </div>
+
+          </div>
+
+          <p class="scan-camera-hint">قف بعيد بما يكفي حتى يظهر جسمك كاملاً</p>
+        </div>
+        <div class="step-bottom">
+          <button class="btn-next ready" id="btn-scan-capture" onclick="startScanCapture()">ابدأ التحليل</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-SCREEN 3: Processing -->
+    <div class="scan-sub" id="scan-sub-3">
+      <!-- Frozen frame background -->
+      <div id="scan-frozen-bg"></div>
+      <div class="step-body step-body-center">
+        <div class="step-top" style="gap:16px;">
+          <canvas id="scan-particle-canvas" width="260" height="260"></canvas>
+          <p class="scan-proc-title">جاري التحليل...</p>
+          <p class="scan-proc-sub">الذكاء الاصطناعي يحلل قياساتك</p>
+          <p class="scan-analysis-step" id="scan-analysis-label"></p>
+          <div class="scan-prog-wrap">
+            <div id="scan-progress-bar" class="scan-prog-fill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB-SCREEN 4: Results -->
+    <div class="scan-sub" id="scan-sub-4">
+      <div class="step-body">
+        <div class="step-top" style="align-items:center;display:flex;flex-direction:column;">
+          <div style="margin-top:16px;margin-bottom:12px;">
+            <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="28" cy="28" r="25" stroke="#0A0A0A" stroke-width="2.5" stroke-dasharray="157" stroke-dashoffset="157" class="scan-check-circle"/>
+              <polyline points="17,28 24,36 38,20" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="35" stroke-dashoffset="35" class="scan-check-tick"/>
+            </svg>
+          </div>
+          <p style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-weight:700;font-size:1.3rem;color:#0A0A0A;text-align:center;margin-bottom:4px;">تم بنجاح! 🎉</p>
+          <p style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-weight:400;font-size:0.82rem;color:#767676;text-align:center;margin-bottom:20px;">إليك قياسات جسمك</p>
+          <div class="scan-meas-card">
+            <div class="scan-meas-header">القياسات</div>
+            <div class="scan-meas-row"><span class="scan-meas-label">محيط الصدر</span><span class="scan-meas-value">٩٦ سم</span></div>
+            <div class="scan-meas-row"><span class="scan-meas-label">محيط الخصر</span><span class="scan-meas-value">٨٢ سم</span></div>
+            <div class="scan-meas-row"><span class="scan-meas-label">محيط الأرداف</span><span class="scan-meas-value">٩٨ سم</span></div>
+            <div class="scan-meas-row"><span class="scan-meas-label">طول الكتف</span><span class="scan-meas-value">٤٤ سم</span></div>
+            <div class="scan-meas-row"><span class="scan-meas-label">طول الجسم</span><span class="scan-meas-value">١٧٠ سم</span></div>
+            <div class="scan-meas-row"><span class="scan-meas-label">محيط الرقبة</span><span class="scan-meas-value">٣٨ سم</span></div>
+          </div>
+        </div>
+        <div class="step-bottom">
+          <button class="btn-next ready" onclick="showScreen(3)">استخدم هذه القياسات</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCREEN 3: Step 2 — Measurements (sliders) -->
+  <div id="screen-3" class="screen">
+    <div class="step-body step-body-center">
+      <div class="step-top">
+        <h2 class="screen-title serif">المقاسات</h2>
+        <div class="slider-wrapper">
+          <div class="slider-row-label">
+            <span class="slider-label">
+              <span id="s-height-label"></span>
+              <button class="info-btn" onclick="showTooltip('height')">?</button>
+            </span>
+            <span class="slider-value" id="s-height-val">١٧٠ سم</span>
+          </div>
+          <div class="slider-track-wrapper">
+            <input type="range" id="slider-height" min="140" max="210" value="170" step="1" />
+          </div>
+        </div>
+        <div class="slider-wrapper">
+          <div class="slider-row-label">
+            <span class="slider-label">
+              <span id="s-weight-label"></span>
+              <button class="info-btn" onclick="showTooltip('weight')">?</button>
+            </span>
+            <span class="slider-value" id="s-weight-val">٨٠ كيلو</span>
+          </div>
+          <div class="slider-track-wrapper">
+            <input type="range" id="slider-weight" min="40" max="180" value="80" step="1" />
+          </div>
+        </div>
+        <div class="slider-wrapper">
+          <div class="slider-row-label">
+            <span class="slider-label">
+              <span id="s-shoe-label"></span>
+              <button class="info-btn" onclick="showTooltip('shoeSize')">?</button>
+            </span>
+            <span class="slider-value" id="s-shoe-val">٤٢ EU</span>
+          </div>
+          <div class="slider-track-wrapper">
+            <input type="range" id="slider-shoe" min="38" max="48" value="42" step="0.5" />
+          </div>
+        </div>
+        <div class="slider-wrapper">
+          <div class="slider-row-label">
+            <span class="slider-label">
+              <span id="s-age-label">العمر</span>
+              <button class="info-btn" onclick="showTooltip('age')">?</button>
+            </span>
+            <span class="slider-value" id="s-age-val">٢٥ سنة</span>
+          </div>
+          <div class="slider-track-wrapper">
+            <input type="range" id="slider-age" min="15" max="70" value="25" step="1" />
+          </div>
+        </div>
+
+        <div class="slider-wrapper">
+          <div class="slider-row-label">
+            <span class="slider-label">
+              <span>مقاس القميص</span>
+              <button class="info-btn" onclick="showTooltip('shirtSize')">?</button>
+            </span>
+            <span class="slider-value" id="s-shirt-val" style="opacity:.55;">اختر مقاسك</span>
+          </div>
+          <div class="size-pill-row" id="shirt-size-row">
+            <button type="button" class="size-pill" data-size="S"    onclick="selectShirtSize(this)">S</button>
+            <button type="button" class="size-pill" data-size="M"    onclick="selectShirtSize(this)">M</button>
+            <button type="button" class="size-pill" data-size="L"    onclick="selectShirtSize(this)">L</button>
+            <button type="button" class="size-pill" data-size="XL"   onclick="selectShirtSize(this)">XL</button>
+            <button type="button" class="size-pill" data-size="XXL"  onclick="selectShirtSize(this)">XXL</button>
+            <button type="button" class="size-pill" data-size="XXXL" onclick="selectShirtSize(this)">XXXL</button>
+          </div>
+        </div>
+      </div>
+      <div class="step-bottom">
+        <div class="step-actions-row">
+          <button type="button" class="btn-back" onclick="showScreen(2)" aria-label="السابق">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+          </button>
+          <button class="btn-next" id="btn-next-2" disabled onclick="validateStep2()">اختر مقاس القميص</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: Step 3 — Body Shape -->
+  <div id="screen-4" class="screen">
+    <div class="step-body step-body-center">
+      <div class="step-top">
+        <h2 class="screen-title serif">شكل الجسم</h2>
+        <div id="shape-cards"></div>
+        <div class="error-msg" id="error-body">الرجاء اختيار شكل الجسم</div>
+      </div>
+      <div class="step-bottom">
+        <div class="step-actions-row">
+          <button type="button" class="btn-back" onclick="showScreen(3)" aria-label="السابق">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+          </button>
+          <button class="btn-next" id="btn-next-3" onclick="validateStep3()">اختر شكل الجسم</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 4b: Step 4 — Fit Preference -->
+  <div id="screen-4b" class="screen">
+    <div class="step-body step-body-center">
+      <div class="step-top">
+        <h2 class="screen-title serif">كيف قياس ثوبك؟</h2>
+        <div class="fit-preview-wrap">
+          <div class="fit-img-stack" id="fit-img-stack">
+            <img class="fit-img" id="fit-img-slim"   src="images/Slim thob.svg"   alt="ضيق" />
+            <img class="fit-img" id="fit-img-normal" src="images/normal thob.svg" alt="عادي" />
+            <img class="fit-img" id="fit-img-loose"  src="images/Losse thob.svg"  alt="واسع" />
+          </div>
+        </div>
+<div class="fit-options-row">
+          <button class="fit-opt-btn" data-fit="slim" data-label="ضيق" onclick="selectFit(this)">ضيق</button>
+          <button class="fit-opt-btn" data-fit="normal" data-label="عادي" onclick="selectFit(this)">عادي</button>
+          <button class="fit-opt-btn" data-fit="loose" data-label="واسع" onclick="selectFit(this)">واسع</button>
+        </div>
+        <div class="error-msg" id="error-fit">الرجاء اختيار المقاس المفضل</div>
+      </div>
+      <div class="step-bottom">
+        <div class="step-actions-row">
+          <button type="button" class="btn-back" onclick="showScreen(4)" aria-label="السابق">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+          </button>
+          <button class="btn-next" id="btn-next-4b" onclick="validateStep4b()">اختر الفيت</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN ai-measure: 3DLOOK widget integration (TEST FILE ONLY) -->
+  <div id="screen-aimeasure" class="screen">
+
+    <!-- SUB ENTRY: explainer + start button -->
+    <div class="aimeasure-sub active" id="dl-sub-entry">
+      <div class="step-body step-body-center">
+        <div class="step-top" style="align-items:center;text-align:center;">
+          <div class="aimeasure-icon-wrap">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="6" y="14" width="36" height="26" rx="4" stroke="#0A0A0A" stroke-width="2.2" fill="none"/>
+              <circle cx="24" cy="27" r="7" stroke="#0A0A0A" stroke-width="2.2" fill="none"/>
+              <path d="M18 14v-2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2" stroke="#0A0A0A" stroke-width="2.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h2 class="aimeasure-headline">قياس بالذكاء الاصطناعي — 3DLOOK</h2>
+          <p class="aimeasure-subtext">صورتين فقط — من الأمام والجانب</p>
+        </div>
+        <div class="step-bottom" style="gap:12px;">
+          <div class="step-actions-row">
+            <button type="button" class="btn-back" onclick="showScreen('4b')" aria-label="السابق">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+            </button>
+            <button class="btn-next ready" id="dl-start-btn" onclick="openThreeDLook()">ابدأ القياس مع 3DLOOK</button>
+          </div>
+          <button type="button" class="aimeasure-skip-btn" onclick="aiMeasureSkip()">تخطى القياس الذكي</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB WIDGET: 3DLOOK iframe + continue button -->
+    <div class="aimeasure-sub" id="dl-sub-widget">
+      <div class="step-body step-body-center">
+        <div class="step-top" style="align-items:center;">
+          <h2 class="screen-title serif" style="text-align:center;font-size:1.4rem;margin-top:0;margin-bottom:6px;">قياس 3DLOOK</h2>
+          <p class="aimeasure-subtext" id="dl-status-text" style="margin-bottom:14px;">اتبع التعليمات داخل الويدجت لإكمال القياس</p>
+
+          <!-- Widget container — 3DLOOK auto-renders its iframe inside this on script load -->
+          <div class="saia-widget-container" id="dl-widget-container" style="width:100%;min-height:480px;border:1px solid #E5E5E5;border-radius:8px;overflow:hidden;background:#FAFAFA;"></div>
+        </div>
+        <div class="step-bottom" style="gap:12px;">
+          <div class="step-actions-row">
+            <button type="button" class="btn-back" onclick="dlBackToEntry()" aria-label="السابق">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+            </button>
+            <button class="btn-next" id="dl-continue-btn" disabled onclick="dlContinueToCheckout()">متابعة للدفع</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCREEN processing -->
+  <div id="screen-processing" class="screen">
+    <div class="processing-wrap">
+      <div class="sadu-loader-diamond" aria-label="جاري التحميل">
+        <svg width="120" height="120" viewBox="0 0 100 100" aria-hidden="true">
+          <polygon class="sat" style="animation-delay:0s"    points="50,6 55,16 45,16" fill="#0A0A0A"/>
+          <polygon class="sat" style="animation-delay:0.4s"  points="94,50 84,55 84,45" fill="#0A0A0A"/>
+          <polygon class="sat" style="animation-delay:0.8s"  points="50,94 45,84 55,84" fill="#0A0A0A"/>
+          <polygon class="sat" style="animation-delay:1.2s"  points="6,50 16,45 16,55" fill="#0A0A0A"/>
+          <g class="center">
+            <polygon points="50,28 72,50 50,72 28,50" fill="none" stroke="#0A0A0A" stroke-width="1.2"/>
+            <polygon points="50,38 62,50 50,62 38,50" fill="#0A0A0A"/>
+          </g>
+        </svg>
+      </div>
+      <p class="processing-text" id="processing-text">جاري تجهيز مقاساتك...</p>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: Step 5 — Contact + Summary -->
+  <!-- ORDER MODAL -->
+  <div id="order-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:flex-end;justify-content:center;">
+    <div id="order-modal" style="background:#FFFFFF;border-radius:20px 20px 0 0;padding:28px 24px 36px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;direction:rtl;position:relative;animation:slideUp 0.3s cubic-bezier(0.4,0,0.2,1) forwards;">
+      <button onclick="closeOrderModal()" style="position:absolute;top:20px;left:20px;background:#F5F5F5;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;color:#767676;line-height:1;">✕</button>
+
+      <p style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-weight:700;font-size:1.2rem;color:#0A0A0A;text-align:right;margin:0 0 4px;">أكمل طلبك</p>
+      <p style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-weight:400;font-size:0.85rem;color:#999999;text-align:right;margin:0 0 20px;">أدخل بياناتك وحنا نتواصل معك</p>
+
+      <div class="section-block w-full">
+        <div class="input-row">
+          <label id="name-label" for="input-name"></label>
+          <div class="line-input-wrap">
+            <input type="text" id="input-name" placeholder="" oninput="updateModalSubmitState()" />
+            <div class="line-border"><div class="line-border-fill"></div></div>
+          </div>
+        </div>
+        <div class="error-msg" id="error-name">الرجاء إدخال الاسم</div>
+
+        <div class="input-row">
+          <label id="phone-label" for="input-phone"></label>
+          <div class="line-input-wrap" id="phone-wrap">
+            <input type="tel" inputmode="numeric" pattern="[0-9]*" id="input-phone" placeholder="05XXXXXXXX" maxlength="10" oninput="onPhoneInput(this)" onblur="onPhoneBlur(this)" />
+            <div class="line-border"><div class="line-border-fill"></div></div>
+          </div>
+        </div>
+        <div class="error-msg" id="error-phone">الرجاء إدخال رقم الجوال</div>
+
+        <div class="input-row">
+          <label style="display:block;font-weight:600;font-size:.78rem;margin-bottom:4px;color:#0A0A0A;">المدينة</label>
+          <div class="line-input-wrap">
+            <input type="text" id="input-city" placeholder="أدخل مدينتك" oninput="updateModalSubmitState()" />
+            <div class="line-border"><div class="line-border-fill"></div></div>
+          </div>
+        </div>
+        <div class="error-msg" id="error-city">الرجاء إدخال المدينة</div>
+        <p style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-size:0.82rem;font-weight:400;color:#767676;text-align:right;margin-top:8px;">نوصل لجميع مناطق المملكة</p>
+      </div>
+
+      <!-- Summary -->
+      <div style="background:#F5F5F5;border-radius:10px;padding:12px 16px;margin-bottom:20px;direction:rtl;">
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E5E5E5;">
+          <span style="font-size:0.82rem;color:#767676;">اللون</span>
+          <span style="font-size:0.85rem;font-weight:700;" id="sum-color">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E5E5E5;">
+          <span style="font-size:0.82rem;color:#767676;">القماش</span>
+          <span style="font-size:0.85rem;font-weight:700;" id="sum-fabric">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E5E5E5;">
+          <span style="font-size:0.82rem;color:#767676;">الياقة</span>
+          <span style="font-size:0.85rem;font-weight:700;" id="sum-collar">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E5E5E5;">
+          <span style="font-size:0.82rem;color:#767676;">المقاسات</span>
+          <span style="font-size:0.82rem;font-weight:700;" id="modal-sum-meas">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0 0;">
+          <span style="font-size:0.95rem;font-weight:700;color:#0A0A0A;">السعر التقديري</span>
+          <span style="font-size:1rem;font-weight:700;" id="modal-sum-price">—</span>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:row;gap:10px;direction:rtl;align-items:stretch;">
+        <button type="button" onclick="checkoutBackToPhotos()" aria-label="السابق" style="flex-shrink:0;width:52px;height:52px;background:#FFFFFF;color:#0A0A0A;border:1.5px solid #0A0A0A;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+        <button id="modal-submit-btn" onclick="handleSubmit()" disabled style="flex:1;height:52px;background:#0A0A0A;color:#FFFFFF;border:none;border-radius:8px;font-family:'YearOfTheCamel','Cairo',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .18s;opacity:0.4;">تأكيد الطلب</button>
+      </div>
+      <p style="font-family:'YearOfTheCamel','Cairo',sans-serif;font-size:0.8rem;font-weight:700;color:#0A0A0A;text-align:center;margin-top:10px;">سنشاركك رابط الدفع بعد تأكيد الطلب</p>
+    </div>
+  </div>
+
+  <!-- STICKY FOOTER (step 4 only) -->
+  <div class="sticky-footer" id="sticky-footer">
+    <div class="price-row">
+      <span class="price-label">السعر التقديري</span>
+      <span class="price-amount" id="footer-price">١٧٩ ريال</span>
+    </div>
+    <div class="payment-note">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+        <line x1="1" y1="10" x2="23" y2="10"/>
+      </svg>
+      <span>سنشاركك رابط الدفع عبر واتساب بعد تأكيد الطلب</span>
+    </div>
+    <button class="btn-next btn-submit" id="submit-btn" onclick="handleSubmit()">أرسل الطلب</button>
+  </div>
+
+  <!-- SCREEN 6: Confirmation -->
+  <div id="screen-6" class="screen">
+    <div class="confirm-wrap">
+      <span class="sadu-success checkmark-svg">
+        <svg width="80" height="80" viewBox="0 0 100 100" aria-hidden="true">
+          <polygon class="ray" style="animation-delay:0.45s" points="50,2 54,10 46,10" fill="#0A0A0A"/>
+          <polygon class="ray" style="animation-delay:0.55s" points="98,50 90,54 90,46" fill="#0A0A0A"/>
+          <polygon class="ray" style="animation-delay:0.65s" points="50,98 46,90 54,90" fill="#0A0A0A"/>
+          <polygon class="ray" style="animation-delay:0.75s" points="2,50 10,46 10,54" fill="#0A0A0A"/>
+          <g class="core">
+            <polygon points="50,16 84,50 50,84 16,50" fill="none" stroke="#0A0A0A" stroke-width="1.5"/>
+            <polygon points="50,28 72,50 50,72 28,50" fill="none" stroke="#0A0A0A" stroke-width="1"/>
+            <polygon points="50,42 58,50 50,58 42,50" fill="#0A0A0A"/>
+          </g>
+        </svg>
+      </span>
+      <h1 class="confirm-title serif" id="confirm-title">تم استلام طلبك!</h1>
+      <p class="confirm-sub" id="confirm-sub"></p>
+      <div class="confirm-line"></div>
+      <div class="ref-label" id="confirm-ref-label"></div>
+      <div class="ref-num" id="order-ref"></div>
+      <a class="btn-wa" id="confirm-pay-btn"
+         href="https://muheeb.co/%D8%AB%D9%88%D8%A8%D9%83-%D8%B2%D8%A7%D9%87%D8%A8/p1436903656#"
+         target="_blank" rel="noopener noreferrer">
+        <span class="btn-wa-main">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect width="20" height="14" x="2" y="5" rx="2"/>
+            <line x1="2" x2="22" y1="10" y2="10"/>
+          </svg>
+          <span>ادفع الآن عن طريق الرابط</span>
+        </span>
+        <span class="btn-wa-sub">اضغط لإتمام الدفع وتأكيد طلبك</span>
+      </a>
+      <a class="confirm-wa-secondary" id="confirm-wa-btn" target="_blank" rel="noopener">
+        <span id="confirm-wa-text">أو تواصل معنا على واتساب</span>
+      </a>
+      <button type="button" class="confirm-rate-link" onclick="showRatingScreen()">قيّم تجربتك ←</button>
+    </div>
+  </div>
+
+  <!-- SCREEN rating: Post-purchase experience rating -->
+  <div id="screen-rating" class="screen">
+    <div class="rating-wrap">
+      <h1 class="rating-title">كيف كانت تجربتك؟</h1>
+      <p class="rating-sub">تقييمك يساعدنا نطور تجربة مُهيب</p>
+
+      <div class="rating-stars-row" id="rating-stars-row" role="radiogroup" aria-label="تقييم">
+        <button type="button" class="rating-star" data-rating="1" onclick="setRating(1)" aria-label="1 نجمة">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </button>
+        <button type="button" class="rating-star" data-rating="2" onclick="setRating(2)" aria-label="2 نجوم">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </button>
+        <button type="button" class="rating-star" data-rating="3" onclick="setRating(3)" aria-label="3 نجوم">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </button>
+        <button type="button" class="rating-star" data-rating="4" onclick="setRating(4)" aria-label="4 نجوم">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </button>
+        <button type="button" class="rating-star" data-rating="5" onclick="setRating(5)" aria-label="5 نجوم">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </button>
+      </div>
+
+      <div class="rating-comment-wrap">
+        <label class="rating-comment-label" for="rating-comment">ملاحظات (اختياري)</label>
+        <textarea id="rating-comment" class="rating-comment" rows="4" placeholder="شاركنا رأيك أو اقتراحاتك..." oninput="autoGrow(this)"></textarea>
+      </div>
+
+      <button type="button" class="rating-submit-btn" id="rating-submit-btn" disabled onclick="submitRating()">إرسال التقييم</button>
+      <button type="button" class="rating-skip-link" onclick="skipRating()">تخطي</button>
+    </div>
+  </div>
+
+  <!-- SCREEN rating-done: Post-rating thank-you -->
+  <div id="screen-rating-done" class="screen">
+    <div class="confirm-wrap">
+      <span class="sadu-success">
+        <svg width="64" height="64" viewBox="0 0 100 100" aria-hidden="true">
+          <polygon class="ray" style="animation-delay:0.45s" points="50,2 54,10 46,10" fill="#0A0A0A"/>
+          <polygon class="ray" style="animation-delay:0.55s" points="98,50 90,54 90,46" fill="#0A0A0A"/>
+          <polygon class="ray" style="animation-delay:0.65s" points="50,98 46,90 54,90" fill="#0A0A0A"/>
+          <polygon class="ray" style="animation-delay:0.75s" points="2,50 10,46 10,54" fill="#0A0A0A"/>
+          <g class="core">
+            <polygon points="50,16 84,50 50,84 16,50" fill="none" stroke="#0A0A0A" stroke-width="1.5"/>
+            <polygon points="50,28 72,50 50,72 28,50" fill="none" stroke="#0A0A0A" stroke-width="1"/>
+            <polygon points="50,42 58,50 50,58 42,50" fill="#0A0A0A"/>
+          </g>
+        </svg>
+      </span>
+      <h1 class="confirm-title serif" id="rating-done-headline">شكراً لتقييمك!</h1>
+      <p class="confirm-sub">نتطلع لخدمتك مرة أخرى</p>
+      <button type="button" class="rating-done-home" onclick="goHome()">العودة للصفحة الرئيسية</button>
+    </div>
+  </div>
+
+  <div class="tooltip-overlay" id="tooltip-overlay" onclick="closeTooltip()"></div>
+  <div class="tooltip-sheet" id="tooltip-sheet">
+    <div class="tooltip-handle"></div>
+    <h3 class="tooltip-title" id="tooltip-title"></h3>
+    <p class="tooltip-body" id="tooltip-body"></p>
+    <button class="tooltip-close" onclick="closeTooltip()">إغلاق</button>
+  </div>
+
+  <!-- PHOTO SOURCE BOTTOM SHEET (camera / gallery picker) -->
+  <div class="photo-sheet-overlay" id="photo-sheet-overlay" onclick="closePhotoSheet()"></div>
+  <div class="photo-sheet" id="photo-sheet" role="dialog" aria-label="اختر مصدر الصورة">
+    <div class="photo-sheet-handle"></div>
+    <button type="button" class="photo-sheet-option" onclick="pickPhotoSource('camera')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+      <span>التقط صورة جديدة</span>
+    </button>
+    <button type="button" class="photo-sheet-option" onclick="pickPhotoSource('gallery')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <circle cx="8.5" cy="9" r="1.5"/>
+        <path d="M21 15l-5-5L5 21"/>
+      </svg>
+      <span>اختر من المعرض</span>
+    </button>
+    <button type="button" class="photo-sheet-cancel" onclick="closePhotoSheet()">إلغاء</button>
+  </div>
+
+  <!-- LEARN MORE BOTTOM SHEET (AI measurement explainer) -->
+  <div class="learn-more-overlay" id="learn-more-overlay" onclick="closeLearnMore()"></div>
+  <div class="learn-more-sheet" id="learn-more-sheet" role="dialog" aria-label="ليش نستخدم الذكاء الاصطناعي للقياس">
+    <div class="photo-sheet-handle"></div>
+    <div class="learn-more-header">
+      <h3 class="learn-more-title">ليش نستخدم الذكاء الاصطناعي للقياس؟</h3>
+      <button type="button" class="learn-more-close" onclick="closeLearnMore()" aria-label="إغلاق">✕</button>
+    </div>
+    <div class="learn-more-body">
+      <section class="learn-more-section">
+        <h4>لماذا الذكاء الاصطناعي؟</h4>
+        <p>نستخدم الذكاء الاصطناعي عشان نضبط مقاسك بدقة عالية بدون ما تحتاج تروح لخياط. صورتين بسيطتين فقط، ونحلل قياسات جسمك تلقائياً عشان نفصّل الثوب على مقاسك تماماً.</p>
+      </section>
+      <section class="learn-more-section">
+        <h4>كيف يشتغل؟</h4>
+        <p>بنحتاج منك صورتين — واحدة من الأمام وواحدة من الجانب — وأنت لابس الثوب. النظام يحلل الصور ويستخرج القياسات الدقيقة خلال ثواني.</p>
+      </section>
+      <section class="learn-more-section">
+        <h4>خصوصيتك</h4>
+        <p>صورك تستخدم فقط لأغراض القياس وتفصيل ثوبك. لا تتم مشاركتها مع أي طرف ثالث.</p>
+      </section>
+    </div>
+    <a class="learn-more-wa-btn"
+       href="https://wa.me/966533045580?text=السلام%20عليكم%D8%8C%20عندي%20استفسار%20عن%20قياسات%20مُهيب%20بالذكاء%20الاصطناعي."
+       target="_blank" rel="noopener" onclick="trackLearnMoreWhatsapp()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      <span>عندك استفسار؟ تواصل معنا</span>
+    </a>
+  </div>
+
+  <!-- POST-PURCHASE RATING MODAL (auto-popups 2.5s after confirmation) -->
+  <div class="rating-modal-overlay" id="rating-modal-overlay"></div>
+  <div class="rating-modal" id="rating-modal" role="dialog" aria-label="كيف كانت تجربتك">
+    <h2 class="rating-modal-title">كيف كانت تجربتك؟</h2>
+    <p class="rating-modal-sub">تقييمك يساعدنا نطور تجربة مُهيب</p>
+
+    <div class="rating-stars-row" id="m-rating-stars-row" role="radiogroup" aria-label="تقييم">
+      <button type="button" class="rating-star" data-rating="1" onclick="setRatingModal(1)" aria-label="1 نجمة">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </button>
+      <button type="button" class="rating-star" data-rating="2" onclick="setRatingModal(2)" aria-label="2 نجوم">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </button>
+      <button type="button" class="rating-star" data-rating="3" onclick="setRatingModal(3)" aria-label="3 نجوم">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </button>
+      <button type="button" class="rating-star" data-rating="4" onclick="setRatingModal(4)" aria-label="4 نجوم">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </button>
+      <button type="button" class="rating-star" data-rating="5" onclick="setRatingModal(5)" aria-label="5 نجوم">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </button>
+    </div>
+
+    <div class="rating-comment-wrap">
+      <label class="rating-comment-label" for="m-rating-comment">ملاحظات (اختياري)</label>
+      <textarea id="m-rating-comment" class="rating-comment" rows="3" placeholder="شاركنا رأيك أو اقتراحاتك..." oninput="autoGrow(this)"></textarea>
+    </div>
+
+    <button type="button" class="rating-submit-btn" id="m-rating-submit-btn" disabled onclick="submitRatingModal()">إرسال التقييم</button>
+    <button type="button" class="rating-skip-link" onclick="skipRatingModal()">تخطي</button>
+  </div>
+
+  <!-- Shutter flash overlay -->
+  <div id="shutter-flash"></div>
+
+  <script src="content/content.js"></script>
+  <script type="module" src="js/order-test-3dlook.js"></script>
+
+  <!-- ─── 3DLOOK MTM WIDGET (test only) ─────────────────────────────
+       Widget auto-renders into `.saia-widget-container` once this
+       script loads. Public key is for the test environment. -->
+  <script id="saia-mtm-integration" async
+    src="https://mtm-widget.3dlook.me/integration.js"
+    data-public-key="MTI1MDY:1wMOCG:NfjnhkbRbnZT7kj6reZWELg4W3Hkx9FJfzNpbhMVitA">
+  </script>
+
+  <!-- ─── 3DLOOK MEASUREMENT CAPTURE ─────────────────────────────────
+       3DLOOK fires postMessage events from its iframe when the user
+       completes a scan. The exact event shape isn't documented; we
+       log everything during testing and pick out anything that looks
+       like measurements. -->
+  <script>
+    window._3dlookMeasurements = null;
+    window.addEventListener('message', function(event) {
+      const origin = event.origin || '';
+      const isFrom3dlook = origin.includes('3dlook.me') || origin.includes('mtm-widget');
+      if (!isFrom3dlook) return;
+      console.log('[Muheeb-Test] 3DLOOK postMessage origin=' + origin, event.data);
+      const d = event.data || {};
+      // Spec example shape — tolerate variations during exploratory testing.
+      if (d && d.type === 'measurements_received' && d.measurements) {
+        captureMeasurements(d.measurements, d);
+        return;
+      }
+      // Fallback: any payload that contains a measurements-shaped object.
+      if (d && typeof d === 'object' && d.measurements && typeof d.measurements === 'object') {
+        captureMeasurements(d.measurements, d);
+      }
+    });
+
+    function captureMeasurements(m, raw) {
+      console.log('[Muheeb-Test] Captured measurements:', m);
+      window._3dlookMeasurements = { measurements: m, raw: raw };
+      const btn = document.getElementById('dl-continue-btn');
+      if (btn) { btn.disabled = false; btn.classList.add('ready'); }
+      const status = document.getElementById('dl-status-text');
+      if (status) status.textContent = 'تم استلام مقاساتك — تابع للدفع';
+      if (typeof gtag === 'function') {
+        gtag('event', 'tdlook_test_completed', { event_category: 'tdlook_test' });
+      }
+    }
+  </script>
+</body>
+</html>
