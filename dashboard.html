@@ -587,6 +587,161 @@
       padding: 0 2px;
     }
 
+    /* ── BROADCAST (WhatsApp click-to-chat) ── */
+    .bc-composer {
+      background: #FAFAFA;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .bc-field { display: flex; flex-direction: column; gap: 4px; }
+    .bc-field label {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.78rem;
+      color: var(--gray);
+    }
+    .bc-field input,
+    .bc-field textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 9px 12px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.92rem;
+      color: var(--black);
+      background: #FFFFFF;
+      outline: none;
+      transition: border-color 0.15s;
+      direction: rtl;
+    }
+    .bc-field input:focus,
+    .bc-field textarea:focus { border-color: var(--black); }
+    .bc-field textarea { resize: vertical; min-height: 88px; line-height: 1.5; }
+    .bc-hint {
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.7rem;
+      color: var(--gray);
+      margin-top: 2px;
+    }
+
+    .bc-filter-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .bc-filter {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .bc-filter:hover { background: var(--faint); }
+    .bc-filter.active {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+
+    .bc-bulk-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #F5F5F5;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.82rem;
+    }
+    .bc-select-all-label { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+    .bc-select-all-label input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+    .bc-bulk-btn {
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .bc-bulk-btn:hover { opacity: 0.9; }
+    .bc-bulk-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    #bc-table th,
+    #bc-table td {
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.86rem;
+      padding: 10px 8px;
+      vertical-align: middle;
+    }
+    .bc-phone {
+      font-variant-numeric: tabular-nums;
+      direction: ltr;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+    .bc-source-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: #EEEEEE;
+      color: #555;
+    }
+    .bc-sent-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .bc-sent-badge.yes { background: #DFF6E3; color: #1B7A36; }
+    .bc-sent-badge.no  { background: #FFF1DD; color: #8B5A00; }
+
+    .bc-wa-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #25D366;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 6px;
+      padding: 7px 12px;
+      text-decoration: none;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .bc-wa-btn:hover { opacity: 0.9; }
+    .bc-mark-toggle {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.74rem;
+      cursor: pointer;
+      margin-right: 6px;
+      color: var(--black);
+      transition: background 0.15s;
+    }
+    .bc-mark-toggle:hover { background: #F5F5F5; }
+    .bc-row-cb { width: 16px; height: 16px; cursor: pointer; }
+
     /* ── RESPONSIVE — narrow phones ── */
     @media (max-width: 600px) {
       .header { padding: 14px 16px; }
@@ -645,6 +800,7 @@
     <div class="tabs">
       <button class="tab-btn active" id="tab-orders"    onclick="switchTab('orders')">طلبات الثوب الجاهز</button>
       <button class="tab-btn"        id="tab-tailoring" onclick="switchTab('tailoring')">طلبات التفصيل</button>
+      <button class="tab-btn"        id="tab-broadcast" onclick="switchTab('broadcast')">بث واتساب</button>
       <button class="export-btn" id="btn-export-csv" type="button" onclick="exportCSV()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -684,6 +840,77 @@
       </div>
     </div>
     <div class="tfoot" id="tfoot"></div>
+
+    <!-- ─── BROADCAST VIEW (hidden until tab selected) ─────────────── -->
+    <!-- WhatsApp click-to-chat only — no automated bulk send. Every row
+         opens https://wa.me/<number> in a new tab; admin must click each
+         chat manually. The Business/Cloud API would be required for true
+         automated bulk send and is NOT used here. -->
+    <div id="broadcast-view" style="display:none;">
+      <!-- Counts -->
+      <div class="status-stats-row" id="broadcast-stats" style="margin-bottom:16px;">
+        <div class="status-stat-card" style="background:#F5F5F5;">
+          <div class="status-stat-num" id="bc-total">—</div>
+          <div class="status-stat-label">إجمالي الأرقام</div>
+        </div>
+        <div class="status-stat-card" style="background:#DFF6E3;">
+          <div class="status-stat-num" id="bc-sent">—</div>
+          <div class="status-stat-label">تم الإرسال</div>
+        </div>
+        <div class="status-stat-card" style="background:#FFE9C7;">
+          <div class="status-stat-num" id="bc-remaining">—</div>
+          <div class="status-stat-label">المتبقي</div>
+        </div>
+      </div>
+
+      <!-- Composer: campaign + message -->
+      <div class="bc-composer">
+        <div class="bc-field">
+          <label for="bc-campaign">اسم الحملة</label>
+          <input type="text" id="bc-campaign" value="default" onchange="loadBroadcast()" placeholder="default" />
+          <span class="bc-hint">الحالات (مُرسل / لم يُرسل) تُحفظ بشكل منفصل لكل حملة.</span>
+        </div>
+        <div class="bc-field">
+          <label for="bc-message">نص الرسالة</label>
+          <textarea id="bc-message" rows="4" oninput="renderBroadcastTable()" placeholder="السلام عليكم، هذه رسالة من مُهيب..."></textarea>
+        </div>
+      </div>
+
+      <!-- Filter pills -->
+      <div class="bc-filter-row">
+        <button class="bc-filter active" data-filter="all"    onclick="setBcFilter('all')">الكل</button>
+        <button class="bc-filter"        data-filter="unsent" onclick="setBcFilter('unsent')">لم يُرسل</button>
+        <button class="bc-filter"        data-filter="sent"   onclick="setBcFilter('sent')">تم الإرسال</button>
+      </div>
+
+      <!-- Bulk actions -->
+      <div class="bc-bulk-row">
+        <label class="bc-select-all-label">
+          <input type="checkbox" id="bc-select-all" onchange="onSelectAll()" />
+          تحديد الكل (المرئي)
+        </label>
+        <button class="bc-bulk-btn" onclick="bulkMarkSent()">تحديد المحدد كمُرسل</button>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap" id="bc-table-wrap">
+        <table id="bc-table">
+          <thead>
+            <tr>
+              <th style="width:32px;"></th>
+              <th>الاسم</th>
+              <th>الجوال (E.164)</th>
+              <th>المصدر</th>
+              <th>الحالة</th>
+              <th style="width:200px;">إجراء</th>
+            </tr>
+          </thead>
+          <tbody id="bc-tbody">
+            <tr class="state-row"><td colspan="6"><span class="spinner"></span> جاري التحميل...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
   </main>
 
@@ -1138,7 +1365,263 @@
       activeTab = tab;
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('tab-' + tab).classList.add('active');
-      loadTab(tab);
+
+      const isBroadcast = tab === 'broadcast';
+      // Toggle which top-level view is shown. Broadcast hides the order
+      // table, the per-status counts, the search box, the table footer,
+      // and the CSV export button (those don't apply to a phone list).
+      document.getElementById('table-container').style.display  = isBroadcast ? 'none'  : '';
+      document.getElementById('status-stats-row').style.display = isBroadcast ? 'none'  : '';
+      document.querySelector('.search-wrap').style.display      = isBroadcast ? 'none'  : '';
+      document.getElementById('tfoot').style.display            = isBroadcast ? 'none'  : '';
+      document.getElementById('btn-export-csv').style.display   = isBroadcast ? 'none'  : '';
+      document.getElementById('broadcast-view').style.display   = isBroadcast ? 'block' : 'none';
+
+      if (isBroadcast) loadBroadcast();
+      else loadTab(tab);
+    }
+
+    // ─── BROADCAST (WhatsApp click-to-chat) ──────────────────────
+    // Sources we union for phone numbers. Add a new entry here as new
+    // tables with `phone` columns are added to the schema. Test tables
+    // (e.g. orders_test_3dlook) are intentionally excluded so test data
+    // doesn't pollute real broadcasts.
+    const BC_SOURCES = [
+      { table: 'orders',           label: 'الثوب الجاهز' },
+      { table: 'tailoring_orders', label: 'التفصيل' },
+    ];
+
+    let _bcEntries = [];   // [{phone, name, source, sent, sent_at}, ...]
+    let _bcFilter  = 'all'; // 'all' | 'sent' | 'unsent'
+
+    // Normalize a Saudi phone into E.164 (+9665XXXXXXXX).
+    // Returns null if the input doesn't look like a valid Saudi mobile.
+    function toE164(raw) {
+      if (!raw) return null;
+      const d = String(raw).replace(/[^0-9]/g, '');
+      if (d.length === 12 && d.startsWith('966')) return '+' + d;
+      if (d.length === 10 && d.startsWith('05'))  return '+966' + d.slice(1);
+      if (d.length === 9  && d.startsWith('5'))   return '+966' + d;
+      return null;
+    }
+
+    function bcCurrentCampaign() {
+      const v = (document.getElementById('bc-campaign')?.value || '').trim();
+      return v || 'default';
+    }
+
+    async function loadBroadcast() {
+      const campaign = bcCurrentCampaign();
+      const tbody = document.getElementById('bc-tbody');
+      tbody.innerHTML = '<tr class="state-row"><td colspan="6"><span class="spinner"></span> جاري التحميل...</td></tr>';
+
+      try {
+        // Fetch every phone source in parallel + the log for this campaign
+        const sourceFetches = BC_SOURCES.map(s =>
+          db.from(s.table)
+            .select('phone, name, created_at')
+            .order('created_at', { ascending: false })
+            .then(r => ({ src: s, data: r.data || [], err: r.error }))
+        );
+        const logFetch = db.from('broadcast_log')
+          .select('phone_e164, sent, sent_at')
+          .eq('campaign', campaign)
+          .then(r => ({ data: r.data || [], err: r.error }));
+
+        const [logResult, ...sourceResults] = await Promise.all([logFetch, ...sourceFetches]);
+
+        // Dedup by normalized E.164. For collisions we keep the FIRST non-empty
+        // name we see (sources are ordered newest-first by created_at, so the
+        // first row a phone appears in is also the most recent occurrence —
+        // that's the source we record as "most recent context").
+        const byPhone = new Map();
+        for (const r of sourceResults) {
+          if (r.err) {
+            console.warn('[Broadcast] source fetch error', r.src.table, r.err);
+            continue;
+          }
+          for (const row of r.data) {
+            const e164 = toE164(row.phone);
+            if (!e164) continue;
+            const existing = byPhone.get(e164);
+            if (!existing) {
+              byPhone.set(e164, {
+                phone: e164,
+                name: row.name || '',
+                source: r.src.label,
+                _ts: row.created_at || null,
+              });
+            } else {
+              // Fill in name from another source if we didn't have one
+              if (!existing.name && row.name) existing.name = row.name;
+              // Track most recent source by timestamp
+              if (row.created_at && (!existing._ts || row.created_at > existing._ts)) {
+                existing.source = r.src.label;
+                existing._ts = row.created_at;
+              }
+            }
+          }
+        }
+
+        // Merge in sent state from broadcast_log
+        const sentMap = new Map();
+        if (logResult.err) {
+          console.warn('[Broadcast] log fetch error', logResult.err);
+        } else {
+          for (const row of logResult.data) {
+            sentMap.set(row.phone_e164, { sent: !!row.sent, sent_at: row.sent_at });
+          }
+        }
+
+        _bcEntries = Array.from(byPhone.values()).map(e => {
+          const log = sentMap.get(e.phone);
+          return {
+            phone: e.phone,
+            name: e.name,
+            source: e.source,
+            sent: log ? log.sent : false,
+            sent_at: log ? log.sent_at : null,
+          };
+        });
+        // Unsent first, then alphabetical by name
+        _bcEntries.sort((a, b) => {
+          if (a.sent !== b.sent) return a.sent ? 1 : -1;
+          return (a.name || '').localeCompare(b.name || '', 'ar');
+        });
+
+        renderBroadcastStats();
+        renderBroadcastTable();
+      } catch (err) {
+        console.error('[Broadcast] load error:', err);
+        tbody.innerHTML = '<tr class="state-row error"><td colspan="6">تعذّر تحميل البيانات</td></tr>';
+      }
+    }
+
+    function renderBroadcastStats() {
+      const total = _bcEntries.length;
+      const sent  = _bcEntries.filter(e => e.sent).length;
+      document.getElementById('bc-total').textContent     = total;
+      document.getElementById('bc-sent').textContent      = sent;
+      document.getElementById('bc-remaining').textContent = total - sent;
+    }
+
+    function renderBroadcastTable() {
+      const tbody = document.getElementById('bc-tbody');
+      const entries = _bcEntries.filter(e =>
+        _bcFilter === 'all'    ? true :
+        _bcFilter === 'sent'   ? e.sent :
+        /* unsent */             !e.sent
+      );
+      if (entries.length === 0) {
+        tbody.innerHTML = '<tr class="state-row"><td colspan="6">لا توجد أرقام مطابقة</td></tr>';
+        // Keep select-all in sync
+        const master = document.getElementById('bc-select-all');
+        if (master) master.checked = false;
+        return;
+      }
+      const msg = document.getElementById('bc-message').value || '';
+      const enc = encodeURIComponent(msg);
+      tbody.innerHTML = entries.map(e => {
+        const waNum = e.phone.replace(/^\+/, '');
+        const label = e.sent ? 'إلغاء التمييز' : 'تعيين كمُرسل';
+        return `
+          <tr>
+            <td><input type="checkbox" class="bc-row-cb" data-phone="${e.phone}" onchange="onRowCbChange()" /></td>
+            <td>${escapeBcHtml(e.name || '—')}</td>
+            <td class="bc-phone">${e.phone}</td>
+            <td><span class="bc-source-pill">${escapeBcHtml(e.source)}</span></td>
+            <td>${e.sent
+              ? '<span class="bc-sent-badge yes">تم الإرسال</span>'
+              : '<span class="bc-sent-badge no">لم يُرسل</span>'}</td>
+            <td>
+              <a class="bc-wa-btn" href="https://wa.me/${waNum}?text=${enc}" target="_blank" rel="noopener" aria-label="فتح محادثة واتساب">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 3.5A11 11 0 0 0 2.6 17l-1.6 5.8 6-1.5A11 11 0 1 0 20.5 3.5zM12 20a8 8 0 0 1-4-1.1l-.3-.2-3.5.9.9-3.4-.2-.3a8 8 0 1 1 7.1 4.1z"/></svg>
+                واتساب
+              </a>
+              <button class="bc-mark-toggle" onclick="toggleSent('${e.phone}')">${label}</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      // Refresh select-all state to match current rows
+      const master = document.getElementById('bc-select-all');
+      if (master) master.checked = false;
+    }
+
+    function setBcFilter(f) {
+      _bcFilter = f;
+      document.querySelectorAll('.bc-filter').forEach(b =>
+        b.classList.toggle('active', b.dataset.filter === f)
+      );
+      renderBroadcastTable();
+    }
+
+    function onSelectAll() {
+      const master = document.getElementById('bc-select-all');
+      document.querySelectorAll('.bc-row-cb').forEach(cb => { cb.checked = master.checked; });
+    }
+
+    function onRowCbChange() {
+      // If any row is unchecked, uncheck the master so it stops claiming "all"
+      const all = document.querySelectorAll('.bc-row-cb');
+      const checked = document.querySelectorAll('.bc-row-cb:checked');
+      const master = document.getElementById('bc-select-all');
+      if (master) master.checked = (all.length > 0 && checked.length === all.length);
+    }
+
+    async function toggleSent(phoneE164) {
+      const entry = _bcEntries.find(e => e.phone === phoneE164);
+      if (!entry) return;
+      const campaign = bcCurrentCampaign();
+      if (entry.sent) {
+        // "Unsend" = delete the log row for this (phone, campaign).
+        const { error } = await db.from('broadcast_log')
+          .delete()
+          .eq('phone_e164', phoneE164)
+          .eq('campaign', campaign);
+        if (error) { console.error('[Broadcast] unsend error', error); alert('تعذّر إلغاء التمييز'); return; }
+        entry.sent = false;
+        entry.sent_at = null;
+      } else {
+        // "Sent" = upsert log row. Composite unique (phone_e164, campaign)
+        // means re-marking idempotent.
+        const now = new Date().toISOString();
+        const { error } = await db.from('broadcast_log').upsert(
+          { phone_e164: phoneE164, campaign, sent: true, sent_at: now },
+          { onConflict: 'phone_e164,campaign' }
+        );
+        if (error) { console.error('[Broadcast] send error', error); alert('تعذّر التعيين كمُرسل'); return; }
+        entry.sent = true;
+        entry.sent_at = now;
+      }
+      renderBroadcastStats();
+      renderBroadcastTable();
+    }
+
+    async function bulkMarkSent() {
+      const phones = Array.from(document.querySelectorAll('.bc-row-cb:checked'))
+        .map(c => c.dataset.phone);
+      if (phones.length === 0) { alert('اختر أرقاماً أولاً'); return; }
+      const campaign = bcCurrentCampaign();
+      const now = new Date().toISOString();
+      const rows = phones.map(p => ({ phone_e164: p, campaign, sent: true, sent_at: now }));
+      const { error } = await db.from('broadcast_log').upsert(rows, { onConflict: 'phone_e164,campaign' });
+      if (error) { console.error('[Broadcast] bulk send error', error); alert('تعذّر التحديث الجماعي'); return; }
+      for (const p of phones) {
+        const e = _bcEntries.find(x => x.phone === p);
+        if (e) { e.sent = true; e.sent_at = now; }
+      }
+      renderBroadcastStats();
+      renderBroadcastTable();
+    }
+
+    // Local HTML escaper (the file's other escapeHtml lives inside the
+    // table renderer; we duplicate a tiny helper here to keep broadcast
+    // logic self-contained and avoid cross-section coupling).
+    function escapeBcHtml(s) {
+      return String(s).replace(/[&<>"']/g, c =>
+        ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])
+      );
     }
 
     // ── STATUS UPDATE ─────────────────────────────────────────────
