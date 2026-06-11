@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>عرض خاص — مُهيب</title>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="apple-touch-icon" href="/images/logo.png" />
+
+  <!-- ─── Open Graph (WhatsApp / Facebook link preview) ────────────
+       The og:image MUST be an absolute https URL or scrapers ignore
+       it. The og:url MUST match the URL that's actually shared (the
+       trailing link in the broadcast message points to /offer). -->
+  <meta property="og:type"          content="website" />
+  <meta property="og:title"         content="اشترِ ثوب مهيب واحصل على الثاني بنص السعر" />
+  <meta property="og:description"   content="مقاساتك بضغطة زر، وضمان استرجاع" />
+  <meta property="og:image"         content="https://www.muheeb.life/images/Group_12.png" />
+  <meta property="og:image:alt"     content="عرض ثوب مُهيب" />
+  <meta property="og:url"           content="https://www.muheeb.life/offer" />
+  <meta property="og:site_name"     content="مُهيب" />
+  <meta property="og:locale"        content="ar_SA" />
+
+  <!-- Twitter card — some scrapers fall back to these even if not Twitter -->
+  <meta name="twitter:card"         content="summary_large_image" />
+  <meta name="twitter:title"        content="اشترِ ثوب مهيب واحصل على الثاني بنص السعر" />
+  <meta name="twitter:description"  content="مقاساتك بضغطة زر، وضمان استرجاع" />
+  <meta name="twitter:image"        content="https://www.muheeb.life/images/Group_12.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root { color-scheme: light; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: #FAFAFA;
+      color: #0A0A0A;
+      direction: rtl;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px calc(28px + env(safe-area-inset-bottom));
+      min-height: 100vh;
+    }
+    .wrap { max-width: 540px; width: 100%; text-align: center; }
+    .hero {
+      width: 100%;
+      max-width: 480px;
+      height: auto;
+      border-radius: 12px;
+      margin: 0 auto 24px;
+      display: block;
+      background: #EEEEEE; /* visible while the image loads */
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    h1 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      line-height: 1.45;
+      margin-bottom: 8px;
+    }
+    .sub {
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: #555;
+      margin-bottom: 20px;
+    }
+    .price-row {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 8px;
+      margin: 4px 0 22px;
+    }
+    .price-main {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #10B981;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .price-currency { font-size: 1.05rem; color: #555; font-weight: 600; }
+    .price-tag {
+      display: inline-block;
+      margin-inline-start: 6px;
+      background: #FFF1DD;
+      color: #8B5A00;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+    .perk-list {
+      list-style: none;
+      margin: 8px auto 28px;
+      padding: 0;
+      text-align: right;
+      max-width: 380px;
+    }
+    .perk-list li {
+      padding: 7px 0;
+      font-size: 0.95rem;
+      color: #333;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      line-height: 1.5;
+    }
+    .perk-list li::before {
+      content: '✓';
+      color: #10B981;
+      font-weight: 800;
+      font-size: 1.1rem;
+      line-height: 1.4;
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 380px;
+      min-height: 56px;
+      background: #0A0A0A;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: opacity .2s, transform .2s;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    }
+    .cta:hover  { opacity: .92; }
+    .cta:active { transform: translateY(1px); }
+    .footer-note {
+      margin-top: 24px;
+      font-size: 0.76rem;
+      color: #888;
+    }
+    @media (max-width: 359px) {
+      h1 { font-size: 1.25rem; }
+      .price-main { font-size: 2rem; }
+      .cta { font-size: 0.95rem; min-height: 52px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <img class="hero" src="/images/Group_12.png" alt="عرض ثوب مُهيب" loading="eager" />
+    <h1>اشترِ ثوب مُهيب، واحصل على الثاني بنص السعر</h1>
+    <p class="sub">مقاساتك بضغطة زر — وضمان استرجاع كامل</p>
+
+    <div class="price-row">
+      <span class="price-main">179</span>
+      <span class="price-currency">ريال</span>
+      <span class="price-tag">+ الثاني بنصف السعر</span>
+    </div>
+
+    <ul class="perk-list">
+      <li>مقاساتك بضغطة زر — لا حاجة لشريط قياس</li>
+      <li>توصيل لجميع مناطق المملكة في ٤ أيام</li>
+      <li>ضمان ذهبي 🥇 — ما عجبك، رجّعنا فلوسك</li>
+    </ul>
+
+    <a class="cta" href="/order.html">ابدأ طلبك الآن ←</a>
+
+    <p class="footer-note">© مُهيب — تفصيل ثياب سعودية</p>
+  </main>
+</body>
+</html>

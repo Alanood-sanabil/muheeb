@@ -2,6 +2,7 @@
   "rewrites": [
     { "source": "/tailoring", "destination": "/tailoring.html" },
     { "source": "/admin",     "destination": "/dashboard.html" },
+    { "source": "/offer",     "destination": "/offer.html"     },
     { "source": "/",          "destination": "/order.html"     }
   ]
 }

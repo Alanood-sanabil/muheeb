@@ -1394,6 +1394,25 @@
     let _bcEntries = [];   // [{phone, name, source, sent, sent_at}, ...]
     let _bcFilter  = 'all'; // 'all' | 'sent' | 'unsent'
 
+    // Per-campaign default message bodies. When the user opens the broadcast
+    // tab with one of these campaigns active AND the textarea is empty, we
+    // seed the textarea with the corresponding text. User edits are never
+    // overwritten — if they've typed anything, the preset is skipped.
+    // Single-asterisk markers are WhatsApp bold. Newlines and emoji are
+    // preserved by encodeURIComponent into the wa.me link.
+    const BC_DEFAULT_MESSAGES = {
+      'default': `أهلاً وسهلاً، حياك الله 👋
+*عرض خاص لـك* 🔥
+اشترِ ثوب مهيب الآن بـ 179 ريال
+وخُذ الثوب الثاني بنص السعر!
+*مع ضمان ذهبي:* 🥇
+وإذا ما أعجبك نرجّع لك فلوسك
+*مقاساتك بضغطة زر* ✅
+ادخل الرابط:
+حط طولك ووزنك — والباقي علينا 👌
+https://www.muheeb.life/offer`,
+    };
+
     // Normalize a Saudi phone into E.164 (+9665XXXXXXXX).
     // Returns null if the input doesn't look like a valid Saudi mobile.
     function toE164(raw) {
@@ -1412,6 +1431,13 @@
 
     async function loadBroadcast() {
       const campaign = bcCurrentCampaign();
+      // Seed the message textarea with the campaign's preset if one exists
+      // AND the textarea is currently empty. Preserves any text the admin
+      // has already typed.
+      const msgEl = document.getElementById('bc-message');
+      if (msgEl && !msgEl.value && BC_DEFAULT_MESSAGES[campaign]) {
+        msgEl.value = BC_DEFAULT_MESSAGES[campaign];
+      }
       const tbody = document.getElementById('bc-tbody');
       tbody.innerHTML = '<tr class="state-row"><td colspan="6"><span class="spinner"></span> جاري التحميل...</td></tr>';
 
