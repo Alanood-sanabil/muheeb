@@ -4,7 +4,7 @@
 //  the module load if the CDN is slow or unavailable.
 // ============================================================
 
-const orderState = { color: null, collar: null, fabric: null, height: 170, weight: 80, shoeSize: 42, age: 25, shirtSize: null, bodyShape: null, fitPreference: null, name: null, phone: null, city: null, ai_chest: null, ai_waist: null, ai_sleeve: null, ai_size: null };
+const orderState = { color: null, collar: null, fabric: null, height: 170, weight: 80, shoeSize: 42, age: 25, shirtSize: null, bodyShape: null, fitPreference: null, name: null, phone: null, city: null };
 let currentScreen = 1;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -375,7 +375,6 @@ function showScreen(n) {
 
     if (n === 2) updateBtn(1);
     if (n === 'scan') resetScanFlow();
-    if (n === 'aimeasure') resetAiMeasureFlow();
     if (n === 4) updateBtn(3);
     if (n === '4b') updateBtn('4b');
 
@@ -418,17 +417,16 @@ function updateProgress(screenNumber) {
   container.style.opacity = '1';
   container.style.pointerEvents = '';
 
-  // Map screen → activeStep (1–5). Five-dot indicator:
+  // Map screen → activeStep (1–4). Four-dot indicator:
   //   1 = الثوب (color + fabric + collar combined on screen-2)
   //   2 = المقاسات (screen-3)
   //   3 = شكل الجسم (screen-4)
   //   4 = المقاس المفضل (screen-4b)
-  //   5 = قياسات AI (screen-aimeasure)
-  const stepMap = { 2: 1, 3: 2, 4: 3, '4b': 4, 'aimeasure': 5 };
-  const screenTargets = [null, 2, 3, 4, '4b', 'aimeasure']; // index = step number for back-click navigation
+  const stepMap = { 2: 1, 3: 2, 4: 3, '4b': 4 };
+  const screenTargets = [null, 2, 3, 4, '4b']; // index = step number for back-click navigation
   const activeStep = stepMap[screenNumber] || 1;
 
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 4; i++) {
     const dot = document.getElementById('step-dot-' + i);
     if (!dot) continue;
 
@@ -450,7 +448,7 @@ function updateProgress(screenNumber) {
     }
   }
 
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= 3; i++) {
     const line = document.getElementById('line-' + i + '-' + (i + 1));
     if (!line) continue;
     if (i < activeStep) line.classList.add('filled');
@@ -530,9 +528,8 @@ window.selectShirtSize = selectShirtSize;
 
 function validateStep4b() {
   if (!orderState.fitPreference) { showErr('error-fit'); return; }
-  gtag('event', 'ai_measure_offered', { event_category: 'ai_measure' });
-  showScreen('aimeasure');
-  resetAiMeasureFlow();
+  // AI sizing flow removed — fit-preference step links directly to checkout.
+  openOrderModal();
 }
 window.validateStep4b = validateStep4b;
 
@@ -629,14 +626,8 @@ async function submit() {
   const ref = _lastSubmitRef || Math.floor(100000 + Math.random() * 900000);
   _lastSubmitRef = ref;
 
-  // ── 1. INIT SUPABASE + UPLOAD PHOTOS (best-effort) ──────────────
-  // TESTING MODE: Photos are being saved despite UI claiming
-  // "الصور لا تُحفظ". Before going live with real customers, either:
-  //   1. Update the consent text to reflect actual behavior, OR
-  //   2. Stop saving photos
-  // This is a privacy/legal issue that must be resolved before public launch.
+  // ── 1. INIT SUPABASE ────────────────────────────────────────────
   let supabase = null;
-  let frontUrl = null, sideUrl = null;
   let initError = null;
   try {
     const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
@@ -644,21 +635,15 @@ async function submit() {
       'https://mwcmfzzukqiutztkgagg.supabase.co',
       'sb_publishable_8zuxMDAcYGIozcmi8CS8sg_ZnjLmb6V'
     );
-    try {
-      [frontUrl, sideUrl] = await Promise.all([
-        uploadPhotoToStorage(supabase, String(ref), 'front', _aiPhotoBlobs.front),
-        uploadPhotoToStorage(supabase, String(ref), 'side',  _aiPhotoBlobs.side),
-      ]);
-      console.log('[Muheeb] Photo URLs after upload — front:', frontUrl, 'side:', sideUrl);
-    } catch (e) {
-      console.error('[Muheeb] Photo upload step failed (non-fatal, continuing):', e);
-    }
   } catch (e) {
     console.error('[Muheeb] Supabase init failed:', e);
     initError = e;
   }
 
   // ── 2. BUILD + LOG PAYLOAD ──────────────────────────────────────
+  // ai_* columns on the orders table are intentionally not written
+  // anymore (the AI sizing flow was removed). They stay in the schema
+  // to preserve historical rows; new rows leave them NULL.
   const payload = {
     order_number: String(ref),
     name: orderState.name,
@@ -672,12 +657,6 @@ async function submit() {
     shoe_size: String(orderState.shoeSize),
     age: String(orderState.age),
     shirt_size: orderState.shirtSize || null,
-    ai_chest:  orderState.ai_chest  ? String(orderState.ai_chest)  : null,
-    ai_waist:  orderState.ai_waist  ? String(orderState.ai_waist)  : null,
-    ai_sleeve: orderState.ai_sleeve ? String(orderState.ai_sleeve) : null,
-    ai_size:   orderState.ai_size   || null,
-    ai_photo_front_url: frontUrl,
-    ai_photo_side_url:  sideUrl,
     body_type: orderState.bodyShape,
     fit_preference: orderState.fitPreference,
   };
@@ -1216,92 +1195,14 @@ function handleSubmit() {
   }
 }
 
-// ---- AI MEASURE FLOW ----
-const AI_LOADING_MSGS = [
-  'جاري تحليل الصورة الأمامية...',
-  'جاري تحليل الصورة الجانبية...',
-  'جاري حساب المقاسات...',
-  'جاري التحقق من الدقة...',
-];
-
-let _aiLoadingTimer = null;
-
-function showAiSub(n) {
-  document.querySelectorAll('.aimeasure-sub').forEach(s => s.classList.remove('active'));
-  const target = document.getElementById('aimeasure-sub-' + n);
-  if (target) target.classList.add('active');
-}
-window.showAiSub = showAiSub;
-
-function resetAiMeasureFlow() {
-  showAiSub(1);
-  // Defense against browser form-restoration: ensure the consent checkbox
-  // starts unchecked and the primary button is disabled on fresh entries.
-  // Within-flow back navigation (aiBackToEntry) calls showAiSub(1) directly
-  // and skips this reset, so the user's prior choice is preserved there.
-  const consent = document.getElementById('aimeasure-consent-cb');
-  if (consent) consent.checked = false;
-  const startBtn = document.getElementById('aimeasure-start-btn');
-  if (startBtn) startBtn.disabled = true;
-  ['front', 'side'].forEach(side => {
-    _aiPhotoBlobs[side] = null;
-    const preview = document.getElementById('ai-' + side + '-preview');
-    if (preview) { preview.style.backgroundImage = ''; preview.classList.remove('visible'); }
-    ['camera', 'gallery'].forEach(src => {
-      const input = document.getElementById('ai-' + side + '-input-' + src);
-      if (input) input.value = '';
-    });
-    const lbl = document.getElementById('ai-' + side + '-label');
-    if (lbl) { lbl.style.opacity = '1'; lbl.style.display = ''; }
-    const lblText = document.getElementById('ai-' + side + '-label-text');
-    if (lblText) lblText.textContent = 'التقط صورة';
-  });
-  // Combined photo screen has a single analyze button now
-  const analyzeBtn = document.getElementById('btn-ai-analyze');
-  if (analyzeBtn) { analyzeBtn.classList.remove('ready'); analyzeBtn.disabled = true; }
-  if (_aiLoadingTimer) { clearTimeout(_aiLoadingTimer); _aiLoadingTimer = null; }
-}
-
-function aiMeasureStart() {
-  gtag('event', 'ai_measure_start', { event_category: 'ai_measure' });
-  // Combined entry+instructions in sub-1 → straight to combined photo capture (sub-3)
-  showAiSub(3);
-}
-window.aiMeasureStart = aiMeasureStart;
-
-function aiMeasureSkip() {
-  gtag('event', 'ai_measure_skipped', { event_category: 'ai_measure' });
-  // Bypass photos/loading/results entirely. Manual measurements (entered in
-  // earlier steps) are used as-is; no AI fields or photo URLs are persisted.
-  openOrderModal();
-}
-window.aiMeasureSkip = aiMeasureSkip;
-
-// ── AI FLOW BACK NAVIGATION ─────────────────────────────────────
-// sub-1 (entry+instructions) → screen-4b (preferred fit) — exits AI flow
-// sub-3 (combined photos)    → sub-1                      — within AI flow
-// Within-flow back preserves user data (photos in _aiPhotoBlobs and consent
-// checkbox state stay intact). Exiting back to 4b does NOT reset the AI
-// state — but if the user re-enters AI via validateStep4b, showScreen
-// triggers resetAiMeasureFlow which clears everything (existing behavior).
-function aiBackToFit() {
-  gtag('event', 'ai_measure_back_to_fit', { event_category: 'ai_measure' });
-  showScreen('4b');
-}
-window.aiBackToFit = aiBackToFit;
-
-function aiBackToEntry() {
-  gtag('event', 'ai_measure_back_to_entry', { event_category: 'ai_measure' });
-  showAiSub(1);
-}
-window.aiBackToEntry = aiBackToEntry;
-
 // From the checkout modal back button: close the modal AND return the
-// underlying screen to the photo capture sub. The previous behavior closed
-// onto the AI results screen (sub-6), but that screen no longer exists.
+// underlying screen to the fit-preference step. The AI sizing flow used
+// to sit between fit and checkout; with that removed, "back" goes one
+// screen up to 4b. The function keeps its old name so the inline
+// onclick="checkoutBackToPhotos()" in order.html still resolves.
 function checkoutBackToPhotos() {
   closeOrderModal();
-  showAiSub(3);
+  showScreen('4b');
 }
 window.checkoutBackToPhotos = checkoutBackToPhotos;
 
@@ -1461,230 +1362,6 @@ function scheduleRatingAutoPopup() {
     gtag('event', 'rating_screen_viewed', { event_category: 'engagement', source: 'auto_modal' });
   }, 15000);
 }
-
-// ─────────────────────────────────────────────────────────────────────────
-// AI PHOTO STORAGE (compression + Supabase Storage upload)
-// ─────────────────────────────────────────────────────────────────────────
-// TESTING MODE: Photos are being saved despite UI claiming "الصور لا تُحفظ".
-// Before going live with real customers, either:
-//   1. Update the consent text to reflect actual behavior, OR
-//   2. Stop saving photos
-// This is a privacy/legal issue that must be resolved before public launch.
-// ─────────────────────────────────────────────────────────────────────────
-
-// Compressed Blobs for the front/side photos, captured client-side from the
-// user's File before upload. Cleared on flow reset / mid-flow exit.
-const _aiPhotoBlobs = { front: null, side: null };
-
-// Resize an image to maxDim on the long edge and re-encode as JPEG at the
-// given quality (0..1). Targets ~100–300 KB at 1080px / 0.78. Returns a Blob.
-async function compressImage(file, maxDim = 1080, quality = 0.78) {
-  // Use createImageBitmap when available (modern browsers, fastest path).
-  let bitmap;
-  if (typeof createImageBitmap === 'function') {
-    bitmap = await createImageBitmap(file);
-  } else {
-    // Fallback via Image element for older Safari
-    const url = URL.createObjectURL(file);
-    bitmap = await new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
-      img.onerror = (err) => { URL.revokeObjectURL(url); reject(err); };
-      img.src = url;
-    });
-  }
-  let { width, height } = bitmap;
-  if (Math.max(width, height) > maxDim) {
-    const scale = maxDim / Math.max(width, height);
-    width  = Math.round(width  * scale);
-    height = Math.round(height * scale);
-  }
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(bitmap, 0, 0, width, height);
-  if (bitmap.close) bitmap.close();
-  return await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
-}
-
-// Upload one Blob to Supabase Storage and return its public URL.
-async function uploadPhotoToStorage(supabaseClient, orderRef, side, blob) {
-  if (!blob) {
-    console.log('[Muheeb] No blob to upload for side=' + side + ' — skipping');
-    return null;
-  }
-  const path = `${orderRef}/${side}.jpg`;
-  const { error } = await supabaseClient.storage
-    .from('ai-photos')
-    .upload(path, blob, { upsert: true, contentType: 'image/jpeg' });
-  if (error) {
-    console.error('[Muheeb] Photo upload failed (' + side + '):', error);
-    return null;
-  }
-
-  // getPublicUrl response shape varies by SDK version:
-  //   v2:  { data: { publicUrl: '...' } }
-  //   v1:  { publicURL: '...' }   (capital URL, no data wrapper)
-  // The CDN ESM import isn't version-pinned, so handle both shapes —
-  // and fall back to manual URL construction (always works for public
-  // buckets) so we NEVER silently drop the URL after a successful upload.
-  let publicUrl = null;
-  try {
-    const result = supabaseClient.storage.from('ai-photos').getPublicUrl(path);
-    publicUrl = (result && result.data && result.data.publicUrl)
-             || (result && result.data && result.data.publicURL)
-             || (result && result.publicURL)
-             || (result && result.publicUrl)
-             || null;
-    if (!publicUrl) console.warn('[Muheeb] getPublicUrl returned no URL — falling back to manual construction. Raw response:', result);
-  } catch (e) {
-    console.error('[Muheeb] getPublicUrl threw (' + side + '):', e);
-  }
-  if (!publicUrl) {
-    publicUrl = `https://mwcmfzzukqiutztkgagg.supabase.co/storage/v1/object/public/ai-photos/${path}`;
-  }
-  console.log('[Muheeb] ' + (side === 'front' ? 'Front' : 'Side') + ' photo uploaded, URL:', publicUrl);
-  return publicUrl;
-}
-
-// ── LEARN-MORE BOTTOM SHEET (AI entry explainer) ──────────
-function openLearnMore() {
-  gtag('event', 'ai_learn_more_opened', { event_category: 'ai_measure' });
-  document.getElementById('learn-more-overlay').classList.add('visible');
-  document.getElementById('learn-more-sheet').classList.add('visible');
-}
-window.openLearnMore = openLearnMore;
-
-function closeLearnMore() {
-  document.getElementById('learn-more-overlay').classList.remove('visible');
-  document.getElementById('learn-more-sheet').classList.remove('visible');
-}
-window.closeLearnMore = closeLearnMore;
-
-function trackLearnMoreWhatsapp() {
-  gtag('event', 'ai_learn_more_whatsapp', { event_category: 'ai_measure' });
-}
-window.trackLearnMoreWhatsapp = trackLearnMoreWhatsapp;
-
-// ── PHOTO SOURCE BOTTOM SHEET ─────────────────────────────
-let _photoSheetSide = null;
-
-function openPhotoSheet(side) {
-  _photoSheetSide = side;
-  document.getElementById('photo-sheet-overlay').classList.add('visible');
-  document.getElementById('photo-sheet').classList.add('visible');
-}
-window.openPhotoSheet = openPhotoSheet;
-
-function closePhotoSheet() {
-  document.getElementById('photo-sheet-overlay').classList.remove('visible');
-  document.getElementById('photo-sheet').classList.remove('visible');
-  // Don't null _photoSheetSide here — pickPhotoSource may run synchronously
-  // after a click that called close*indirectly* via re-entrancy. Setting it
-  // null only when the sheet is reopened or after a pick is fine.
-}
-window.closePhotoSheet = closePhotoSheet;
-
-function pickPhotoSource(source) {
-  const side = _photoSheetSide;
-  closePhotoSheet();
-  if (!side) return;
-  const input = document.getElementById('ai-' + side + '-input-' + source);
-  if (input) input.click();
-}
-window.pickPhotoSource = pickPhotoSource;
-
-async function aiPhotoSelected(side, input) {
-  if (!input.files || !input.files[0]) return;
-  const file = input.files[0];
-
-  // Compress for upload (target ~100–300 KB) and stash the Blob for submit().
-  // We render the preview from the COMPRESSED image so what the user sees in
-  // the UI matches what eventually gets stored.
-  let blob;
-  try {
-    blob = await compressImage(file);
-  } catch (e) {
-    console.error('[Muheeb] Photo compression failed, falling back to original:', e);
-    blob = file;
-  }
-  _aiPhotoBlobs[side] = blob;
-
-  const url = URL.createObjectURL(blob);
-  const preview = document.getElementById('ai-' + side + '-preview');
-  if (preview) {
-    preview.style.backgroundImage = `url(${url})`;
-    preview.classList.add('visible');
-  }
-  // Switch label to "retake" state so user can replace the photo
-  const lblText = document.getElementById('ai-' + side + '-label-text');
-  if (lblText) lblText.textContent = 'تغيير الصورة';
-  // Combined photo screen has a single analyze button — enable only when
-  // BOTH photos are present.
-  const analyzeBtn = document.getElementById('btn-ai-analyze');
-  if (analyzeBtn) {
-    const bothReady = !!(_aiPhotoBlobs.front && _aiPhotoBlobs.side);
-    analyzeBtn.disabled = !bothReady;
-    if (bothReady) analyzeBtn.classList.add('ready');
-  }
-  if (side === 'front') gtag('event', 'ai_measure_photo_front', { event_category: 'ai_measure' });
-  if (side === 'side')  gtag('event', 'ai_measure_photo_side',  { event_category: 'ai_measure' });
-}
-window.aiPhotoSelected = aiPhotoSelected;
-
-function calcAIMeasurements() {
-  const h = orderState.height;
-  const w = orderState.weight;
-  const shape = orderState.bodyShape || '';
-  const isHeavy = shape === 'ممتلئ';
-  const chest  = Math.round(w * 1.1 + 25);
-  const waist  = Math.round(w * 1.0 + 15);
-  const sleeve = Math.round(h * 0.345);
-  let size;
-  if      (w <= 60)  size = isHeavy ? 'M'   : 'S';
-  else if (w <= 72)  size = isHeavy ? 'L'   : 'M';
-  else if (w <= 85)  size = isHeavy ? 'XL'  : 'L';
-  else if (w <= 100) size = isHeavy ? 'XXL' : 'XL';
-  else               size = 'XXL';
-  return { height: h, chest, waist, sleeve, size };
-}
-
-function aiMeasureAnalyze() {
-  showAiSub(5);
-  const statusEl = document.getElementById('ai-loading-status');
-  let msgIdx = 0;
-  function cycleMsg() {
-    if (!statusEl) return;
-    statusEl.style.opacity = '0';
-    setTimeout(() => {
-      msgIdx = (msgIdx + 1) % AI_LOADING_MSGS.length;
-      statusEl.textContent = AI_LOADING_MSGS[msgIdx];
-      statusEl.style.opacity = '1';
-    }, 300);
-  }
-  if (statusEl) statusEl.textContent = AI_LOADING_MSGS[0];
-  const interval = setInterval(cycleMsg, 1200);
-  _aiLoadingTimer = setTimeout(() => {
-    clearInterval(interval);
-    const m = calcAIMeasurements();
-    orderState.ai_chest  = m.chest;
-    orderState.ai_waist  = m.waist;
-    orderState.ai_sleeve = m.sleeve;
-    orderState.ai_size   = m.size;
-    // AI flow effectively completes here — fire the completed event then
-    // jump straight to checkout (no separate results screen).
-    gtag('event', 'ai_measure_completed', { event_category: 'ai_measure' });
-    openOrderModal();
-  }, 5000);
-}
-window.aiMeasureAnalyze = aiMeasureAnalyze;
-
-function aiMeasureRetry() {
-  gtag('event', 'ai_measure_abandoned', { event_category: 'ai_measure' });
-  resetAiMeasureFlow();
-}
-window.aiMeasureRetry = aiMeasureRetry;
 
 window.showScreen = showScreen;
 window.selectScanMode = selectScanMode;
